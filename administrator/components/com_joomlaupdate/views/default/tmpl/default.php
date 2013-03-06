@@ -392,6 +392,8 @@ $ftpFieldsDisplay = $this->ftp['enabled'] ? '' : 'style = "display: none"';
                 <?php echo JText::_('COM_JOOMLAUPDATE_MARKED_DESCRIPTION_FIRST'); ?>
                 <span class="label label-warning"><?php echo JText::_('COM_JOOMLAUPDATE_MISSING_TAG_MARK'); ?></span>
                 <?php echo JText::_('COM_JOOMLAUPDATE_MISSING_TAG_DESCRIPTION'); ?>
+            <?php else: ?>
+            	<?php echo JText::_('COM_JOOMLAUPDATE_DONT_HAVE_3RD_EXTENSIONS_FOR_CHECK'); ?>
 			<?php endif;?>
 		</div>
 		<!-- close span -->
