@@ -1050,24 +1050,15 @@ ENDDATA;
 			}
 
 			// Check inside manifest xml for compatibility tags
-			$element = $manifest->compatibility;
+			$compatiblity = new JCompatibility($manifest->compatibilities);
+			$element = $manifest->compatibilities;
 			
 			if ($element && !empty($latest_version))
 			{
 				$compatible_found = false;
 				foreach ($element->children() as $compatible)
 				{
-					if (($compatible->getAttribute('exclude') == true) && $compatible_found)
-					{
-						if (!$this->compareVersions($latest_version, $compatible, true)) {
-							$compatible_found = false;
-							break;
-						}
-					}
-					elseif (!$compatible_found && $this->compareVersions($latest_version, $compatible)) {
-						// The extension is compatible
-						$compatible_found = true;
-					}
+					$compatible_found = $compatiblity->check($latest_version);
 				}
 				
 				if ($compatible_found)
@@ -1088,46 +1079,5 @@ ENDDATA;
 		}
 
 		return $items_compatible;
-	}
-	
-	/**
-	 * Method to compare two versions
-	 *
-	 * @param   string  $latest_version  Dot-number notation
-	 * @param   string  $compatible      Dot-number notation
-	 * @param   bool	$exclude         When true we only check that $compatible and $latest_version are different
-	 *
-	 * @return boolean True on success
-	 * @since   2.5.9
-	 */
-	protected function compareVersions($latest_version, $compatible, $exclude = false)
-	{
-		// If no version is given return false;
-		if (empty($latest_version))
-		{
-			return false;
-		}
-		
-		if ($exclude)
-		{
-			// Perform an exclusion test
-			return version_compare($latest_version, $compatible, 'ne');
-		}
-		else
-		{
-			// Perform a regular version test
-
-			// Normalise the minimum version to check against
-			$compatible_array 		= explode(".", $compatible, 3);
-			$compatible_array		= array_pad($compatible_array, 2, 0);
-			$compatible				= implode('.', $compatible_array);
-			
-			// Get the maximum version to check against by increasing the minor version
-			$compatible_array[1]++;
-			$max_compatible			= implode('.', $compatible_array);
-
-			return version_compare($latest_version, $compatible, 'ge') &&
-				version_compare($latest_version, $max_compatible, 'lt');
-		}
 	}	
 }
