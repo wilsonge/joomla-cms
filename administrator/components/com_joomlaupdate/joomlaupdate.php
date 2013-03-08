@@ -14,6 +14,9 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_joomlaupdate')) {
 	return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
 }
 
+// Register manifest helper
+JLoader::register('ManifestHelper', JPATH_COMPONENT.'/helpers/manifest.php');
+
 $controller	= JControllerLegacy::getInstance('Joomlaupdate');
 $controller->execute(JRequest::getCmd('task'));
 $controller->redirect();

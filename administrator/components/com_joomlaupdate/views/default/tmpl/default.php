@@ -329,7 +329,7 @@ $ftpFieldsDisplay = $this->ftp['enabled'] ? '' : 'style = "display: none"';
                                             <?php foreach($this->extensions['not_compatible'] as $extension){ ?>
                                             <tr>
                                                 <td>
-                                                    <a href="index.php?option=com_joomlaupdate&view=compatibility&extension=<?php echo $extension->name; ?>&jversion=<?php echo $this->updateInfo['latest']; ?>" rel="{handler: 'iframe', size: {x: 875, y: 550}, onClose: function() {}}" class="modal"><?php echo $extension->name; ?></a>
+                                                    <a href="index.php?option=com_joomlaupdate&task=compatibility.display&extension=<?php echo $extension->name; ?>&jversion=<?php echo $this->updateInfo['latest']; ?>" rel="{handler: 'iframe', size: {x: 875, y: 550}, onClose: function() {}}" class="modal"><?php echo $extension->name; ?></a>
                                                 </td>
                                                 <td><span class="label label-important"><?php echo JText::_('JNO'); ?></span></td>
                                             </tr>

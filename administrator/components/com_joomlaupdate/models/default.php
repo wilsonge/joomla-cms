@@ -941,86 +941,9 @@ ENDDATA;
 		foreach ($items as $field => $value)
 		{
 			// Initialise the manifest sniffer code
-			$package_folder = null;
-			$manifest_filename = null;
-			
-			// Guess the manifest path and name
-			switch($value->type){
-				case 'component':
-					// A "component" type extension. We'll have to look for its manifest.
-					$package_folder = JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $value->element);
-					break;
-				
-				case 'file':
-					// A "file" type extension. Its manifest is strictly named and in a predictable path.
-					$package_folder = JPath::clean(JPATH_MANIFESTS . '/files');
-					$manifest_filename = $value->element . '.xml';
-					break;
-
-				case 'language':
-					// A "language" type extension. Its manifest is strictly named and in a predictable path.
-					$manifest_filename = $value->element . '.xml';
-					if ($value->client_id == 0)
-					{
-						// A site language
-						$base_path = JPATH_SITE;
-					}
-					else
-					{
-						// An administrator language
-						$base_path = JPATH_ADMINISTRATOR;
-					}
-					$package_folder = JPath::clean($base_path . '/language/' . $value->element);
-					
-					break;
-
-				case 'library':
-					// A "library" type extension. Its manifest is strictly named and in a predictable path.
-					$package_folder = JPATH_MANIFESTS . '/libraries/' . $value->element;
-					$manifest_filename = $value->element . '.xml';
-					break;
-
-				case 'module':
-					// A "module" type extension. We'll have to look for its manifest.
-					if ($value->client_id == 0)
-					{
-						// A site language
-						$base_path = JPATH_SITE;
-					}
-					else
-					{
-						// An administrator language
-						$base_path = JPATH_ADMINISTRATOR;
-					}
-					$package_folder = JPath::clean($base_path . '/modules/' . $value->element);
-					break;
-
-				case 'package':
-					// A "package" type extension. Its manifest is strictly named and in a predictable path.
-					$package_folder = JPATH_MANIFESTS . '/packages/' . $value->element;
-					$manifest_filename = $value->element . '.xml';
-					break;
-
-				case 'plugin':
-					// A "plugin" type extension. We'll have to look for its manifest.
-					$package_folder = JPath::clean(JPATH_SITE . '/plugins/' . $value->folder . '/' . $value->element);
-					break;
-
-				case 'template':
-					// A "tempalte" type extension. We'll have to look for its manifest.
-					if ($value->client_id == 0)
-					{
-						// A site language
-						$base_path = JPATH_SITE;
-					}
-					else
-					{
-						// An administrator language
-						$base_path = JPATH_ADMINISTRATOR;
-					}
-					$package_folder = JPath::clean($base_path . '/templates/' . $value->element);
-					break;
-			}
+			$findManifes = ManifestHelper::getPackageFolder($value);
+			$package_folder = $findManifes['package_folder'];
+			$manifest_filename = $findManifes['manifest_filename'];
 			
 			// Set up the installer's source path
 			$installer->setPath('source', $package_folder);
