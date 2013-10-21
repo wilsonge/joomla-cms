@@ -255,20 +255,27 @@ class JInstallationModelDatabase extends JModelLegacy
 			}
 
 			// Load the localise.sql for translating the data in joomla.sql/joomla_backwards.sql
-			$dblocalise = 'sql/'.(($type == 'mysqli') ? 'mysql' : $type).'/localise.sql';
-			if (JFile::exists($dblocalise)) {
-				if (!$this->populateDatabase($db, $dblocalise)) {
-					$this->setError(JText::sprintf('INSTL_ERROR_DB', $this->getError()));
-					return false;
-				}
-			}
-			$dblocalise_sql = 'sql/'.(($type == 'sqlsrv') ? 'sqlazure' : $type).'/localise.sql';
-			if (JFile::exists($dblocalise_sql)) {
-				if (!$this->populateDatabase($db, $dblocalise_sql)) {
-					$this->setError(JText::sprintf('INSTL_ERROR_DB', $this->getError()));
-					return false;
-				}
-			}
+	                if ($type == 'mysqli' || $type == 'mysql')
+	                {
+	                        $dblocalise = 'sql/mysql/localise.sql';
+	                }
+	                elseif ($type == 'sqlsrv' || $type == 'sqlazure')
+	                {
+	                        $dblocalise = 'sql/sqlazure/localise.sql';
+	                }
+	                else
+	                {
+	                        $dblocalise = 'sql/' . $type . '/localise.sql';
+	                }
+	
+	                if (is_file($dblocalise))
+	                {
+	                        if (!$this->populateDatabase($db, $dblocalise))
+	                        {
+	                                return false;
+	                        }
+	                }
+
 
 			// Handle default backend language setting. This feature is available for localized versions of Joomla 1.5.
 			$app = JFactory::getApplication();
