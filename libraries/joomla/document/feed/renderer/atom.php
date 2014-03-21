@@ -116,19 +116,12 @@ class JDocumentRendererAtom extends JDocumentRenderer
 
 		for ($i = 0, $count = count($data->items); $i < $count; $i++)
 		{
-
-			if ($data->items[$i]->link = JFilterOutput::stringURLSafe($data->items[$i]->link))
-			{
-				$itemlink = $data->items[$i]->link;
-			}
-			else
-			{
-				$itemlink = implode("/", array_map("rawurlencode", explode("/", $data->items[$i]->link)));
-			}
+			// Ensure the URL is ASCII compliant
+			$data->items[$i]->link = JFilterOutput::stringURLSafe($data->items[$i]->link);
 
 			$feed .= "	<entry>\n";
 			$feed .= "		<title>" . htmlspecialchars(strip_tags($data->items[$i]->title), ENT_COMPAT, 'UTF-8') . "</title>\n";
-			$feed .= '		<link rel="alternate" type="text/html" href="' . $url . $itemlink . "\"/>\n";
+			$feed .= '		<link rel="alternate" type="text/html" href="' . $url . $data->items[$i]->link . "\"/>\n";
 
 			if ($data->items[$i]->date == "")
 			{
@@ -142,7 +135,7 @@ class JDocumentRendererAtom extends JDocumentRenderer
 
 			if (empty($data->items[$i]->guid) === true)
 			{
-				$feed .= "		<id>" . str_replace(' ', '%20', $url . $itemlink) . "</id>\n";
+				$feed .= "		<id>" . str_replace(' ', '%20', $url . $data->items[$i]->link) . "</id>\n";
 			}
 			else
 			{
