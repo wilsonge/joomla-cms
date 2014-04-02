@@ -314,7 +314,17 @@ class Registry implements \JsonSerializable, \ArrayAccess
 			return false;
 		}
 
-		$this->bindData($this->data, $source->toArray(), $recursive);
+		$array = $source->toArray();
+
+		foreach ($array as $k => $v)
+		{
+			if ($v === '' || $v === null)
+			{
+				unset($array[$k]);
+			}
+		}
+
+		$this->bindData($this->data, $array, $recursive);
 
 		return $this;
 	}
