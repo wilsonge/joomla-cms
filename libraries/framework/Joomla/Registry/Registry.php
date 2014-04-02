@@ -487,11 +487,6 @@ class Registry implements \JsonSerializable, \ArrayAccess
 
 		foreach ($data as $k => $v)
 		{
-			if ($v === '' || $v === null)
-			{
-				continue;
-			}
-
 			// Modification from joomla/registry package - Using CMS JArrayHelper versus importing joomla/utilities package
 			if ((is_array($v) && \JArrayHelper::isAssociative($v)) || is_object($v) && $recursive)
 			{
