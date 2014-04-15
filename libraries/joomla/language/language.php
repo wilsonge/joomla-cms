@@ -716,12 +716,13 @@ class JLanguage
 	 * @param   string   $lang       The language to load, default null for the current language.
 	 * @param   boolean  $reload     Flag that will force a language to be reloaded if set to true.
 	 * @param   boolean  $default    Flag that force the default language to be loaded if the current does not exist.
+	 * @param   string   $type       The type of the language file.
 	 *
 	 * @return  boolean  True if the file has successfully loaded.
 	 *
 	 * @since   11.1
 	 */
-	public function load($extension = 'joomla', $basePath = JPATH_BASE, $lang = null, $reload = false, $default = true)
+	public function load($extension = 'joomla', $basePath = JPATH_BASE, $lang = null, $reload = false, $default = true, $type = 'ini')
 	{
 		// Load the default language first if we're not debugging and a non-default language is requested to be loaded
 		// with $default set to true
@@ -739,7 +740,7 @@ class JLanguage
 
 		$internal = $extension == 'joomla' || $extension == '';
 		$filename = $internal ? $lang : $lang . '.' . $extension;
-		$filename = "$path/$filename.ini";
+		$filename = "$path/$filename.$type";
 
 		if (isset($this->paths[$extension][$filename]) && !$reload)
 		{
@@ -760,12 +761,12 @@ class JLanguage
 				// Check the standard file name
 				$path = self::getLanguagePath($basePath, $this->default);
 				$filename = $internal ? $this->default : $this->default . '.' . $extension;
-				$filename = "$path/$filename.ini";
+				$filename = "$path/$filename.$type";
 
 				// If the one we tried is different than the new name, try again
 				if ($oldFilename != $filename)
 				{
-					$result = $this->loadLanguage($filename, $extension, false);
+					$result = $this->loadLanguage($filename, $extension);
 				}
 			}
 		}
@@ -830,6 +831,7 @@ class JLanguage
 	 * Parses a language file.
 	 *
 	 * @param   string  $filename  The name of the file.
+	 * @type    string  $type      The filetype
 	 *
 	 * @return  array  The array of parsed strings.
 	 *
@@ -837,79 +839,28 @@ class JLanguage
 	 */
 	protected function parse($filename)
 	{
-		if ($this->debug)
+		jimport('joomla.filesystem.file');
+		$type = JFile::getExt($filename);
+		$class = 'JLanguageParser' . ucfirst($type);
+		$options = array (
+			'debug' => $this->debug,
+			'lang' => $this->lang
+		);
+
+		if(class_exists($class))
 		{
-			// Capture hidden PHP errors from the parsing.
-			$php_errormsg = null;
-			$track_errors = ini_get('track_errors');
-			ini_set('track_errors', true);
+			$instance = new $class;
+
+			if ($instance instanceof JLanguageParserInterface)
+			{
+				$result = $instance->parse($filename, $options);
+				$this->errorfiles = array_merge($this->errorfiles, $result['errorfiles']);
+
+				return $result['strings'];
+			}
 		}
 
-		$contents = file_get_contents($filename);
-		$contents = str_replace('_QQ_', '"\""', $contents);
-		$strings = @parse_ini_string($contents);
-
-		if (!is_array($strings))
-		{
-			$strings = array();
-		}
-
-		if ($this->debug)
-		{
-			// Restore error tracking to what it was before.
-			ini_set('track_errors', $track_errors);
-
-			// Initialise variables for manually parsing the file for common errors.
-			$blacklist = array('YES', 'NO', 'NULL', 'FALSE', 'ON', 'OFF', 'NONE', 'TRUE');
-			$regex = '/^(|(\[[^\]]*\])|([A-Z][A-Z0-9_\-\.]*\s*=(\s*(("[^"]*")|(_QQ_)))+))\s*(;.*)?$/';
-			$this->debug = false;
-			$errors = array();
-
-			// Open the file as a stream.
-			$file = new SplFileObject($filename);
-
-			foreach ($file as $lineNumber => $line)
-			{
-				// Avoid BOM error as BOM is OK when using parse_ini
-				if ($lineNumber == 0)
-				{
-					$line = str_replace("\xEF\xBB\xBF", '', $line);
-				}
-
-				// Check that the key is not in the blacklist and that the line format passes the regex.
-				$key = strtoupper(trim(substr($line, 0, strpos($line, '='))));
-
-				// Workaround to reduce regex complexity when matching escaped quotes
-				$line = str_replace('\"', '_QQ_', $line);
-
-				if (!preg_match($regex, $line) || in_array($key, $blacklist))
-				{
-					$errors[] = $lineNumber;
-				}
-			}
-
-			// Check if we encountered any errors.
-			if (count($errors))
-			{
-				if (basename($filename) != $this->lang . '.ini')
-				{
-					$this->errorfiles[$filename] = $filename . JText::sprintf('JERROR_PARSING_LANGUAGE_FILE', implode(', ', $errors));
-				}
-				else
-				{
-					$this->errorfiles[$filename] = $filename . '&#160;: error(s) in line(s) ' . implode(', ', $errors);
-				}
-			}
-			elseif ($php_errormsg)
-			{
-				// We didn't find any errors but there's probably a parse notice.
-				$this->errorfiles['PHP' . $filename] = 'PHP parser errors :' . $php_errormsg;
-			}
-
-			$this->debug = true;
-		}
-
-		return $strings;
+		return array();
 	}
 
 	/**
