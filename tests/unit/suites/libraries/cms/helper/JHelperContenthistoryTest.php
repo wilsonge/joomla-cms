@@ -51,7 +51,7 @@ class JHelperContenthistoryTest extends TestCaseDatabase
 
 		$dataSet->addTable('jos_users', JPATH_TEST_DATABASE . '/jos_users.csv');
 		$dataSet->addTable('jos_content', JPATH_TEST_DATABASE . '/jos_content.csv');
-		//$dataSet->addTable('jos_ucm_base', JPATH_TEST_DATABASE . '/jos_ucm_history.csv');
+		$dataSet->addTable('jos_ucm_history', JPATH_TEST_DATABASE . '/jos_ucm_history.csv');
 
 		return $dataSet;
 	}
@@ -67,16 +67,27 @@ class JHelperContenthistoryTest extends TestCaseDatabase
 		$this->markTestSkipped('Test not implemented.');
 	}
 
+	public function getHistoryData()
+	{
+		return array(
+			array('com_content.article', 1, 2),
+			array('com_content.article', 2, 2),
+			array('com_weblinks.weblink', 1, 2),
+		);
+	}
+
 	/**
 	 * Tests the getHistory method
 	 *
 	 * @return  void
 	 *
+	 * @dataProvider getHistoryData
+	 *
 	 * @since   3.2
 	 */
-	public function getHistory()
+	public function getHistory($type, $id, $expectedNumber)
 	{
-		$this->markTestSkipped('Test not implemented.');
+		$this->assertEquals($expectedNumber, $this->object->getHistory(), 'There should be ' . $expectedNumber . ' objects in the #__ucm_history table for the type ' . $type . ' and id ' . $id);
 	}
 
 	/**
