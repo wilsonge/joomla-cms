@@ -534,6 +534,28 @@ CREATE INDEX `idx_ucm_content_core_type_id` ON `jos_ucm_content` (`core_type_id`
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `jos_ucm_history`
+--
+
+CREATE TABLE `jos_ucm_history` (
+  `version_id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `ucm_item_id` INTEGER NOT NULL DEFAULT '0',
+  `ucm_type_id` INTEGER NOT NULL DEFAULT '0',
+  `version_note` TEXT NOT NULL,
+  `save_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `editor_user_id` INTEGER NOT NULL DEFAULT '0',
+  `character_count` INTEGER NOT NULL DEFAULT '0',
+  `sha1_hash` TEXT NOT NULL,
+  `version_data` TEXT NOT NULL,
+  `keep_forever` INTEGER NOT NULL DEFAULT '0'
+);
+
+CREATE INDEX `idx_ucm_item_id` ON `jos_ucm_history` (`ucm_type_id`,`ucm_item_id`);
+CREATE INDEX `idx_save_date` ON `jos_ucm_history` (`save_date`);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `jos_updates`
 --
 
