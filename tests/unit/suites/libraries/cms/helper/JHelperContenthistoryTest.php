@@ -90,7 +90,7 @@ class JHelperContenthistoryTest extends TestCaseDatabase
 		// Create the helper with the given type
 		$helper = new JHelperContenthistory($type);
 
-		$this->assertEquals($expectedNumber, $helper->getHistory(), 'There should be ' . $expectedNumber . ' objects in the #__ucm_history table for the type ' . $type . ' and id ' . $id);
+		$this->assertEquals($expectedNumber, $helper->getHistory($typeid, $id), 'There should be ' . $expectedNumber . ' objects in the #__ucm_history table for the type ' . $type . ' and id ' . $id);
 	}
 
 	/**
