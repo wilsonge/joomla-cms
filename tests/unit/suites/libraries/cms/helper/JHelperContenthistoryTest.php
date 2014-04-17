@@ -85,7 +85,7 @@ class JHelperContenthistoryTest extends TestCaseDatabase
 	 *
 	 * @since   3.2
 	 */
-	public function getHistory($type, $typeid, $id, $expectedNumber)
+	public function testGetHistory($type, $typeid, $id, $expectedNumber)
 	{
 		// Create the helper with the given type
 		$helper = new JHelperContenthistory($type);
@@ -100,7 +100,7 @@ class JHelperContenthistoryTest extends TestCaseDatabase
 	 *
 	 * @since   3.2
 	 */
-	public function store()
+	public function testStore()
 	{
 		$this->markTestSkipped('Test not implemented.');
 	}
