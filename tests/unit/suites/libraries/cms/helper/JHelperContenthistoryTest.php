@@ -87,7 +87,7 @@ class JHelperContenthistoryTest extends TestCaseDatabase
 	 */
 	public function testGetHistory($typeid, $id, $expectedNumber)
 	{
-		$this->assertEquals($expectedNumber, count($this->object->getHistory($typeid, $id)), 'There should be ' . $expectedNumber . ' objects in the #__ucm_history table for the type ' . $type . ' and id ' . $id);
+		$this->assertEquals($expectedNumber, count($this->object->getHistory($typeid, $id)), 'There should be ' . $expectedNumber . ' objects in the #__ucm_history table for the typeid ' . $typeid . ' and id ' . $id);
 	}
 
 	/**
