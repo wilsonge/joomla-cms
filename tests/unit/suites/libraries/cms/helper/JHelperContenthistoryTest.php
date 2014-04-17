@@ -70,9 +70,9 @@ class JHelperContenthistoryTest extends TestCaseDatabase
 	public function getHistoryData()
 	{
 		return array(
-			array('com_content.article', 1, 2),
-			array('com_content.article', 2, 2),
-			array('com_weblinks.weblink', 1, 2),
+			array('com_content.article', 1, 1, 2),
+			array('com_content.article', 1, 2, 2),
+			array('com_weblinks.weblink', 2, 1, 2),
 		);
 	}
 
@@ -85,9 +85,12 @@ class JHelperContenthistoryTest extends TestCaseDatabase
 	 *
 	 * @since   3.2
 	 */
-	public function getHistory($type, $id, $expectedNumber)
+	public function getHistory($type, $typeid, $id, $expectedNumber)
 	{
-		$this->assertEquals($expectedNumber, $this->object->getHistory(), 'There should be ' . $expectedNumber . ' objects in the #__ucm_history table for the type ' . $type . ' and id ' . $id);
+		// Create the helper with the given type
+		$helper = new JHelperContenthistory($type);
+
+		$this->assertEquals($expectedNumber, $helper->getHistory(), 'There should be ' . $expectedNumber . ' objects in the #__ucm_history table for the type ' . $type . ' and id ' . $id);
 	}
 
 	/**
