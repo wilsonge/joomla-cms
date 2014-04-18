@@ -21,7 +21,6 @@ interface JLanguageParserInterface
 	/**
 	 * Parses a language file.
 	 *
-	 * @param   string   $filename  The name of the file.
 	 * @param   array    $options   An array of options
 	 *
 	 * @return  array  The returning array containing:
@@ -32,5 +31,5 @@ interface JLanguageParserInterface
 	 *
 	 * @since   3.4
 	 */
-	public function parse($filename, $options);
+	public function parse($options);
 }

@@ -37,8 +37,8 @@ class JLanguageParserIni implements JLanguageParserInterface
 	/**
 	 * Parses a xxx.ini language file.
 	 *
-	 * @param   string   $filename  The name of the file.
-	 * @param   array    $options   An array of options
+	 * @param   array    $options   An array of options. Contains keys with the filename to load from,
+	 *                              whether debug is turned on and what the language is.
 	 *
 	 * @return  array  The returning array containing:
 	 *                 In the key strings: An array of containing the translated strings of the form
@@ -48,10 +48,11 @@ class JLanguageParserIni implements JLanguageParserInterface
 	 *
 	 * @since   3.4
 	 */
-	public function parse($filename, $options)
+	public function parse($options)
 	{
 		$this->debug = $options['debug'];
 		$lang = $options['lang'];
+		$filename = $options['filename'];
 
 		if ($this->debug)
 		{
