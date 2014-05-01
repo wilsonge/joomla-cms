@@ -8,7 +8,7 @@ before_script:
   - composer self-update
   - pyrus channel-discover pear.phpunit.de
   - pyrus channel-discover pear.symfony.com
-  - pyrus install --alldeps --force phpunit/DbUnit
+  - pyrus install -o --force phpunit/DbUnit
   - phpenv rehash
   - mysql -e 'create database joomla_ut;'
   - mysql joomla_ut < tests/unit/suites/database/stubs/mysql.sql
