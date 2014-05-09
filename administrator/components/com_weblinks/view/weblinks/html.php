@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_weblinks
  * @since       1.5
  */
-class WeblinksViewWeblinks extends JViewLegacy
+class WeblinksViewWeblinksHtml extends JViewCms
 {
 	protected $items;
 
@@ -24,16 +24,13 @@ class WeblinksViewWeblinks extends JViewLegacy
 
 	protected $state;
 
-	/**
-	 * Display the view
-	 *
-	 * @return  void
-	 */
-	public function display($tpl = null)
+
+	public function render($tpl = null)
 	{
-		$this->state		= $this->get('State');
-		$this->items		= $this->get('Items');
-		$this->pagination	= $this->get('Pagination');
+		$model = $this->getModel();
+		$this->state		= $model->getState();
+		$this->items		= $model->getItems();
+		$this->pagination	=$model->getPagination();
 
 		WeblinksHelper::addSubmenu('weblinks');
 
@@ -46,7 +43,7 @@ class WeblinksViewWeblinks extends JViewLegacy
 
 		$this->addToolbar();
 		$this->sidebar = JHtmlSidebar::render();
-		parent::display($tpl);
+		return parent::render($tpl);
 	}
 
 	/**
@@ -67,28 +64,31 @@ class WeblinksViewWeblinks extends JViewLegacy
 		JToolbarHelper::title(JText::_('COM_WEBLINKS_MANAGER_WEBLINKS'), 'weblinks.png');
 		if (count($user->getAuthorisedCategories('com_weblinks', 'core.create')) > 0)
 		{
-			JToolbarHelper::addNew('weblink.add');
+			JToolbarHelper::addNew('add.weblink');
 		}
 		if ($canDo->get('core.edit'))
 		{
-			JToolbarHelper::editList('weblink.edit');
+			JToolbarHelper::editList('edit.weblink');
 		}
 		if ($canDo->get('core.edit.state')) {
 
-			JToolbarHelper::publish('weblinks.publish', 'JTOOLBAR_PUBLISH', true);
-			JToolbarHelper::unpublish('weblinks.unpublish', 'JTOOLBAR_UNPUBLISH', true);
+			JToolbarHelper::publish('statePublish.weblinks', 'JTOOLBAR_PUBLISH', true);
+			JToolbarHelper::unpublish('stateUnpublish.weblinks', 'JTOOLBAR_UNPUBLISH', true);
 
-			JToolbarHelper::archiveList('weblinks.archive');
-			JToolbarHelper::checkin('weblinks.checkin');
+			JToolbarHelper::archiveList('stateArchive.weblinks');
+			JToolbarHelper::checkin('checkin.weblinks');
 		}
 		if ($state->get('filter.state') == -2 && $canDo->get('core.delete'))
 		{
-			JToolbarHelper::deleteList('', 'weblinks.delete', 'JTOOLBAR_EMPTY_TRASH');
+			JToolbarHelper::deleteList('', 'delete.weblinks', 'JTOOLBAR_EMPTY_TRASH');
 		} elseif ($canDo->get('core.edit.state'))
 		{
-			JToolbarHelper::trash('weblinks.trash');
+			JToolbarHelper::trash('trash.weblinks');
 		}
+
 		// Add a batch button
+		// Currently not supported in MVSC
+		/*
 		if ($user->authorise('core.create', 'com_weblinks') && $user->authorise('core.edit', 'com_weblinks') && $user->authorise('core.edit.state', 'com_weblinks'))
 		{
 			JHtml::_('bootstrap.modal', 'collapseModal');
@@ -100,6 +100,8 @@ class WeblinksViewWeblinks extends JViewLegacy
 			$dhtml = $layout->render(array('title' => $title));
 			$bar->appendButton('Custom', $dhtml, 'batch');
 		}
+		*/
+
 		if ($canDo->get('core.admin'))
 		{
 			JToolbarHelper::preferences('com_weblinks');

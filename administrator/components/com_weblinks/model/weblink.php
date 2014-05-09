@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_weblinks
  * @since       1.5
  */
-class WeblinksModelWeblink extends JModelAdmin
+class WeblinksModelWeblink extends JModelAdministrator
 {
 
 	/**
@@ -34,75 +34,6 @@ class WeblinksModelWeblink extends JModelAdmin
 	 * @since  1.6
 	 */
 	protected $text_prefix = 'COM_WEBLINKS';
-
-	/**
-	 * Method to test whether a record can be deleted.
-	 *
-	 * @param   object  $record  A record object.
-	 *
-	 * @return  boolean  True if allowed to delete the record. Defaults to the permission for the component.
-	 *
-	 * @since   1.6
-	 */
-	protected function canDelete($record)
-	{
-		if (!empty($record->id))
-		{
-			if ($record->state != -2)
-			{
-				return;
-			}
-			$user = JFactory::getUser();
-
-			if ($record->catid)
-			{
-				return $user->authorise('core.delete', 'com_weblinks.category.'.(int) $record->catid);
-			}
-			else
-			{
-				return parent::canDelete($record);
-			}
-		}
-	}
-
-	/**
-	 * Method to test whether a record can be deleted.
-	 *
-	 * @param   object  $record  A record object.
-	 *
-	 * @return  boolean  True if allowed to change the state of the record. Defaults to the permission for the component.
-	 *
-	 * @since   1.6
-	 */
-	protected function canEditState($record)
-	{
-		$user = JFactory::getUser();
-
-		if (!empty($record->catid))
-		{
-			return $user->authorise('core.edit.state', 'com_weblinks.category.'.(int) $record->catid);
-		}
-		else
-		{
-			return parent::canEditState($record);
-		}
-	}
-
-	/**
-	 * Method to get a table object, load it if necessary.
-	 *
-	 * @param   string  $type    The table name. Optional.
-	 * @param   string  $prefix  The class prefix. Optional.
-	 * @param   array   $config  Configuration array for model. Optional.
-	 *
-	 * @return  JTable  A JTable object
-	 *
-	 * @since   1.6
-	 */
-	public function getTable($type = 'Weblink', $prefix = 'WeblinksTable', $config = array())
-	{
-		return JTable::getInstance($type, $prefix, $config);
-	}
 
 	/**
 	 * Abstract method for getting the form from the model.
@@ -137,7 +68,7 @@ class WeblinksModelWeblink extends JModelAdmin
 		}
 
 		// Modify the form based on access controls.
-		if (!$this->canEditState((object) $data))
+		if (!$this->allowAction('core.edit.state',$this->config['option'],(object) $data))
 		{
 			// Disable fields for display.
 			$form->setFieldAttribute('ordering', 'disabled', 'true');
@@ -166,7 +97,7 @@ class WeblinksModelWeblink extends JModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_weblinks.edit.weblink.data', array());
+		$data = JFactory::getApplication()->getUserState('com_weblinks.weblink.edit.data', array());
 
 		if (empty($data))
 		{
@@ -292,12 +223,12 @@ class WeblinksModelWeblink extends JModelAdmin
 	 *
 	 * @since	3.1
 	 */
-	public function save($data)
+	public function create($data)
 	{
 		$app = JFactory::getApplication();
 
 		// Alter the title for save as copy
-		if ($app->input->get('task') == 'save2copy')
+		if ($app->input->get('task') == 'updateCopy')
 		{
 			list($name, $alias) = $this->generateNewTitle($data['catid'], $data['alias'], $data['title']);
 			$data['title']	= $name;
@@ -305,7 +236,7 @@ class WeblinksModelWeblink extends JModelAdmin
 			$data['state']	= 0;
 		}
 
-		return parent::save($data);
+		return parent::create($data);
 	}
 
 	/**
@@ -319,7 +250,7 @@ class WeblinksModelWeblink extends JModelAdmin
 	 *
 	 * @since   3.1
 	 */
-	protected function generateNewTitle($category_id, $alias, $name)
+	public function generateNewTitle($category_id, $alias, $name)
 	{
 		// Alter the title & alias
 		$table = $this->getTable();
@@ -335,5 +266,19 @@ class WeblinksModelWeblink extends JModelAdmin
 		}
 
 		return array($name, $alias);
+	}
+
+	/**
+	 * @see JModelCms::allowAction()
+	 */
+	public function allowAction($action, $assetName = null, $activeRecord = null)
+	{
+		if (is_object($activeRecord) && !empty($activeRecord->catid))
+		{
+			$config = $this->config;
+			$assetName = $config['option'].'.category.'.(int) $activeRecord->catid;
+		}
+
+		return parent::allowAction($action, $assetName, $activeRecord);
 	}
 }

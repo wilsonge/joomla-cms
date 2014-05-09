@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_weblinks
  * @since       1.5
  */
-class WeblinksViewWeblink extends JViewLegacy
+class WeblinksViewWeblinkHtml extends JViewCms
 {
 	protected $state;
 
@@ -27,11 +27,12 @@ class WeblinksViewWeblink extends JViewLegacy
 	/**
 	 * Display the view
 	 */
-	public function display($tpl = null)
+	public function render($tpl = null)
 	{
-		$this->state	= $this->get('State');
-		$this->item		= $this->get('Item');
-		$this->form		= $this->get('Form');
+		$model = $this->getModel();
+		$this->state	= $model->getState();
+		$this->item		= $model->getItem();
+		$this->form		= $model->getForm();
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -41,7 +42,7 @@ class WeblinksViewWeblink extends JViewLegacy
 		}
 
 		$this->addToolbar();
-		parent::display($tpl);
+		return parent::render($tpl);
 	}
 
 	/**
@@ -61,27 +62,36 @@ class WeblinksViewWeblink extends JViewLegacy
 
 		JToolbarHelper::title(JText::_('COM_WEBLINKS_MANAGER_WEBLINK'), 'weblinks.png');
 
+		if($isNew)
+		{
+			$taskPrefix = 'create';
+		}
+		else
+		{
+			$taskPrefix = 'update';
+		}
+
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit')||(count($user->getAuthorisedCategories('com_weblinks', 'core.create')))))
 		{
-			JToolbarHelper::apply('weblink.apply');
-			JToolbarHelper::save('weblink.save');
+			JToolbarHelper::apply($taskPrefix.'Edit.weblink');
+			JToolbarHelper::save($taskPrefix.'Close.weblink');
 		}
 		if (!$checkedOut && (count($user->getAuthorisedCategories('com_weblinks', 'core.create')))){
-			JToolbarHelper::save2new('weblink.save2new');
+			JToolbarHelper::save2new($taskPrefix.'New.weblink');
 		}
 		// If an existing item, can save to a copy.
 		if (!$isNew && (count($user->getAuthorisedCategories('com_weblinks', 'core.create')) > 0))
 		{
-			JToolbarHelper::save2copy('weblink.save2copy');
+			JToolbarHelper::save2copy($taskPrefix.'Copy.weblink');
 		}
 		if (empty($this->item->id))
 		{
-			JToolbarHelper::cancel('weblink.cancel');
+			JToolbarHelper::cancel('cancel.weblink');
 		}
 		else
 		{
-			JToolbarHelper::cancel('weblink.cancel', 'JTOOLBAR_CLOSE');
+			JToolbarHelper::cancel('cancel.weblink', 'JTOOLBAR_CLOSE');
 		}
 
 		if ($this->state->params->get('save_history') && $user->authorise('core.edit'))

@@ -16,16 +16,18 @@ defined('_JEXEC') or die;
  * @subpackage  com_weblinks
  * @since       1.5
  */
-class WeblinksTableWeblink extends JTable
+class WeblinksTableWeblink extends JTableCms
 {
 	/**
 	 * Constructor
 	 *
 	 * @param   JDatabaseDriver  &$db  A database connector object
 	 */
-	public function __construct(&$db)
+	public function __construct($config)
 	{
-		parent::__construct('#__weblinks', 'id', $db);
+		$config['table']['name'] = '#__weblinks';
+		$config['table']['key'] = 'id';
+		parent::__construct($config);
 	}
 
 	/**
@@ -110,7 +112,7 @@ class WeblinksTableWeblink extends JTable
 		}
 
 		// Verify that the alias is unique
-		$table = JTable::getInstance('Weblink', 'WeblinksTable');
+		$table = clone $this;
 
 		if ($table->load(array('alias' => $this->alias, 'catid' => $this->catid)) && ($table->id != $this->id || $this->id == 0))
 		{
@@ -195,88 +197,19 @@ class WeblinksTableWeblink extends JTable
 	}
 
 	/**
-	 * Method to set the publishing state for a row or list of rows in the database
-	 * table.  The method respects checked out rows by other users and will attempt
-	 * to checkin rows that it can after adjustments are made.
+	 * A protected method to get a set of ordering conditions.
 	 *
-	 * @param   mixed	An optional array of primary key values to update.  If not
-	 *					set the instance property value is used.
-	 * @param   integer The publishing state. eg. [0 = unpublished, 1 = published]
-	 * @param   integer The user id of the user performing the operation.
-	 * @return  boolean  True on success.
-	 * @since   1.0.4
+	 * @param   JTable  $table  A JTable object.
+	 *
+	 * @return  array  An array of conditions to add to ordering queries.
+	 *
+	 * @since   1.6
 	 */
-	public function publish($pks = null, $state = 1, $userId = 0)
+	protected function getReorderConditions($table)
 	{
-		$k = $this->_tbl_key;
+		$condition = array();
+		$condition[] = 'catid = ' . (int) $table->catid;
 
-		// Sanitize input.
-		JArrayHelper::toInteger($pks);
-		$userId = (int) $userId;
-		$state  = (int) $state;
-
-		// If there are no primary keys set check to see if the instance key is set.
-		if (empty($pks))
-		{
-			if ($this->$k)
-			{
-				$pks = array($this->$k);
-			}
-			// Nothing to set publishing state on, return false.
-			else {
-				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
-				return false;
-			}
-		}
-
-		// Build the WHERE clause for the primary keys.
-		$where = $k.'='.implode(' OR '.$k.'=', $pks);
-
-		// Determine if there is checkin support for the table.
-		if (!property_exists($this, 'checked_out') || !property_exists($this, 'checked_out_time'))
-		{
-			$checkin = '';
-		}
-		else
-		{
-			$checkin = ' AND (checked_out = 0 OR checked_out = '.(int) $userId.')';
-		}
-
-		// Update the publishing state for rows with the given primary keys.
-		$this->_db->setQuery(
-			'UPDATE '.$this->_db->quoteName($this->_tbl) .
-			' SET '.$this->_db->quoteName('state').' = '.(int) $state .
-			' WHERE ('.$where.')' .
-			$checkin
-		);
-
-		try
-		{
-			$this->_db->execute();
-		}
-		catch (RuntimeException $e)
-		{
-			$this->setError($e->getMessage());
-			return false;
-		}
-
-		// If checkin is supported and all rows were adjusted, check them in.
-		if ($checkin && (count($pks) == $this->_db->getAffectedRows()))
-		{
-			// Checkin the rows.
-			foreach ($pks as $pk)
-			{
-				$this->checkin($pk);
-			}
-		}
-
-		// If the JTable instance value is in the list of primary keys that were set, set the instance.
-		if (in_array($this->$k, $pks))
-		{
-			$this->state = $state;
-		}
-
-		$this->setError('');
-		return true;
+		return $condition;
 	}
 }
