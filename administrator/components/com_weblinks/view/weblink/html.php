@@ -8,6 +8,7 @@
  */
 
 defined('_JEXEC') or die;
+include_once JPATH_COMPONENT.'/helpers/weblinks.php';
 
 /**
  * View to edit a weblink.
@@ -33,13 +34,6 @@ class WeblinksViewWeblinkHtml extends JViewCms
 		$this->state	= $model->getState();
 		$this->item		= $model->getItem();
 		$this->form		= $model->getForm();
-
-		// Check for errors.
-		if (count($errors = $this->get('Errors')))
-		{
-			JError::raiseError(500, implode("\n", $errors));
-			return false;
-		}
 
 		$this->addToolbar();
 		return parent::render($tpl);
@@ -94,6 +88,8 @@ class WeblinksViewWeblinkHtml extends JViewCms
 			JToolbarHelper::cancel('cancel.weblink', 'JTOOLBAR_CLOSE');
 		}
 
+		// contenthistory not supported in MVSC yet
+		/*
 		if ($this->state->params->get('save_history') && $user->authorise('core.edit'))
 		{
 			$itemId = $this->item->id;
@@ -101,7 +97,37 @@ class WeblinksViewWeblinkHtml extends JViewCms
 			JToolbarHelper::versions($typeAlias, $itemId);
 		}
 
+		*/
 		JToolbarHelper::divider();
 		JToolbarHelper::help('JHELP_COMPONENTS_WEBLINKS_LINKS_EDIT');
+	}
+
+	// I had to add these methods because
+	// 1. JViewCms doesn't extend JObject
+	// 2. Layouts was causing an error because it was calling JForm
+ 	/**
+	 * Returns a property of the object or the default value if the property is not set.
+	 *
+	 * @param   string  $property  The name of the property.
+	 * @param   mixed   $default   The default value.
+	 *
+	 * @return  mixed    The value of the property.
+	 *
+	 * @since   11.1
+	 *
+	 * @see     getProperties()
+	 */
+	public function get($property, $default = null)
+	{
+		if (isset($this->$property))
+		{
+			return $this->$property;
+		}
+		return $default;
+	}
+
+	public function getForm()
+	{
+		return $this->form;
 	}
 }

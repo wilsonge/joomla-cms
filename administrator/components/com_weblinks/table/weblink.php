@@ -205,7 +205,7 @@ class WeblinksTableWeblink extends JTableCms
 	 *
 	 * @since   1.6
 	 */
-	protected function getReorderConditions($table)
+	public function getReorderConditions($table)
 	{
 		$condition = array();
 		$condition[] = 'catid = ' . (int) $table->catid;

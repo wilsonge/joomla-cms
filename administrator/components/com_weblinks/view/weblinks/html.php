@@ -8,6 +8,7 @@
  */
 
 defined('_JEXEC') or die;
+include_once JPATH_COMPONENT.'/helpers/weblinks.php';
 
 /**
  * View class for a list of weblinks.
@@ -34,12 +35,6 @@ class WeblinksViewWeblinksHtml extends JViewCms
 
 		WeblinksHelper::addSubmenu('weblinks');
 
-		// Check for errors.
-		if (count($errors = $this->get('Errors')))
-		{
-			JError::raiseError(500, implode("\n", $errors));
-			return false;
-		}
 
 		$this->addToolbar();
 		$this->sidebar = JHtmlSidebar::render();

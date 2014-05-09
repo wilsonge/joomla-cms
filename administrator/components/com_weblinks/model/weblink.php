@@ -35,6 +35,33 @@ class WeblinksModelWeblink extends JModelAdministrator
 	 */
 	protected $text_prefix = 'COM_WEBLINKS';
 
+
+	/**
+	 * Stock method to auto-populate the model state.
+	 *
+	 * @param null $ordering
+	 * @param null $direction
+	 *
+	 * @return  void
+	 *
+	 * @since   12.2
+	 */
+	protected function populateState($ordering = NULL, $direction = NULL)
+	{
+		$table = $this->getTable();
+		$key = $table->getKeyName();
+
+		// Get the pk of the record from the request.
+		$pk = JFactory::getApplication()->input->getInt($key);
+		$this->setState($this->getContext() . '.id', $pk);
+
+		// Load the parameters.
+		$value = JComponentHelper::getParams($this->config['option']);
+		$this->setState('params', $value);
+
+		parent::populateState($ordering, $direction);
+	}
+
 	/**
 	 * Abstract method for getting the form from the model.
 	 *
@@ -94,10 +121,10 @@ class WeblinksModelWeblink extends JModelAdministrator
 	 *
 	 * @since   1.6
 	 */
-	protected function loadFormData()
+	protected function loadFormData($context = NULL)
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_weblinks.weblink.edit.data', array());
+		$data = JFactory::getApplication()->getUserState('com_weblinks.weblink.jform.data', array());
 
 		if (empty($data))
 		{
