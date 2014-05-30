@@ -273,6 +273,11 @@ class JDatabaseDriverMysqliTest extends TestCaseDatabaseMysqli
 			),
 			__LINE__
 		);
+
+		$this->assertNull(
+			self::$driver->getTableColumns('jos_dbtest_composite', false),
+			__LINE__
+		);
 	}
 
 	/**
