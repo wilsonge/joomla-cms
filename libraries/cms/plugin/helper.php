@@ -7,6 +7,8 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+use Joomla\Event\Cms as JDispatcherCms;
+
 defined('JPATH_PLATFORM') or die;
 
 /**
@@ -253,8 +255,22 @@ abstract class JPluginHelper
 							$plugin = static::getPlugin($plugin->type, $plugin->name);
 						}
 
-						// Instantiate and register the plugin.
-						new $className($dispatcher, (array) ($plugin));
+						// @todo Check if we have a new style plugin - assume we don't
+						// if we can't find any info
+						$newPlugin = false;
+
+						if ($newPlugin)
+						{
+							$dispatcher = JDispatcherCms::getInstance();
+
+							$pluginInstance = new $className((array) ($plugin));
+							$dispatcher->addListener($pluginInstance);
+						}
+						else
+						{
+							// Instantiate and register the plugin.
+							new $className($dispatcher, (array) ($plugin));
+						}
 					}
 				}
 			}

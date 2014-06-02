@@ -7,6 +7,9 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+use Joomla\Event\Plugin;
+use Joomla\Event\Cms as JDispatcherCms;
+
 defined('JPATH_PLATFORM') or die;
 
 /**
@@ -138,6 +141,12 @@ class JEventDispatcher extends JObject
 		$args = (array) $args;
 
 		$event = strtolower($event);
+
+		// Trigger the new style of event in the dispatcher.
+		$newDispatcher = JDispatcherCms::getDispatcherInstance();
+		$newEvent = new Plugin($event, $args);
+		$newResult = $newDispatcher->triggerEvent($newEvent);
+		$args = $newResult->getArguments();
 
 		// Check if any plugins are attached to the event.
 		if (!isset($this->_methods[$event]) || empty($this->_methods[$event]))
