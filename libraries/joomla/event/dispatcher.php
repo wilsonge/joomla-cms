@@ -8,6 +8,7 @@
  */
 
 use Joomla\Event\Plugin;
+use Joomla\Event\DispatcherInterface;
 use Joomla\Event\Cms as JDispatcherCms;
 
 defined('JPATH_PLATFORM') or die;
@@ -24,7 +25,7 @@ defined('JPATH_PLATFORM') or die;
  * @see         JPlugin
  * @since       12.1
  */
-class JEventDispatcher extends JObject
+class JEventDispatcher extends JObject implements DispatcherInterface
 {
 	/**
 	 * An array of Observer objects to notify
@@ -142,10 +143,10 @@ class JEventDispatcher extends JObject
 
 		$event = strtolower($event);
 
-		// Trigger the new style of event in the dispatcher.
-		$newDispatcher = JDispatcherCms::getDispatcherInstance();
+		// Trigger the new style of event in the dispatcher and use the results to
+		// continue with the rest of the legacy plugin events.
 		$newEvent = new Plugin($event, $args);
-		$newResult = $newDispatcher->triggerEvent($newEvent);
+		$newResult = $this->triggerEvent($newEvent);
 		$args = $newResult->getArguments();
 
 		// Check if any plugins are attached to the event.
@@ -183,6 +184,13 @@ class JEventDispatcher extends JObject
 		}
 
 		return $result;
+	}
+
+	public function triggerEvent($event)
+	{
+		$newDispatcher = JDispatcherCms::getInstance();
+
+		return $newDispatcher->triggerEvent($event);
 	}
 
 	/**

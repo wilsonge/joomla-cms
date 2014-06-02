@@ -255,12 +255,12 @@ abstract class JPluginHelper
 							$plugin = static::getPlugin($plugin->type, $plugin->name);
 						}
 
-						// @todo Check if we have a new style plugin - assume we don't
-						// if we can't find any info
-						$newPlugin = false;
+						// Check if we have a new style plugin
+						$legacyPlugin = static::isLegacyPlugin($plugin);
 
-						if ($newPlugin)
+						if (!$legacyPlugin)
 						{
+							// Instantiate and register the plugin as a listener to the dispatcher.
 							$dispatcher = JDispatcherCms::getInstance();
 
 							$pluginInstance = new $className((array) ($plugin));
@@ -279,6 +279,22 @@ abstract class JPluginHelper
 				$paths[$path] = false;
 			}
 		}
+	}
+
+	/**
+	 * Checks if a plugin is in the legacy format or not.
+	 *
+	 * @param   object  $plugin  The plugin to check
+	 *
+	 * @return  boolean  An array of published plugins
+	 *
+	 * @since   3.4
+	 * @deprecated  4.0  All plugins will use the new style plugin
+	 */
+	protected static function isLegacyPlugin($plugin)
+	{
+		// @todo Implement this check
+		return true;
 	}
 
 	/**
