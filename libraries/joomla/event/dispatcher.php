@@ -133,31 +133,67 @@ class JEventDispatcher extends JObject implements DispatcherInterface
 	 */
 	public function trigger($event, $args = array())
 	{
-		$result = array();
+		$event = strtolower($event);
 
 		/*
 		 * If no arguments were passed, we still need to pass an empty array to
 		 * the call_user_func_array function.
 		 */
 		$args = (array) $args;
+		$eventHandler = new Plugin($event, $args);
 
-		$event = strtolower($event);
+		// Call all the plugin events
+		$result = $this->handleEvent($eventHandler);
 
+		return $result->getResults();
+	}
+
+	/**
+	 * Trigger an event.
+	 *
+	 * @param   Joomla\Event\Plugin|string  $event  The event object or name.
+	 *
+	 * @return  Joomla\Event\Plugin  The event after being passed through all listeners.
+	 *
+	 * @since   1.0
+	 */
+	public function triggerEvent($event)
+	{
+		if (is_string($event))
+		{
+			$event = new Plugin($event);
+		}
+
+		// Call all the plugin events
+		return $this->handleEvent($event);
+	}
+
+	/**
+	 * Deal with an event being triggered.
+	 *
+	 * @param   Joomla\Event\Plugin  $event  The event object or name.
+	 *
+	 * @return  Joomla\Event\Plugin  The event after being passed through all listeners.
+	 *
+	 * @since   1.0
+	 */
+	private function handleEvent($event)
+	{
 		// Trigger the new style of event in the dispatcher and use the results to
 		// continue with the rest of the legacy plugin events.
-		$newEvent = new Plugin($event, $args);
-		$newResult = $this->triggerEvent($newEvent);
-		$args = $newResult->getArguments();
+		$newDispatcher = JDispatcherCms::getInstance();
+		$result = $newDispatcher->triggerEvent($event);
+		$args = $result->getArguments();
 
 		// Check if any plugins are attached to the event.
-		if (!isset($this->_methods[$event]) || empty($this->_methods[$event]))
+		if (!isset($this->_methods[$event->getName()]) || empty($this->_methods[$event->getName()]))
 		{
 			// No Plugins Associated To Event!
-			return $result;
+			return $event;
 		}
 
 		// Loop through all plugins having a method matching our event
-		foreach ($this->_methods[$event] as $key)
+		foreach ($this->_methods[$event->getName()] as $key)
 		{
 			// Check if the plugin is present.
 			if (!isset($this->_observers[$key]))
@@ -168,7 +204,7 @@ class JEventDispatcher extends JObject implements DispatcherInterface
 			// Fire the event for an object based observer.
 			if (is_object($this->_observers[$key]))
 			{
-				$args['event'] = $event;
+				$args['event'] = $event->getName();
 				$value = $this->_observers[$key]->update($args);
 			}
 			// Fire the event for a function based observer.
@@ -179,18 +215,11 @@ class JEventDispatcher extends JObject implements DispatcherInterface
 
 			if (isset($value))
 			{
-				$result[] = $value;
+				$result->setResult($value);
 			}
 		}
 
 		return $result;
-	}
-
-	public function triggerEvent($event)
-	{
-		$newDispatcher = JDispatcherCms::getInstance();
-
-		return $newDispatcher->triggerEvent($event);
 	}
 
 	/**

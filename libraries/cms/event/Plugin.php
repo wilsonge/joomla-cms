@@ -23,10 +23,10 @@ class Plugin extends Event
 	/**
 	 * The result of triggering the plugin event
 	 *
-	 * @var    boolean
+	 * @var    array
 	 * @since  3.4
 	 */
-	protected $result = true;
+	protected $result = array();
 
 	/**
 	 * Forbid stopping the event propagation.
@@ -45,7 +45,7 @@ class Plugin extends Event
 	 * Allows someone to set a result. Each result is merged together to give a final
 	 * overall return as to the success of all the listeners.
 	 *
-	 * @param  boolean  $result  The result to register
+	 * @param  mixed  $result  The result to register
 	 *
 	 * @return  void
 	 *
@@ -54,22 +54,17 @@ class Plugin extends Event
 	 */
 	public function setResult($result)
 	{
-		if (!is_bool($result))
-		{
-			throw new \InvalidArgumentException('The result must be a boolean');
-		}
-
-		$this->result = ($result && $this->result);
+		$this->result[] = $result;
 	}
 
 	/**
-	 * Allows someone to get the result.
+	 * Allows someone to get the result of the plugin events.
 	 *
-	 * @return  boolean  The result
+	 * @return  array  The result array
 	 *
 	 * @since   3.4
 	 */
-	public function getResult()
+	public function getResults()
 	{
 		return $this->result;
 	}
