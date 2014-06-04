@@ -7,7 +7,7 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-use Joomla\Event\Cms as JDispatcherCms;
+use Joomlacms\Event\Cms as JDispatcherCms;
 
 defined('JPATH_PLATFORM') or die;
 

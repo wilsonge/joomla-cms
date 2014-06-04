@@ -17,5 +17,10 @@
 	    "ircmaxell/password-compat": "1.*",
 	    "phpmailer/phpmailer": "~5.2",
 	    "symfony/yaml": "2.*"
+    },
+    "autoload"   : {
+        "psr-4": {
+            "Joomlacms\\": "libraries/Joomlacms/"
+        }
     }
 }

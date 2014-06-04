@@ -7,7 +7,7 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Event;
+namespace Joomlacms\Event;
 
 defined('JPATH_PLATFORM') or die;
 
