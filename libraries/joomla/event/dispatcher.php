@@ -8,7 +8,7 @@
  */
 
 use Joomlacms\Event\Plugin;
-use Joomlacms\Event\DispatcherInterface;
+use Joomla\Event\DispatcherInterface;
 use Joomlacms\Event\Cms as JDispatcherCms;
 
 defined('JPATH_PLATFORM') or die;
