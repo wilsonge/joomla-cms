@@ -9,6 +9,8 @@
 
 namespace Joomlacms\Event;
 
+use Joomla\Event\Dispatcher;
+
 defined('JPATH_PLATFORM') or die;
 
 /**
@@ -23,7 +25,7 @@ class Cms extends Dispatcher
 	/**
 	 * Stores the singleton instance of the dispatcher.
 	 *
-	 * @var    \Joomla\Event\Cms
+	 * @var    \Joomlacms\Event\Cms
 	 * @since  11.3
 	 */
 	protected static $instance = null;
@@ -32,7 +34,7 @@ class Cms extends Dispatcher
 	 * Returns the global Dispatcher object, only creating it
 	 * if it doesn't already exist.
 	 *
-	 * @return  \Joomla\Event\Dispatcher  The EventDispatcher object.
+	 * @return  \Joomlacms\Event\Cms  The EventDispatcher object.
 	 *
 	 * @since   11.1
 	 */

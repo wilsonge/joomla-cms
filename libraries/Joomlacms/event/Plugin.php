@@ -9,6 +9,8 @@
 
 namespace Joomlacms\Event;
 
+use Joomla\Event\Event;
+
 defined('JPATH_PLATFORM') or die;
 
 /**

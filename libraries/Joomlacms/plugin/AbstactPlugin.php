@@ -21,7 +21,7 @@ defined('JPATH_PLATFORM') or die;
  * @subpackage  Plugin
  * @since       3.4
  */
-abstract class Plugin
+abstract class AbstractPlugin
 {
 	/**
 	 * A JRegistry object holding the parameters for the plugin
