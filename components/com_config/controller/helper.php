@@ -20,19 +20,15 @@ class ConfigControllerHelper
 {
 	/**
 	 * Method to parse a controller from a url
-	 * Defaults to the base controllers and passes an array of options.
-	 * $options[0] is the location of the controller which defaults to the core libraries (referenced as 'j'
-	 * and then the named folder within the component entry point file.
-	 * $options[1] is the name of the controller file,
-	 * $options[2] is the name of the folder found in the component controller folder for controllers
-	 * not prefixed with Config.
-	 * Additional options maybe added to parameterise the controller.
+	 * Defaults to the base controllers and passes an array of options. See the parseTasks function
+	 * for more information on the options passed
 	 *
 	 * @param   JApplicationCms  $app  An application object
 	 *
 	 * @return  JController  A JController object
 	 *
 	 * @since   3.2
+	 * @see     ConfigControllerHelper->parseTasks($app);
 	 */
 	public function parseController($app)
 	{
@@ -97,20 +93,16 @@ class ConfigControllerHelper
 
 	/**
 	 * Method to parse a controller from a url
-	 * Adds the options from an application object to a given controller.
-	 * $options[0] is the location of the controller which defaults to the core libraries (referenced as 'j'
-	 * and then the named folder within the component entry point file.
-	 * $options[1] is the name of the controller file,
-	 * $options[2] is the name of the folder found in the component controller folder for controllers
-	 * not prefixed with Config.
-	 * Additional options maybe added to parameterise the controller.
+	 * Adds the options from an application object to a given controller. See the parseTasks
+	 * function for more information on the options passed
 	 *
 	 * @param   JController      $controller  The controller object
-	 * @param   JApplicationCms  $app         An application object
+	 * @param   JApplicationBase  $app         An application object
 	 *
-	 * @return  JController  A JController object
+	 * @return  JController  The JController object with the attached options array
 	 *
 	 * @since   3.4
+	 * @see     ConfigControllerHelper->parseTasks($app);
 	 */
 	public function parseOptions($controller, $app)
 	{
@@ -130,7 +122,7 @@ class ConfigControllerHelper
 	 * not prefixed with Config.
 	 * Additional options maybe added to parameterise the controller.
 	 *
-	 * @param   JApplicationCms  $app         An application object
+	 * @param   JApplicationBase  $app         An application object
 	 *
 	 * @return  array  An array of tasks.
 	 *
