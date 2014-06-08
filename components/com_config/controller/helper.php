@@ -86,7 +86,7 @@ class ConfigControllerHelper
 		$controller = new $controllerName;
 
 		// Add the options
-		$controller = $this->parseController($controller, $app);
+		$controller = $this->parseOptions($controller, $app);
 
 		return $controller;
 	}
