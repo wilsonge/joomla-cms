@@ -33,6 +33,8 @@ JLoader::registerPrefix('J', JPATH_PLATFORM . '/cms', false, true);
 JLoader::registerNamespace('Joomla', JPATH_PLATFORM . '/framework');
 JLoader::registerNamespace('Symfony', JPATH_PLATFORM . '/framework');
 
+JLoader::register('JModelCmsInterface', JPATH_PLATFORM . '/cms/model/CmsInterface.php');
+
 // Register the class aliases for Framework classes that have replaced their Platform equivilents
 require_once __DIR__ . '/classmap.php';
 
