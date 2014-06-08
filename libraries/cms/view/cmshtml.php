@@ -30,13 +30,21 @@ class JViewCmshtml extends JViewCms
 	 * Method to instantiate the view.
 	 *
 	 * @param   JModelCmsInterface  $model     The model object.
-	 * @param   RendererInterface   $renderer  The renderer object.
+	 * @param   RendererInterface   $renderer  The renderer object. Defaults to JLayout if not set.
 	 *
 	 * @since   3.4
 	 */
-	public function __construct(JModelCmsInterface $model, RendererInterface $renderer)
+	public function __construct(JModelCmsInterface $model, RendererInterface $renderer = null)
 	{
-		// Setup dependencies.
+		// If we don't have a renderer use the JLayout renderer
+		if (!$renderer)
+		{
+			$config = array();
+
+			$renderer = new JRendererJlayout($config);
+		}
+
+		// Set the renderer.
 		$this->setRenderer($renderer);
 
 		parent::__construct($model);

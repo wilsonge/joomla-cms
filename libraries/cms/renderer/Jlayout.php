@@ -14,8 +14,31 @@ use Joomla\Renderer\RendererInterface;
  *
  * @since  3.4
  */
-class JLayoutRenderer implements RendererInterface
+class JRendererJlayout implements RendererInterface
 {
+	/**
+	 * The list of paths for layouts to be searched
+	 *
+	 * @var    array
+	 * @since  3.4
+	 */
+	private $paths = array();
+
+	/**
+	 * Public constructor
+	 *
+	 * @param  array  $config  An array of configuration options
+	 *
+	 * @since  3.4
+	 */
+	public function __constructor($config)
+	{
+		if (isset($config['paths']))
+		{
+			$this->paths = (array) $config['paths'];
+		}
+	}
+
 	/**
 	 * Render and return compiled data.
 	 *
@@ -43,6 +66,11 @@ class JLayoutRenderer implements RendererInterface
 	private function getLayout($template)
 	{
 		$layout = new JLayoutFile($template);
+
+		if (!empty($this->paths))
+		{
+			$layout->setIncludePaths($this->paths);
+		}
 
 		return $layout;
 	}
