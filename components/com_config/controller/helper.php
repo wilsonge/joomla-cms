@@ -28,7 +28,7 @@ class ConfigControllerHelper
 	 * not prefixed with Config.
 	 * Additional options maybe added to parameterise the controller.
 	 *
-	 * @param   JApplicationBase  $app  An application object
+	 * @param   JApplicationCms  $app  An application object
 	 *
 	 * @return  JController  A JController object
 	 *
@@ -36,33 +36,7 @@ class ConfigControllerHelper
 	 */
 	public function parseController($app)
 	{
-		$tasks = array();
-
-		if ($task = $app->input->get('task'))
-		{
-			// Toolbar expects old style but we are using new style
-			// Remove when toolbar can handle either directly
-			if (strpos($task, '/') !== false)
-			{
-				$tasks = explode('/', $task);
-			}
-			else
-			{
-				$tasks = explode('.', $task);
-			}
-		}
-		elseif ($controllerTask = $app->input->get('controller'))
-		{
-			// Temporary solution
-			if (strpos($controllerTask, '/') !== false)
-			{
-				$tasks = explode('/', $controllerTask);
-			}
-			else
-			{
-				$tasks = explode('.', $controllerTask);
-			}
-		}
+		$tasks = $this->parseTasks($app);
 
 		if (empty($tasks[0]) || $tasks[0] == 'Config')
 		{
@@ -114,9 +88,84 @@ class ConfigControllerHelper
 		}
 
 		$controller = new $controllerName;
+
+		// Add the options
+		$controller = $this->parseController($controller, $app);
+
+		return $controller;
+	}
+
+	/**
+	 * Method to parse a controller from a url
+	 * Adds the options from an application object to a given controller.
+	 * $options[0] is the location of the controller which defaults to the core libraries (referenced as 'j'
+	 * and then the named folder within the component entry point file.
+	 * $options[1] is the name of the controller file,
+	 * $options[2] is the name of the folder found in the component controller folder for controllers
+	 * not prefixed with Config.
+	 * Additional options maybe added to parameterise the controller.
+	 *
+	 * @param   JController      $controller  The controller object
+	 * @param   JApplicationCms  $app         An application object
+	 *
+	 * @return  JController  A JController object
+	 *
+	 * @since   3.4
+	 */
+	public function parseOptions($controller, $app)
+	{
+		$tasks = $this->parseTasks($app);
 		$controller->options = array();
 		$controller->options = $tasks;
 
 		return $controller;
+	}
+
+	/**
+	 * An array of options.
+	 * $options[0] is the location of the controller which defaults to the core libraries (referenced as 'j'
+	 * and then the named folder within the component entry point file.
+	 * $options[1] is the name of the controller file,
+	 * $options[2] is the name of the folder found in the component controller folder for controllers
+	 * not prefixed with Config.
+	 * Additional options maybe added to parameterise the controller.
+	 *
+	 * @param   JApplicationCms  $app         An application object
+	 *
+	 * @return  array  An array of tasks.
+	 *
+	 * @since   3.4
+	 */
+	protected function parseTasks($app)
+	{
+		$tasks = array();
+
+		if ($task = $app->input->get('task'))
+		{
+			// Toolbar expects old style but we are using new style
+			// Remove when toolbar can handle either directly
+			if (strpos($task, '/') !== false)
+			{
+				$tasks = explode('/', $task);
+			}
+			else
+			{
+				$tasks = explode('.', $task);
+			}
+		}
+		elseif ($controllerTask = $app->input->get('controller'))
+		{
+			// Temporary solution
+			if (strpos($controllerTask, '/') !== false)
+			{
+				$tasks = explode('/', $controllerTask);
+			}
+			else
+			{
+				$tasks = explode('.', $controllerTask);
+			}
+		}
+
+		return $tasks;
 	}
 }
