@@ -49,7 +49,7 @@ class JRendererJlayout implements RendererInterface
 
 		// Add the default paths
 		$this->config['paths'] = array();
-		$this->config['paths'][] = $rootPath . '/templates/html' . $componentFolder . '/' . $viewName;
+		$this->config['paths'][] = $rootPath . '/templates/' . $app->getTemplate() . '/html/' . $componentFolder . '/' . $viewName;
 		$this->config['paths'][] = $rootPath . '/components/' . $componentFolder . '/view/' . $viewName . '/tmpl';
 
 		// Merge the config.
