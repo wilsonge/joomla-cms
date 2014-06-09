@@ -90,10 +90,7 @@ abstract class JViewCms implements JView
 	 *
 	 * @since   3.4
 	 */
-	public function getData()
-	{
-		return $this->getModel()->getData();
-	}
+	abstract public function getData();
 
 	/**
 	 * Method to get the view layout.

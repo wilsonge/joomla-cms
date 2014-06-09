@@ -22,13 +22,4 @@ interface JModelCmsInterface extends JModel
 	 * @since   3.4
 	 */
 	public function getName();
-
-	/**
-	 * Gets the data from the model for use in the view.
-	 *
-	 * @return  array  The array of data from the model
-	 *
-	 * @since   3.4
-	 */
-	public function getData();
 }

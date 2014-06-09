@@ -16,7 +16,7 @@ use Joomla\Renderer\RendererInterface;
  * @subpackage  View
  * @since       3.4
  */
-class JViewCmshtml extends JViewCms
+abstract class JViewHtmlCms extends JViewCms
 {
 	/**
 	 * The renderer object

@@ -14,7 +14,7 @@
  * @subpackage  View
  * @since       3.4
  */
-class JViewCmsjson extends JViewCms
+abstract class JViewJsonCms extends JViewCms
 {
 	/**
 	 * Method to render the view.
