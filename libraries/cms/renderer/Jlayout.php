@@ -83,11 +83,7 @@ class JRendererJlayout implements RendererInterface
 	private function getLayout($template)
 	{
 		$layout = new JLayoutFile($template);
-
-		if (!empty($this->paths))
-		{
-			$layout->setIncludePaths($this->config['paths']);
-		}
+		$layout->setIncludePaths($this->config['paths']);
 
 		return $layout;
 	}
