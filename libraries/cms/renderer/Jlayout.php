@@ -31,9 +31,10 @@ class JRendererJlayout implements RendererInterface
 	 *
 	 * @since  3.4
 	 */
-	public function __constructor($config)
+	public function __construct($config)
 	{
 		// Find the root path - either site or administrator
+		$app = JFactory::getApplication();
 		$rootPath = $app->isAdmin() ? JPATH_ADMINISTRATOR : JPATH_SITE;
 
 		/**
@@ -43,7 +44,7 @@ class JRendererJlayout implements RendererInterface
 		 * maybe also check it in the config? But we should be independent of that
 		 * in the renderer
 		**/
-		$input = JFactory::getApplication()->input;
+		$input = $app->input;
 		$componentFolder = strtolower($input->get('option'));
 		$viewName = strtolower($input->get('view'));
 
