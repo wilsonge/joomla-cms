@@ -39,9 +39,7 @@ abstract class JViewHtmlCms extends JViewCms
 		// If we don't have a renderer use the JLayout renderer
 		if (!$renderer)
 		{
-			$config = array();
-
-			$renderer = new JRendererJlayout($config);
+			$renderer = new JRendererJlayout;
 		}
 
 		// Set the renderer.

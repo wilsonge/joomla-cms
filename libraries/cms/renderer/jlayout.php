@@ -17,12 +17,12 @@ use Joomla\Renderer\RendererInterface;
 class JRendererJlayout implements RendererInterface
 {
 	/**
-	 * The list of paths for layouts to be searched
+	 * The renderer default configuration parameters.
 	 *
 	 * @var    array
 	 * @since  3.4
 	 */
-	private $paths = array();
+	private $config = array();
 
 	/**
 	 * Public constructor
@@ -31,12 +31,30 @@ class JRendererJlayout implements RendererInterface
 	 *
 	 * @since  3.4
 	 */
-	public function __constructor($config)
+	public function __construct($config)
 	{
-		if (isset($config['paths']))
-		{
-			$this->paths = (array) $config['paths'];
-		}
+		// Find the root path - either site or administrator
+		$app = JFactory::getApplication();
+		$rootPath = $app->isAdmin() ? JPATH_ADMINISTRATOR : JPATH_SITE;
+
+		/**
+		 * Get the component and view name
+		 * 
+		 * @todo Feels like there should be a better way of doing this
+		 * maybe also check it in the config? But we should be independent of that
+		 * in the renderer
+		**/
+		$input = $app->input;
+		$componentFolder = strtolower($input->get('option'));
+		$viewName = strtolower($input->get('view'));
+
+		// Add the default paths
+		$this->config['paths'] = array();
+		$this->config['paths'][] = $rootPath . '/templates/' . $app->getTemplate() . '/html/' . $componentFolder . '/' . $viewName;
+		$this->config['paths'][] = $rootPath . '/components/' . $componentFolder . '/view/' . $viewName . '/tmpl';
+
+		// Merge the config.
+		$this->config = array_merge($this->config, $config);
 	}
 
 	/**
@@ -66,11 +84,7 @@ class JRendererJlayout implements RendererInterface
 	private function getLayout($template)
 	{
 		$layout = new JLayoutFile($template);
-
-		if (!empty($this->paths))
-		{
-			$layout->setIncludePaths($this->paths);
-		}
+		$layout->setIncludePaths($this->config['paths']);
 
 		return $layout;
 	}

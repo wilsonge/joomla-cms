@@ -205,14 +205,19 @@ abstract class JViewCms implements JView
 	 * Method to add a model to the view.  We support a multiple model single
 	 * view system by which models are referenced by class name.
 	 *
-	 * @param   JModelCmsInterface   $model   The model to add to the view.
-	 * @param   boolean              $default Is this the default model?
+	 * @param   JModelCmsInterface   $model    The model to add to the view.
+	 * @param   string               $name     The name for model to be stored as (optional)
+	 * @param   boolean              $default  Is this the default model? Defaults to false
 	 *
 	 * @return  void
 	 */
-	public function setModel(JModelCmsInterface $model, $default = false)
+	public function setModel(JModelCmsInterface $model, $name = null, $default = false)
 	{
-		$name = strtolower($model->getName());
+		if (!$name)
+		{
+			$name = strtolower($model->getName());
+		}
+
 		$this->models[$name] = $model;
 
 		if ($default)
