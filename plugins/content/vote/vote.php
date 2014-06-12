@@ -53,7 +53,8 @@ class PlgContentVote extends JPlugin
 
 			$params->set('showVoteForm', ($view == 'article' && $row->state == 1));
 
-			return $this->getRenderer('default')->render(
+			return $this->getRenderer()->render(
+				'default',
 				array(
 					'context' => $context,
 					'row'     => $row,

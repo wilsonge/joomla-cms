@@ -45,7 +45,8 @@ class PlgQuickiconJoomlaupdate extends JPlugin
 			return;
 		}
 
-		$this->getRenderer('default')->render(
+		$this->getRenderer()->render(
+			'default',
 			array(
 				'context' => $context
 			)

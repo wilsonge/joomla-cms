@@ -145,22 +145,23 @@ abstract class JPlugin extends JEvent
 	/**
 	 * Get the renderer
 	 *
-	 * @param   string  $layout   Layout to load.
 	 * @param   array   $options  Optional array with layout options
 	 *
-	 * @return  JLayoutFile       Renderer instance
+	 * @return  JRendererJlayout  Renderer instance
 	 */
-	protected function getRenderer($layout, $options = array())
+	protected function getRenderer($options = array())
 	{
-		$template = JFactory::getApplication()->getTemplate();
-		$renderer = new JLayoutFile($layout, null, $options);
+		if (!isset($options['paths']))
+		{
+			$template = JFactory::getApplication()->getTemplate();
 
-		$renderer->setIncludePaths(
-			array(
+			$options['paths'] = array(
 				JPATH_THEMES . "/" . $template . '/html/layouts/plugins/' . $this->_type . '/' . $this->_name,
 				JPATH_SITE . '/layouts/plugins/' . $this->_type . '/' . $this->_name
-			)
-		);
+			);
+		}
+		
+		$renderer = new JRendererJlayout($options);
 
 		return $renderer;
 	}
