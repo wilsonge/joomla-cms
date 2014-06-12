@@ -22,39 +22,19 @@ class JRendererJlayout implements RendererInterface
 	 * @var    array
 	 * @since  3.4
 	 */
-	private $config = array();
+	protected $config = array();
 
 	/**
 	 * Public constructor
 	 *
-	 * @param  array  $config  An array of configuration options
+	 * @param  array            $config  An array of configuration options
 	 *
 	 * @since  3.4
 	 */
-	public function __construct($config)
+	public function __construct(array $config = array())
 	{
-		// Find the root path - either site or administrator
-		$app = JFactory::getApplication();
-		$rootPath = $app->isAdmin() ? JPATH_ADMINISTRATOR : JPATH_SITE;
-
-		/**
-		 * Get the component and view name
-		 * 
-		 * @todo Feels like there should be a better way of doing this
-		 * maybe also check it in the config? But we should be independent of that
-		 * in the renderer
-		**/
-		$input = $app->input;
-		$componentFolder = strtolower($input->get('option'));
-		$viewName = strtolower($input->get('view'));
-
-		// Add the default paths
-		$this->config['paths'] = array();
-		$this->config['paths'][] = $rootPath . '/templates/' . $app->getTemplate() . '/html/' . $componentFolder . '/' . $viewName;
-		$this->config['paths'][] = $rootPath . '/components/' . $componentFolder . '/view/' . $viewName . '/tmpl';
-
-		// Merge the config.
-		$this->config = array_merge($this->config, $config);
+		// Insert the config.
+		$this->config = $config;
 	}
 
 	/**
@@ -81,10 +61,15 @@ class JRendererJlayout implements RendererInterface
 	 *
 	 * @since   3.4
 	 */
-	private function getLayout($template)
+	protected function getLayout($template)
 	{
 		$layout = new JLayoutFile($template);
-		$layout->setIncludePaths($this->config['paths']);
+
+		// If any paths are set in the config we'll replace the existing ones
+		if (isset($this->config['paths']))
+		{
+			$layout->setIncludePaths($this->config['paths']);
+		}
 
 		return $layout;
 	}

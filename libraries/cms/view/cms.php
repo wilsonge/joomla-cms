@@ -57,16 +57,37 @@ abstract class JViewCms implements JView
 	protected $name;
 
 	/**
+	 * The name of the component.
+	 *
+	 * @var    string
+	 * @since  3.4
+	 */
+	protected $option;
+
+	/**
+	 * Configuration options.
+	 *
+	 * @var    JRegistry
+	 * @since  3.4
+	 */
+	protected $config;
+
+	/**
 	 * Method to instantiate the view.
 	 *
-	 * @param   JModelCmsInterface  $model     The model object.
+	 * @param   JModelCmsInterface  $model   The model object.
+	 * @param   array               $config  An array of config options. Should contain component
+	 *                                       name and view name.
 	 *
 	 * @since   3.4
 	 */
-	public function __construct(JModelCmsInterface $model)
+	public function __construct(JModelCmsInterface $model, $config = array())
 	{
 		// Setup dependencies.
 		$this->setModel($model, true);
+		$this->config = new JRegistry($config);
+		$this->name = $config['view'];
+		$this->option = $config['option'];
 	}
 
 	/**
@@ -125,39 +146,25 @@ abstract class JViewCms implements JView
 	/**
 	 * Method to get the view name
 	 *
-	 * The model name by default parsed using the classname
-	 *
 	 * @return  string  The name of the model
 	 *
-	 * @since   3.4
-	 * @throws  RuntimeException
+	 * @since  3.4
 	 */
 	public function getName()
 	{
-		if (empty($this->name))
-		{
-			$className = get_class($this);
-			$viewPos = strpos($className, 'View');
+		return $this->name; 
+	}
 
-			if ($viewPos === false)
-			{
-				throw new RuntimeException(JText::_('JLIB_APPLICATION_ERROR_VIEW_GET_NAME'), 500);
-			}
-
-			$lastPart = substr($className, $viewPos + 4);
-			$pathParts = explode(' ', JStringNormalise::fromCamelCase($lastPart));
-
-			if (!empty($pathParts[1]))
-			{
-				$this->name = strtolower($pathParts[0]);
-			}
-			else
-			{
-				$this->name = strtolower($lastPart);
-			}
-		}
-
-		return $this->name;
+	/**
+	 * Method to get the option (component) name
+	 *
+	 * @return  string  The name of the component
+	 *
+	 * @since  3.4
+	 */
+	public function getOption()
+	{
+		return $this->option; 
 	}
 
 	/**
@@ -165,7 +172,7 @@ abstract class JViewCms implements JView
 	 *
 	 * @return  string  The rendered view.
 	 *
-	 * @since   3.4
+	 * @since  3.4
 	 */
 	abstract public function render();
 
