@@ -30,7 +30,7 @@ abstract class JModelRecord extends JModelData
 
 		$activeRecord = $this->getActiveRecord($pk);
 
-		// Convert to the JObject before adding other data.
+		// Convert to the table from a JObject to a stdClass before adding other data.
 		$properties = $activeRecord->getProperties(1);
 		$item       = JArrayHelper::toObject($properties);
 
