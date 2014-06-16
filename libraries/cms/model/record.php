@@ -14,9 +14,9 @@ abstract class JModelRecord extends JModelData
 	/**
 	 * Method to get a single record.
 	 *
-	 * @param   integer $pk The id of the primary key.
+	 * @param   integer  $pk The id of the primary key.
 	 *
-	 * @return  mixed    JObject on success, false on failure.
+	 * @return  mixed  stdClass on success, false on failure.
 	 *
 	 * @since   12.2
 	 */
@@ -32,7 +32,7 @@ abstract class JModelRecord extends JModelData
 
 		// Convert to the JObject before adding other data.
 		$properties = $activeRecord->getProperties(1);
-		$item       = JArrayHelper::toObject($properties, 'JObject');
+		$item       = JArrayHelper::toObject($properties);
 
 		if (property_exists($item, 'params'))
 		{

@@ -21,7 +21,7 @@ abstract class JModelCms
 	/**
 	 * A state object
 	 *
-	 * @var    string
+	 * @var    JRegistry
 	 * @since  12.2
 	 */
 	protected $state;
@@ -46,13 +46,13 @@ abstract class JModelCms
 	{
 		$this->config = $config;
 
-		if (array_key_exists('state', $config) && ($config['state'] instanceof JObject))
+		if (array_key_exists('state', $config) && ($config['state'] instanceof JRegistry))
 		{
 			$this->state = $config['state'];
 		}
 		else
 		{
-			$this->state = new JObject();
+			$this->state = new JRegistry();
 		}
 
 		if (!empty($config['ignore_request']))
