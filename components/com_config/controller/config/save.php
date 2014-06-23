@@ -104,6 +104,8 @@ class ConfigControllerConfigSave extends JControllerUpdate
 
 			// Save failed, go back to the screen and display a notice.
 			$this->setRedirect(JRoute::_('index.php?option=com_config&controller=config.display.config', false));
+
+			return false;
 		}
 
 		// Redirect back to com_config display
