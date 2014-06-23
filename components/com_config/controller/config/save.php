@@ -30,14 +30,18 @@ class ConfigControllerConfigSave extends JControllerUpdate
 		if (!JSession::checkToken())
 		{
 			$this->app->enqueueMessage(JText::_('JINVALID_TOKEN'));
-			$this->app->redirect('index.php');
+			$this->setRedirect('index.php');
+
+			return false;
 		}
 
 		// Check if the user is authorized to do this.
 		if (!JFactory::getUser()->authorise('core.admin'))
 		{
 			$this->app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'));
-			$this->app->redirect('index.php');
+			$this->setRedirect('index.php');
+
+			return false;
 		}
 
 		// Set FTP credentials, if given.
@@ -69,7 +73,7 @@ class ConfigControllerConfigSave extends JControllerUpdate
 			$this->app->setUserState('com_config.config.global.data', $data);
 
 			// Redirect back to the edit screen.
-			$this->app->redirect(JRoute::_('index.php?option=com_config&controller=config.display.config', false));
+			$this->setRedirect(JRoute::_('index.php?option=com_config&controller=config.display.config', false));
 		}
 
 		// Attempt to save the configuration.
@@ -79,17 +83,14 @@ class ConfigControllerConfigSave extends JControllerUpdate
 		JLoader::registerPrefix('Config', JPATH_ADMINISTRATOR . '/components/com_config');
 		$saveClass = new ConfigControllerApplicationSave;
 
-		// Get a document object
-		$document = JFactory::getDocument();
-
 		// Set back-end required params
-		$document->setType('json');
+		$this->doc->setType('json');
 
 		// Execute back-end controller
 		$return = $saveClass->execute();
 
 		// Reset params back after requesting from service
-		$document->setType('html');
+		$this->doc->setType('html');
 
 		// Check the return value.
 		if ($return === false)
@@ -102,12 +103,12 @@ class ConfigControllerConfigSave extends JControllerUpdate
 			$this->app->setUserState('com_config.config.global.data', $data);
 
 			// Save failed, go back to the screen and display a notice.
-			$this->app->redirect(JRoute::_('index.php?option=com_config&controller=config.display.config', false));
+			$this->setRedirect(JRoute::_('index.php?option=com_config&controller=config.display.config', false));
 		}
 
 		// Redirect back to com_config display
 		$this->app->enqueueMessage(JText::_('COM_CONFIG_SAVE_SUCCESS'));
-		$this->app->redirect(JRoute::_('index.php?option=com_config&controller=config.display.config', false));
+		$this->setRedirect(JRoute::_('index.php?option=com_config&controller=config.display.config', false));
 
 		return true;
 	}
