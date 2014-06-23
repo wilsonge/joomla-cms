@@ -16,85 +16,58 @@ defined('_JEXEC') or die;
  * @subpackage  com_config
  * @since       3.2
 */
-class ConfigControllerConfigDisplay extends ConfigControllerDisplay
+class ConfigControllerConfigDisplay extends JControllerDisplay
 {
-	/**
-	 * Method to display global configuration.
+	/*
+	 * Permission needed for the action. Defaults to most restrictive
 	 *
-	 * @return  boolean	True on success, false on failure.
-	 *
-	 * @since   3.2
+	 * @var  string
+	 * @since  3.4
 	 */
-	public function execute()
+	public $permission = 'core.admin';
+
+	/**
+	 * Method to get a view, initiating it if it does not already exist.
+	 * This method assumes auto-loading format is $prefix . 'View' . $name . $type
+	 * The
+	 *
+	 * @param   JModelCmsInterface  $model   The model to be injected
+	 * @param   string              $prefix  Option prefix exp. com_content
+	 * @param   string              $name    Name of the view folder exp. articles
+	 * @param   string              $type    Name of the file exp. html = html.php
+	 * @param   array               $config  An array of config options
+	 *
+	 * @throws  RuntimeException
+	 * @return  JViewCms
+	 */
+	protected function getView(JModelCmsInterface $model, $prefix = null, $name = null, $type = null, $config = array())
 	{
-		// Get the application
-		$app = $this->getApplication();
+		$doc = JFactory::getDocument();
 
-		// Get the document object.
-		$document     = JFactory::getDocument();
-
-		$viewName     = $this->input->getWord('view', 'config');
-		$viewFormat   = $document->getType();
-		$layoutName   = $this->input->getWord('layout', 'default');
-
-		// Access back-end com_config
-		JLoader::registerPrefix(ucfirst($viewName), JPATH_ADMINISTRATOR . '/components/com_config');
-		$displayClass = new ConfigControllerApplicationDisplay;
-
-		// Set back-end required params
-		$document->setType('json');
-		$app->input->set('view', 'application');
-
-		// Execute back-end controller
-		$serviceData = json_decode($displayClass->execute(), true);
-
-		// Reset params back after requesting from service
-		$document->setType('html');
-		$app->input->set('view', $viewName);
-
-		// Register the layout paths for the view
+		$viewFormat = $doc->getType();
+		// Initialise the view class.
 		$paths = new SplPriorityQueue;
-		$paths->insert(JPATH_COMPONENT . '/view/' . $viewName . '/tmpl', 'normal');
+		$paths->insert(JPATH_COMPONENT . '/view/' . $this->viewName . '/tmpl', 'normal');
+		$viewClass  = 'ConfigView' . ucfirst($this->viewName) . ucfirst($viewFormat);
+		$view = new $viewClass($model, $paths);
 
-		$viewClass  = 'ConfigView' . ucfirst($viewName) . ucfirst($viewFormat);
-		$modelClass = 'ConfigModel' . ucfirst($viewName);
-
-		if (class_exists($viewClass))
+		// If in html view then we set the layout
+		if ($viewFormat == 'html')
 		{
-			if ($viewName != 'close')
-			{
-				$model = new $modelClass;
-
-				// Access check.
-				if (!JFactory::getUser()->authorise('core.admin', $model->getState('component.option')))
-				{
-					return;
-				}
-			}
-
-			$view = new $viewClass($model, $paths);
-
+			$layoutName   = $this->input->getWord('layout', 'default');
 			$view->setLayout($layoutName);
-
-			// Push document object into the view.
-			$view->document = $document;
-
-			// Load form and bind data
-			$form = $model->getForm();
-
-			if ($form)
-			{
-				$form->bind($serviceData);
-			}
-
-			// Set form and data to the view
-			$view->form = &$form;
-			$view->data = &$serviceData;
-
-			// Render view.
-			echo $view->render();
 		}
 
-		return true;
+		// Push document object into the view.
+		$view->document = JFactory::getDocument();
+
+		// Load form and bind data
+		$form = $model->getForm();
+
+		// Set form and data to the view
+		$view->form = &$form;
+		$view->data = $model->getServiceData($this->input);
+
+		return $view;
 	}
 }

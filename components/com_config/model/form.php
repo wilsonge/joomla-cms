@@ -120,7 +120,18 @@ abstract class ConfigModelForm extends ConfigModelCms
 	 *
 	 * @since   3.2
 	 */
-	abstract public function getForm($data = array(), $loadData = true);
+	public function getForm($data = array(), $loadData = true)
+	{
+		// Get the form.
+		$form = $this->loadForm($this->option . '.' . $this->name, $this->name, array('control' => 'jform', 'load_data' => $loadData));
+
+		if (empty($form))
+		{
+			return false;
+		}
+
+		return $form;
+	}
 
 	/**
 	 * Method to get a form object.

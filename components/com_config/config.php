@@ -19,8 +19,9 @@ $app = JFactory::getApplication();
 // Tell the browser not to cache this page.
 $app->setHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT', true);
 
-$controllerHelper = new ConfigControllerHelper;
-$controller = $controllerHelper->parseController($app);
+$dispatcher = JComponentDispatcher::getInstance('com_config');
+$controller = $dispatcher->getController($app);
+$controller->options = $dispatcher->getTasks();
 
 $controller->prefix = 'Config';
 
