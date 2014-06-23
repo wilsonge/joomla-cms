@@ -16,16 +16,8 @@ defined('JPATH_PLATFORM') or die;
  * @subpackage  com_config
  * @since       3.2
  */
-class ConfigControllerCancel extends JControllerBase
+class ConfigControllerCancel extends JControllerCancel
 {
-	/**
-	 * Application object - Redeclared for proper typehinting
-	 *
-	 * @var    JApplicationCms
-	 * @since  3.2
-	 */
-	protected $app;
-
 	/**
 	 * Method to handle cancel
 	 *
@@ -36,6 +28,6 @@ class ConfigControllerCancel extends JControllerBase
 	public function execute()
 	{
 		// Redirect back to home(base) page
-		$this->app->redirect(JUri::base());
+		$this->setRedirect(JUri::base());
 	}
 }
