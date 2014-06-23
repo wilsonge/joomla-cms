@@ -42,10 +42,9 @@ class ConfigControllerConfigDisplay extends JControllerDisplay
 	 */
 	protected function getView(JModelCmsInterface $model, $prefix = null, $name = null, $type = null, $config = array())
 	{
-		$doc = JFactory::getDocument();
+		$viewFormat = $this->doc->getType();
 
-		$viewFormat = $doc->getType();
-		// Initialise the view class.
+		// Initialise the paths for the views.
 		$paths = new SplPriorityQueue;
 		$paths->insert(JPATH_COMPONENT . '/view/' . $this->viewName . '/tmpl', 'normal');
 		$viewClass  = 'ConfigView' . ucfirst($this->viewName) . ucfirst($viewFormat);
@@ -59,7 +58,7 @@ class ConfigControllerConfigDisplay extends JControllerDisplay
 		}
 
 		// Push document object into the view.
-		$view->document = JFactory::getDocument();
+		$view->document = $this->doc;
 
 		// Load form and bind data
 		$form = $model->getForm();
