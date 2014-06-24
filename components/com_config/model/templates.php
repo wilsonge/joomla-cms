@@ -16,8 +16,49 @@ defined('_JEXEC') or die;
  * @subpackage  com_config
  * @since       3.2
  */
-class ConfigModelTemplates extends ConfigModelForm
+class ConfigModelTemplates extends JModelCmsform
 {
+	public function getServiceData(JInput $input = null)
+	{
+		// Set up variables needed
+		$app =  JFactory::getApplication();
+		$input = $input ? $input : $app->input;
+		$document = JFactory::getDocument();
+		$viewName = $input->getWord('view', 'config');
+
+		// Access back-end com_config
+		JLoader::register('TemplatesController', JPATH_ADMINISTRATOR . '/components/com_templates/controller.php');
+		JLoader::register('TemplatesViewStyle', JPATH_ADMINISTRATOR . '/components/com_templates/views/style/view.json.php');
+		JLoader::register('TemplatesModelStyle', JPATH_ADMINISTRATOR . '/components/com_templates/models/style.php');
+
+		$displayClass = new TemplatesController;
+
+		// Set back-end required params
+		$document->setType('json');
+		$input->set('id', $app->getTemplate('template')->id);
+
+		// Execute back-end controller
+		$serviceData = json_decode($displayClass->display(), true);
+
+		// Reset params back after requesting from service
+		$document->setType('html');
+		$input->set('view', $viewName);
+
+		return $serviceData;
+	}
+
+	/**
+	 * Method to get the data that should be injected in the form.
+	 *
+	 * @return  array    The default data is an empty array.
+	 *
+	 * @since   3.2
+	 */
+	protected function loadFormData()
+	{
+		return $this->getServiceData();
+	}
+
 	/**
 	 * Method to auto-populate the model state.
 	 *
@@ -39,7 +80,7 @@ class ConfigModelTemplates extends ConfigModelForm
 	}
 
 	/**
-	 * Method to get the record form.
+	 * Method to load the form.
 	 *
 	 * @param   array    $data      An optional array of data for the form to interogate.
 	 * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
@@ -48,31 +89,47 @@ class ConfigModelTemplates extends ConfigModelForm
 	 *
 	 * @since   3.2
 	 */
-	public function getForm($data = array(), $loadData = true)
+	protected function loadForm($name, $source = null, $options = array(), $clear = false, $xpath = false)
 	{
-		// Get the form.
-		$form = $this->loadForm('com_config.templates', 'templates', array('control' => 'jform', 'load_data' => $loadData));
+		// Handle the optional arguments.
+		$options['control'] = JArrayHelper::getValue($options, 'control', false);
+
+		// Create a signature hash.
+		$hash = sha1($source . serialize($options));
+
+		// Check if we can use a previously loaded form.
+		if (isset($this->forms[$hash]) && !$clear)
+		{
+			return $this->forms[$hash];
+		}
 
 		try
 		{
 			$form = new JForm('com_config.templates');
 			$data = array();
+
+			if (isset($options['load_data']) && $options['load_data'])
+			{
+				// Get the data for the form.
+				$data = $this->loadFormData();
+			}
+
+			// Allow for additional modification of the form, and events to be triggered.
+			// We pass the data because plugins may require it.
 			$this->preprocessForm($form, $data);
 
-			// Load the data into the form
+			// Load the data into the form after the plugins have operated.
 			$form->bind($data);
+
 		}
 		catch (Exception $e)
 		{
-			JFactory::getApplication()->enqueueMessage($e->getMessage());
-
-			return false;
+			// Throw any exceptions upstream
+			throw new RuntimeException($e->getMessage());
 		}
 
-		if (empty($form))
-		{
-			return false;
-		}
+		// Store the form for later.
+		$this->forms[$hash] = $form;
 
 		return $form;
 	}

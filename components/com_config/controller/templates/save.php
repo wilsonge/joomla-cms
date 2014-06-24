@@ -15,7 +15,7 @@ defined('_JEXEC') or die('Restricted access');
  * @subpackage  com_config
  * @since       3.2
 */
-class ConfigControllerTemplatesSave extends JControllerBase
+class ConfigControllerTemplatesSave extends JControllerUpdate
 {
 	/**
 	 * Method to save global configuration.
@@ -29,13 +29,13 @@ class ConfigControllerTemplatesSave extends JControllerBase
 		// Check for request forgeries.
 		if (!JSession::checkToken())
 		{
-			JFactory::getApplication()->redirect('index.php', JText::_('JINVALID_TOKEN'));
+			$this->setRedirect('index.php', JText::_('JINVALID_TOKEN'));
 		}
 
 		// Check if the user is authorized to do this.
 		if (!JFactory::getUser()->authorise('core.admin'))
 		{
-			JFactory::getApplication()->redirect('index.php', JText::_('JERROR_ALERTNOAUTHOR'));
+			$this->setRedirect('index.php', JText::_('JERROR_ALERTNOAUTHOR'));
 
 			return;
 		}
@@ -43,37 +43,32 @@ class ConfigControllerTemplatesSave extends JControllerBase
 		// Set FTP credentials, if given.
 		JClientHelper::setCredentialsFromRequest('ftp');
 
-		$app = JFactory::getApplication();
-
 		// Access back-end com_templates
 		JLoader::register('TemplatesControllerStyle', JPATH_ADMINISTRATOR . '/components/com_templates/controllers/style.php');
 		JLoader::register('TemplatesModelStyle', JPATH_ADMINISTRATOR . '/components/com_templates/models/style.php');
 		JLoader::register('TemplatesTableStyle', JPATH_ADMINISTRATOR . '/components/com_templates/tables/style.php');
 		$controllerClass = new TemplatesControllerStyle;
 
-		// Get a document object
-		$document = JFactory::getDocument();
-
 		// Set back-end required params
-		$document->setType('json');
-		$this->input->set('id', $app->getTemplate('template')->id);
+		$this->doc->setType('json');
+		$this->input->set('id', $this->app->getTemplate('template')->id);
 
 		// Execute back-end controller
 		$return = $controllerClass->save();
 
 		// Reset params back after requesting from service
-		$document->setType('html');
+		$this->doc->setType('html');
 
 		// Check the return value.
 		if ($return === false)
 		{
 			// Save the data in the session.
-			$app->setUserState('com_config.config.global.data', $data);
+			$this->app->setUserState('com_config.config.global.data', $data);
 
 			// Save failed, go back to the screen and display a notice.
 			$message = JText::sprintf('JERROR_SAVE_FAILED');
 
-			$app->redirect(JRoute::_('index.php?option=com_config&controller=config.display.templates', false), $message, 'error');
+			$this->setRedirect(JRoute::_('index.php?option=com_config&controller=config.display.templates', false), $message, 'error');
 
 			return false;
 		}
@@ -82,7 +77,7 @@ class ConfigControllerTemplatesSave extends JControllerBase
 		$message = JText::_('COM_CONFIG_SAVE_SUCCESS');
 
 		// Redirect back to com_config display
-		$app->redirect(JRoute::_('index.php?option=com_config&controller=config.display.templates', false), $message);
+		$this->setRedirect(JRoute::_('index.php?option=com_config&controller=config.display.templates', false), $message);
 
 		return true;
 	}
