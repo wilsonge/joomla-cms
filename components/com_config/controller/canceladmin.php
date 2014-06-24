@@ -57,6 +57,8 @@ class ConfigControllerCanceladmin extends ConfigControllerCancel
 		{
 			$this->app->enqueueMessage(JText::_('JINVALID_TOKEN'));
 			$this->app->redirect('index.php');
+
+			return false;
 		}
 
 		if (empty($this->context))
@@ -70,10 +72,10 @@ class ConfigControllerCanceladmin extends ConfigControllerCancel
 		if (!empty($this->redirect))
 		{
 			$this->app->redirect($this->redirect);
+
+			return true;
 		}
-		else
-		{
-			parent::execute();
-		}
+
+		return parent::execute();
 	}
 }

@@ -29,5 +29,7 @@ class ConfigControllerCancel extends JControllerCancel
 	{
 		// Redirect back to home(base) page
 		$this->setRedirect(JUri::base());
+
+		return true;
 	}
 }
