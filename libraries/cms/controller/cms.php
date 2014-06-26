@@ -116,19 +116,25 @@ class JControllerCms extends JControllerBase implements JControllerCmsInterface
 	/**
 	 * Constructor
 	 *
-	 * @param   array            $config  An array of configuration options. Must have option key.
 	 * @param   JInput           $input   The input object.
 	 * @param   JApplicationCms  $app     The application object.
+	 * @param   array            $config  An array of configuration options.
 	 * @param   JDocument        $doc     The JDocument object
 	 *
 	 * @since   3.4
 	 */
-	public function __construct(array $config, JInput $input = null, JApplicationCms $app = null, JDocument $doc = null)
+	public function __construct(JInput $input = null, JApplicationCms $app = null, array $config, JDocument $doc = null)
 	{
 		$this->config = $config;
 		$this->doc = $doc ? $doc : JFactory::getDocument();
 
 		parent::__construct($input, $app);
+
+		if (!isset($this->config['option']) || (isset($this->config['option']) && empty($this->config['option'])))
+		{
+			// If an option key is not set try and get one from the input
+			$this->config['option'] = $this->input->get('option', null);
+		}
 	}
 
 	/**
