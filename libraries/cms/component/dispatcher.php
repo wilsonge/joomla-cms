@@ -233,7 +233,7 @@ class JComponentDispatcher implements JComponentDispatcherInterface
 			throw new InvalidArgumentException(JText::sprintf('JLIB_APPLICATION_ERROR_INVALID_CONTROLLER', $first, $format));
 		}
 
-		$this->controller = new $class($this->config, $this->input, $app);
+		$this->controller = new $class($this->input, $app, $this->config);
 
 		return $this->controller;
 	}
