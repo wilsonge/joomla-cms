@@ -81,27 +81,18 @@ class JComponentDispatcher implements JComponentDispatcherInterface
 		{
 			if (JFactory::getApplication()->isSite())
 			{
-				$mainPath	= JPATH_SITE . '/components/' . $option;
-				$altPath	= JPATH_ADMINISTRATOR . '/components/' . $option;
+				$basePath = JPATH_SITE;
 			}
 			else
 			{
-				$mainPath	= JPATH_ADMINISTRATOR . '/components/' . $option;
-				$altPath	= JPATH_SITE . '/components/' . $option;
+				$basePath = JPATH_ADMINISTRATOR;
 			}
 
-			$componentPaths = array(
-				'main'	=> $mainPath,
-				'alt'	=> $altPath,
-				'site'	=> JPATH_SITE . '/components/' . $option,
-				'admin'	=> JPATH_ADMINISTRATOR . '/components/' . $option,
-			);
-
 			$searchPaths = array(
-				$componentPaths['main'],
-				$componentPaths['main'] . '/dispatchers',
-				$componentPaths['admin'],
-				$componentPaths['admin'] . '/dispatchers'
+				$basePath . '/components/' . $option,
+				$basePath . '/components/' . $option . '/dispatchers',
+				JPATH_ADMINISTRATOR . '/components/' . $option,
+				JPATH_ADMINISTRATOR . '/components/' . $option . '/dispatchers'
 			);
 
 			if (array_key_exists('searchpath', $config))
