@@ -88,7 +88,7 @@ class ConfigControllerConfigSave extends JControllerUpdate
 			'option' => 'com_config',
 			'view' => 'Application'
 		);
-		$saveClass = new ConfigControllerApplicationSave($config, $this->input);
+		$saveClass = new ConfigControllerApplicationSave($this->input, null, $config);
 
 		// Set back-end required params
 		$this->doc->setType('json');

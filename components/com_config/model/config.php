@@ -30,7 +30,7 @@ class ConfigModelConfig extends JModelCmsform
 			'option' => 'com_config',
 			'view' => 'Application'
 		);
-		$displayClass = new ConfigControllerApplicationDisplay($config);
+		$displayClass = new ConfigControllerApplicationDisplay($input, null, $config, $document);
 
 		// Set back-end required params
 		$document->setType('json');
