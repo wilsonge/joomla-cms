@@ -21,7 +21,9 @@ class ConfigControllerComponentSave extends JControllerUpdate
 	/**
 	 * Method to save global configuration.
 	 *
-	 * @return  mixed  Calls $app->redirect()
+	 * @return  boolean  True if controller finished execution, false if the controller did not
+	 *                   finish execution. A controller might return false if some precondition for
+	 *                   the controller to run has not been satisfied.
 	 *
 	 * @since   3.2
 	 */
@@ -31,7 +33,9 @@ class ConfigControllerComponentSave extends JControllerUpdate
 		if (!JSession::checkToken())
 		{
 			$this->app->enqueueMessage(JText::_('JINVALID_TOKEN'));
-			$this->app->redirect('index.php');
+			$this->setRedirect('index.php');
+
+			return false;
 		}
 
 		// Set FTP credentials, if given.
@@ -55,7 +59,9 @@ class ConfigControllerComponentSave extends JControllerUpdate
 		if (!JFactory::getUser()->authorise('core.admin', $option))
 		{
 			$this->app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'));
-			$this->app->redirect('index.php');
+			$this->setRedirect('index.php');
+
+			return false;
 		}
 
 		$returnUri = $this->input->post->get('return', null, 'base64');
@@ -81,7 +87,9 @@ class ConfigControllerComponentSave extends JControllerUpdate
 			$this->app->setUserState('com_config.config.global.data', $data);
 
 			// Redirect back to the edit screen.
-			$this->app->redirect(JRoute::_('index.php?option=com_config&view=component&component=' . $option . $redirect, false));
+			$this->setRedirect(JRoute::_('index.php?option=com_config&view=component&component=' . $option . $redirect, false));
+
+			return false;
 		}
 
 		// Attempt to save the configuration.
@@ -102,7 +110,9 @@ class ConfigControllerComponentSave extends JControllerUpdate
 
 			// Save failed, go back to the screen and display a notice.
 			$this->app->enqueueMessage(JText::sprintf('JERROR_SAVE_FAILED', $e->getMessage()), 'error');
-			$this->app->redirect(JRoute::_('index.php?option=com_config&view=component&component=' . $option . $redirect, false));
+			$this->setRedirect(JRoute::_('index.php?option=com_config&view=component&component=' . $option . $redirect, false));
+
+			return false;
 		}
 
 		// Set the redirect based on the task.
@@ -110,7 +120,7 @@ class ConfigControllerComponentSave extends JControllerUpdate
 		{
 			case 'apply':
 				$this->app->enqueueMessage(JText::_('COM_CONFIG_SAVE_SUCCESS'));
-				$this->app->redirect(JRoute::_('index.php?option=com_config&view=component&component=' . $option . $redirect, false));
+				$this->setRedirect(JRoute::_('index.php?option=com_config&view=component&component=' . $option . $redirect, false));
 
 				break;
 
@@ -123,7 +133,7 @@ class ConfigControllerComponentSave extends JControllerUpdate
 					$redirect = base64_decode($returnUri);
 				}
 
-				$this->app->redirect(JRoute::_($redirect, false));
+				$this->setRedirect(JRoute::_($redirect, false));
 
 				break;
 		}

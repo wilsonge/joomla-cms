@@ -74,14 +74,21 @@ class ConfigControllerConfigSave extends JControllerUpdate
 
 			// Redirect back to the edit screen.
 			$this->setRedirect(JRoute::_('index.php?option=com_config&controller=config.display.config', false));
+
+			return false;
 		}
 
 		// Attempt to save the configuration.
 		$data = $return;
+		$this->input->post->set('jform', $data);
 
 		// Access back-end com_config
 		JLoader::registerPrefix('Config', JPATH_ADMINISTRATOR . '/components/com_config');
-		$saveClass = new ConfigControllerApplicationSave;
+		$config = array (
+			'option' => 'com_config',
+			'view' => 'Application'
+		);
+		$saveClass = new ConfigControllerApplicationSave($config, $this->input);
 
 		// Set back-end required params
 		$this->doc->setType('json');

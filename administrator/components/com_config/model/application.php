@@ -70,7 +70,7 @@ class ConfigModelApplication extends JModelCmsform
 	 */
 	protected function loadFormData()
 	{
-		$data = $this->getData();
+		$data = array();
 
 		$this->preprocessData($this->option . '.' . $this->name, $data);
 

@@ -26,7 +26,11 @@ class ConfigModelConfig extends JModelCmsform
 
 		// Access back-end com_config
 		JLoader::registerPrefix(ucfirst($viewName), JPATH_ADMINISTRATOR . '/components/com_config');
-		$displayClass = new ConfigControllerApplicationDisplay;
+		$config = array (
+			'option' => 'com_config',
+			'view' => 'Application'
+		);
+		$displayClass = new ConfigControllerApplicationDisplay($config);
 
 		// Set back-end required params
 		$document->setType('json');
