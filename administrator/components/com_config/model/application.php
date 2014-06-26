@@ -16,31 +16,8 @@ defined('_JEXEC') or die;
  * @subpackage  com_config
  * @since       3.2
  */
-class ConfigModelApplication extends ConfigModelForm
+class ConfigModelApplication extends JModelCmsform
 {
-	/**
-	 * Method to get a form object.
-	 *
-	 * @param   array    $data      Data for the form.
-	 * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
-	 *
-	 * @return  mixed  A JForm object on success, false on failure
-	 *
-	 * @since	1.6
-	 */
-	public function getForm($data = array(), $loadData = true)
-	{
-		// Get the form.
-		$form = $this->loadForm('com_config.application', 'application', array('control' => 'jform', 'load_data' => $loadData));
-
-		if (empty($form))
-		{
-			return false;
-		}
-
-		return $form;
-	}
-
 	/**
 	 * Method to get the configuration data.
 	 *
@@ -80,6 +57,22 @@ class ConfigModelApplication extends ConfigModelForm
 		{
 			$data = array_merge($data, $temp);
 		}
+
+		return $data;
+	}
+
+	/**
+	 * Method to get the data that should be injected in the form.
+	 *
+	 * @return  array    The default data is an empty array.
+	 *
+	 * @since   3.4
+	 */
+	protected function loadFormData()
+	{
+		$data = $this->getData();
+
+		$this->preprocessData($this->option . '.' . $this->name, $data);
 
 		return $data;
 	}
@@ -296,5 +289,24 @@ class ConfigModelApplication extends ConfigModelForm
 		}
 
 		return true;
+	}
+
+	/**
+	 * Method to auto-populate the model state.
+	 *
+	 * This method should only be called once per instantiation and is designed
+	 * to be called on the first call to the getState() method unless the model
+	 * configuration flag to ignore the request is set.
+	 *
+	 * @return  void
+	 *
+	 * @note    Calling getState in this method will result in recursion.
+	 * @since   3.4
+	 */
+	protected function populateState()
+	{
+		$state = new JRegistry;
+
+		return $state;
 	}
 }

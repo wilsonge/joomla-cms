@@ -16,16 +16,8 @@ defined('_JEXEC') or die;
  * @subpackage  com_config
  * @since       3.2
  */
-class ConfigControllerComponentSave extends JControllerBase
+class ConfigControllerComponentSave extends JControllerUpdate
 {
-	/**
-	 * Application object - Redeclared for proper typehinting
-	 *
-	 * @var    JApplicationCms
-	 * @since  3.2
-	 */
-	protected $app;
-
 	/**
 	 * Method to save global configuration.
 	 *
@@ -45,7 +37,15 @@ class ConfigControllerComponentSave extends JControllerBase
 		// Set FTP credentials, if given.
 		JClientHelper::setCredentialsFromRequest('ftp');
 
-		$model  = new ConfigModelComponent;
+		try
+		{
+			$model = $this->getModel('Config', 'Component');
+		}
+		catch (RuntimeException $e)
+		{
+			throw new RuntimeException($e->getMessage(), $e->getCode());
+		}
+
 		$form   = $model->getForm();
 		$data   = $this->input->get('jform', array(), 'array');
 		$id     = $this->input->getInt('id');

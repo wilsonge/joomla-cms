@@ -12,20 +12,14 @@ JHtml::_('behavior.tabstate');
 
 // Access checks are done internally because of different requirements for the two controllers.
 
-// Tell the browser not to cache this page.
-JFactory::getApplication()->setHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT', true);
-
-// Load classes
-JLoader::registerPrefix('Config', JPATH_COMPONENT);
-JLoader::registerPrefix('Config', JPATH_ROOT . '/components/com_config');
-
 // Application
 $app = JFactory::getApplication();
 
-$controllerHelper = new ConfigControllerHelper;
-$controller = $controllerHelper->parseController($app);
+// Tell the browser not to cache this page.
+$app->setHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT', true);
 
-$controller->prefix = 'Config';
+// Load classes
+JLoader::registerPrefix('Config', JPATH_ROOT . '/components/com_config');
+JLoader::registerPrefix('Config', JPATH_ROOT . '/administrator/components/com_config');
 
-// Perform the Request task
-$controller->execute();
+JComponentDispatcher::getInstance('com_config')->dispatch($app);

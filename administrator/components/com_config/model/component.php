@@ -16,8 +16,24 @@ defined('_JEXEC') or die;
  * @subpackage  com_config
  * @since       3.2
  */
-class ConfigModelComponent extends ConfigModelForm
+class ConfigModelComponent extends JModelCmsform
 {
+	/**
+	 * Method to get the data that should be injected in the form.
+	 *
+	 * @return  array    The default data is an empty array.
+	 *
+	 * @since   3.4
+	 */
+	protected function loadFormData()
+	{
+		$data = array();
+
+		$this->preprocessData($this->option . '.' . $this->name, $data);
+
+		return $data;
+	}
+
 	/**
 	 * Method to auto-populate the model state.
 	 *
