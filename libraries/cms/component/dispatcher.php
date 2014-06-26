@@ -247,46 +247,19 @@ class JComponentDispatcher implements JComponentDispatcherInterface
 	 */
 	protected function getControllerNames()
 	{
-		$tasks = $this->getTasks();
-
-		if (empty($tasks[self::CONTROLLER_PREFIX]))
-		{
-			$location = $this->getDefaultPrefix();
-		}
-		elseif ($tasks[self::CONTROLLER_PREFIX] == 'j')
-		{
-			// Ensure lower case j is made uppercase
-			$location = 'J';
-		}
-		else
-		{
-			$location = ucfirst(strtolower($tasks[self::CONTROLLER_PREFIX]));
-		}
-
-		if (empty($tasks[self::CONTROLLER_ACTIVITY]))
-		{
-			$activity = $this->getDefaultActivity();
-		}
-		else
-		{
-			$activity = ucfirst(strtolower($tasks[self::CONTROLLER_ACTIVITY]));
-		}
-
+		$prefix = $this->getControllerPrefix();
+		$activity = $this->getControllerActivity();
 		$view = '';
 
-		if (empty($tasks[self::CONTROLLER_VIEW_FOLDER]) && $location != 'J')
+		if ($prefix != 'J')
 		{
-			$view = $this->getDefaultView();
-		}
-		elseif ($location != 'J')
-		{
-			$view = ucfirst(strtolower($tasks[self::CONTROLLER_VIEW_FOLDER]));
+			$view = $this->getControllerView();
 		}
 
 		// Create the priority queue now we've sorted things out
 		$queue = new SplPriorityQueue;
-		$queue->insert($location . 'Controller' . $view . $activity, 100);
-		$queue->insert($location . 'Controller' . $activity, 10);
+		$queue->insert($prefix . 'Controller' . $view . $activity, 100);
+		$queue->insert($prefix . 'Controller' . $activity, 10);
 		$queue->insert('JController' . $activity, 1);
 
 		return $queue;
@@ -299,7 +272,23 @@ class JComponentDispatcher implements JComponentDispatcherInterface
 	 */
 	protected function getControllerPrefix()
 	{
-		return ucfirst(substr($this->input->get('option'), 4));
+		$tasks = $this->getTasks();
+
+		if (empty($tasks[self::CONTROLLER_PREFIX]))
+		{
+			$prefix = ucfirst(substr($this->input->get('option'), 4));
+		}
+		elseif ($tasks[self::CONTROLLER_PREFIX] == 'j')
+		{
+			// Ensure lower case j is made uppercase
+			$prefix = 'J';
+		}
+		else
+		{
+			$prefix = ucfirst(strtolower($tasks[self::CONTROLLER_PREFIX]));
+		}
+
+		return $prefix;
 	}
 
 	/**
@@ -309,7 +298,15 @@ class JComponentDispatcher implements JComponentDispatcherInterface
 	 */
 	protected function getControllerActivity()
 	{
-		return 'Display';
+		$tasks = $this->getTasks();
+		$activity = 'Display';
+
+		if (!empty($tasks[self::CONTROLLER_ACTIVITY]))
+		{
+			$activity = ucfirst(strtolower($tasks[self::CONTROLLER_ACTIVITY]));
+		}
+
+		return $activity;
 	}
 
 	/**
@@ -319,7 +316,15 @@ class JComponentDispatcher implements JComponentDispatcherInterface
 	 */
 	protected function getControllerView()
 	{
-		return ucfirst(strtolower($this->input->get('view')));
+		$tasks = $this->getTasks();
+		$view = ucfirst(strtolower($this->input->get('view')));
+
+		if (!empty($tasks[self::CONTROLLER_VIEW_FOLDER]))
+		{
+			$view = ucfirst(strtolower($tasks[self::CONTROLLER_VIEW_FOLDER]));
+		}
+
+		return $view;
 	}
 
 	/**
