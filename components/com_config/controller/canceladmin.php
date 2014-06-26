@@ -56,7 +56,7 @@ class ConfigControllerCanceladmin extends ConfigControllerCancel
 		if (!JSession::checkToken())
 		{
 			$this->app->enqueueMessage(JText::_('JINVALID_TOKEN'));
-			$this->app->redirect('index.php');
+			$this->setRedirect('index.php');
 
 			return false;
 		}
@@ -71,7 +71,7 @@ class ConfigControllerCanceladmin extends ConfigControllerCancel
 
 		if (!empty($this->redirect))
 		{
-			$this->app->redirect($this->redirect);
+			$this->setRedirect($this->redirect);
 
 			return true;
 		}
