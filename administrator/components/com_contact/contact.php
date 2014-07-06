@@ -15,6 +15,14 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_contact'))
 	return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
 }
 
+/**
 $controller = JControllerLegacy::getInstance('contact');
 $controller->execute(JFactory::getApplication()->input->get('task'));
 $controller->redirect();
+**/
+
+JLoader::registerPrefix('Contact', JPATH_ROOT . '/administrator/components/com_contact');
+JLoader::register('ContactHelper', JPATH_ROOT . '/administrator/components/com_contact/helpers/contact.php');
+JLoader::register('JHtmlContact', JPATH_ROOT . '/administrator/components/com_contact/helpers/html/contact.php');
+
+JComponentDispatcher::getInstance('com_contact')->dispatch(JFactory::getApplication());

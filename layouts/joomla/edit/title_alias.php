@@ -9,7 +9,16 @@
 
 defined('JPATH_BASE') or die;
 
-$form = $displayData->getForm();
+// @deprecated  Injecting JViewLegacy directly into a JLayout is deprecated
+//              you should just insert the JForm as part of an array of data
+if ($displayData instanceof JViewLegacy)
+{
+	$form = $displayData->getForm();
+}
+else
+{
+	$form = $displayData['form'];
+}
 
 $title = $form->getField('title') ? 'title' : ($form->getField('name') ? 'name' : '');
 

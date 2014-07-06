@@ -9,38 +9,82 @@
 
 defined('_JEXEC') or die;
 
+
 $app = JFactory::getApplication();
-$form = $displayData->getForm();
 $input = $app->input;
 $component = $input->getCmd('option', 'com_content');
+
 if ($component == 'com_categories')
 {
 	$extension	= $input->getCmd('extension', 'com_content');
 	$parts		= explode('.', $extension);
 	$component	= $parts[0];
 }
-$saveHistory = JComponentHelper::getParams($component)->get('save_history', 0);
 
-$fields = $displayData->get('fields') ?: array(
-	array('category', 'catid'),
-	array('parent', 'parent_id'),
-	'tags',
-	array('published', 'state', 'enabled'),
-	'featured',
-	'sticky',
-	'access',
-	'language',
-	'note',
-	'version_note'
-);
+// @deprecated  Injecting JViewLegacy directly into a JLayout is deprecated
+//              you should just insert the JForm, fields and hidden fields
+//              as part of an array of data
+if ($displayData instanceof JViewLegacy)
+{
+	$form = $displayData->getForm();
 
-$hiddenFields = $displayData->get('hidden_fields') ?: array();
+	$fields = $displayData->get('fields') ?: array(
+		array('category', 'catid'),
+		array('parent', 'parent_id'),
+		'tags',
+		array('published', 'state', 'enabled'),
+		'featured',
+		'sticky',
+		'access',
+		'language',
+		'note',
+		'version_note'
+	);
+
+	$hiddenFields = $displayData->get('hidden_fields') ?: array();
+}
+else
+{
+	$form = $displayData['form'];
+
+	if (!empty($displayData['fields']))
+	{
+		$fields = $displayData['fields'];
+	}
+	else
+	{
+		$fields = array(
+			array('category', 'catid'),
+			array('parent', 'parent_id'),
+			'tags',
+			array('published', 'state', 'enabled'),
+			'featured',
+			'sticky',
+			'access',
+			'language',
+			'note',
+			'version_note'
+		);
+	}
+
+	if (!empty($displayData['hidden_fields']))
+	{
+		$hiddenFields = $displayData['hidden_fields'];
+	}
+	else
+	{
+		$hiddenFields = array();
+	}
+}
 
 // Multilanguage check:
 /*if (!JLanguageMultilang::isEnabled())
 {
 	$hiddenFields[] = 'language';
 }*/
+
+$saveHistory = JComponentHelper::getParams($component)->get('save_history', 0);
+
 if (!$saveHistory)
 {
 	$hiddenFields[] = 'version_note';

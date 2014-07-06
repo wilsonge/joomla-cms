@@ -11,6 +11,11 @@ defined('_JEXEC') or die;
 
 require_once JPATH_COMPONENT . '/helpers/route.php';
 
+JLoader::registerPrefix('Contact', JPATH_ROOT . '/components/com_contact');
+
+JComponentDispatcher::getInstance('com_contact')->dispatch();
+/**
 $controller = JControllerLegacy::getInstance('Contact');
 $controller->execute(JFactory::getApplication()->input->get('task'));
 $controller->redirect();
+**/
