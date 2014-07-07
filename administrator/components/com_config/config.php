@@ -19,7 +19,6 @@ $app = JFactory::getApplication();
 $app->setHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT', true);
 
 // Load classes
-JLoader::registerPrefix('Config', JPATH_ROOT . '/components/com_config');
 JLoader::registerPrefix('Config', JPATH_ROOT . '/administrator/components/com_config');
 
 JComponentDispatcher::getInstance('com_config')->dispatch($app);

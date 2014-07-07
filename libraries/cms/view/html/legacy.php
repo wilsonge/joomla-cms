@@ -44,11 +44,11 @@ abstract class JViewHtmlLegacy extends JViewLegacy implements JView
 
 			if ($app->isAdmin())
 			{
-				$paths->insert(JPATH_ADMINISTRATOR . '/components/' . $componentFolder . '/view/' . $viewName . '/tmpl', 1);
+				$paths->insert(JPATH_ADMINISTRATOR . '/components/' . $component . '/view/' . $viewName . '/tmpl', 1);
 			}
 			else
 			{
-				$paths->insert(JPATH_BASE . '/components/' . $componentFolder . '/view/' . $viewName . '/tmpl', 1);
+				$paths->insert(JPATH_BASE . '/components/' . $component . '/view/' . $viewName . '/tmpl', 1);
 			}
 
 			$paths->insert(JPATH_THEMES . '/' . $app->getTemplate() . '/html/' . $component . '/' . $this->getName(), 2);

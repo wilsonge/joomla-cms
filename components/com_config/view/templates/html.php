@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_config
  * @since       3.2
  */
-class ConfigViewTemplatesHtml extends JViewHtmlCms
+class ConfigViewTemplatesHtml extends JViewHtmlLegacy
 {
 	/**
 	 * Method to render the view.
@@ -29,6 +29,9 @@ class ConfigViewTemplatesHtml extends JViewHtmlCms
 	{
 		$user = JFactory::getUser();
 		$this->userIsSuperAdmin = $user->authorise('core.admin');
+
+		$data = $this->getData();
+		$this->form = $data['form'];
 
 		return parent::render();
 	}

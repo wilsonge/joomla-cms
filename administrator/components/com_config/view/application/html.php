@@ -16,9 +16,17 @@ defined('_JEXEC') or die;
  * @subpackage  com_config
  * @since       3.2
  */
-class ConfigViewApplicationHtml extends JViewHtmlCms
+class ConfigViewApplicationHtml extends JViewHtmlLegacy
 {
 	protected $components;
+
+	protected $form;
+
+	protected $data;
+
+	protected $userIsSuperAdmin;
+
+	protected $ftp;
 
 	/**
 	 * Method to display the view.
@@ -44,6 +52,14 @@ class ConfigViewApplicationHtml extends JViewHtmlCms
 		// Set the components that have a config. This is also used in the getData() function
 		$this->components = ConfigHelperConfig::getComponentsWithConfig();
 		ConfigHelperConfig::loadLanguageForComponents($this->components);
+
+		// Set the data variables
+		$data = $this->getData();
+
+		$this->form = $data['form'];
+		$this->data = $data['data'];
+		$this->userIsSuperAdmin = $data['userIsSuperAdmin'];
+		$this->ftp = $data['ftp'];	
 
 		$this->addToolbar();
 

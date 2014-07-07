@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_config
  * @since       3.2
  */
-class ConfigViewComponentHtml extends ConfigViewCmsHtml
+class ConfigViewComponentHtml extends JViewHtmlLegacy
 {
 	public $state;
 
@@ -39,8 +39,8 @@ class ConfigViewComponentHtml extends ConfigViewCmsHtml
 
 		try
 		{
-			$form = $this->model->getForm();
-			$component = $this->model->getComponent();
+			$form = $this->getModel()->getForm();
+			$component = $this->getModel()->getComponent();
 			$user = JFactory::getUser();
 		}
 		catch (Exception $e)

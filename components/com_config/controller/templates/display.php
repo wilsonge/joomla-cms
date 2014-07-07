@@ -26,18 +26,43 @@ class ConfigControllerTemplatesDisplay extends JControllerDisplay
 	 */
 	public $permission = 'core.admin';
 
-	/*
-	 * Allows the renderer class to be injected into the model to be set
+	/**
+	 * Method to get a view, initiating it if it does not already exist.
+	 * This method assumes auto-loading format is $prefix . 'View' . $name . $type
+	 * The
 	 *
-	 * @return  RendererInterface  The renderer object
+	 * @param   JModelCmsInterface  $model   The model to be injected
+	 * @param   string              $prefix  Option prefix exp. com_content
+	 * @param   string              $name    Name of the view folder exp. articles
+	 * @param   string              $type    Name of the file exp. html = html.php
+	 * @param   array               $config  An array of config options
 	 *
-	 * @since   3.4
+	 * @throws  RuntimeException
+	 * @return  JViewCms
 	 */
-	protected function getRenderer()
+	protected function getView(JModelCmsInterface $model, $prefix = null, $name = null, $type = null, $config = array())
 	{
-		// Set the renderer
-		$renderer = new JRendererLegacy(null, $this->app);
+		$viewFormat = $this->doc->getType();
 
-		return $renderer;
+		// Initialise the paths for the views.
+		$paths = new SplPriorityQueue;
+		$paths->insert(JPATH_ADMINISTRATOR . '/components/' . $this->config['option'] . '/view/' . $this->viewName . '/tmpl', 1);
+
+		$viewClass  = 'ConfigView' . ucfirst($this->viewName) . ucfirst($viewFormat);
+		$view = new $viewClass($model, $paths);
+
+		// If in html view then we set the layout
+		if ($viewFormat == 'html')
+		{
+			$layoutName   = $this->input->getWord('layout', 'default');
+			$view->setLayout($layoutName);
+		}
+
+		// Push document object into the view.
+		$view->document = $this->doc;
+
+		$this->view = $view;
+
+		return $this->view;
 	}
 }
