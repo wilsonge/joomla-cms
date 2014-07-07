@@ -18,7 +18,7 @@ require_once JPATH_COMPONENT . '/models/category.php';
  * @subpackage  com_contact
  * @since       1.5
  */
-class ContactViewContactHtml extends JViewHtmlCms
+class ContactViewContactHtml extends JViewHtmlLegacy
 {
 	protected $state;
 

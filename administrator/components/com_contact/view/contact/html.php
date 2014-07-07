@@ -16,8 +16,31 @@ defined('_JEXEC') or die;
  * @subpackage  com_contact
  * @since       1.6
  */
-class ContactViewContactHtml extends JViewHtmlCms
+class ContactViewContactHtml extends JViewHtmlLegacy
 {
+	protected $state;
+
+	protected $item;
+
+	protected $form;
+
+	/**
+	 * Display the view
+	 *
+	 * @return  void
+	 */
+	public function render()
+	{
+		$data = $this->getData();
+		$this->state = $data['state'];
+		$this->item  = $data['item'];
+		$this->form  = $data['form'];
+
+		$this->addToolbar();
+
+		return parent::render();
+	}
+
 	public function getData()
 	{
 		$data = parent::getData();

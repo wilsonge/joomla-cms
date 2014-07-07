@@ -18,24 +18,6 @@ defined('_JEXEC') or die;
  */
 class ContactControllerContactDisplay extends JControllerDisplay
 {
-	/*
-	 * Allows the renderer class to be injected into the model to be set
-	 *
-	 * @return  RendererInterface  The renderer object
-	 *
-	 * @since   3.4
-	 */
-	 /**
-	protected function getRenderer()
-	{
-		// Set the renderer
-		JLoader::register('ContactRendererContact', JPATH_ROOT . '/administrator/components/com_contact/renderer/contact.php');
-		$renderer = new ContactRendererContact($this->config);
-
-		return $renderer;
-	}
-	**/
-
 	/**
 	 * Method to get a view, initiating it if it does not already exist.
 	 * This method assumes auto-loading format is $prefix . 'View' . $name . $type
@@ -114,11 +96,11 @@ class ContactControllerContactDisplay extends JControllerDisplay
 
 			if ($this->app->isAdmin())
 			{
-				$paths->insert(JPATH_ADMINISTRATOR . '/components/' . $componentFolder . '/view/' . $viewName . '/tmpl', 1);
+				$paths->insert(JPATH_ADMINISTRATOR . '/components/' . $this->config['option'] . '/view/' . $this->viewName . '/tmpl', 1);
 			}
 			else
 			{
-				$paths->insert(JPATH_BASE . '/components/' . $componentFolder . '/view/' . $viewName . '/tmpl', 1);
+				$paths->insert(JPATH_BASE . '/components/' . $this->config['option'] . '/view/' . $this->viewName . '/tmpl', 1);
 			}
 
 			$view = new $class($model, $paths);

@@ -16,13 +16,15 @@ defined('_JEXEC') or die;
  * @subpackage  com_contact
  * @since       1.6
  */
-class ContactViewContactsHtml extends JViewHtmlCms
+class ContactViewContactsHtml extends JViewHtmlLegacy
 {
 	protected $items;
 
 	protected $pagination;
 
 	protected $state;
+
+	protected $sidebar;
 
 	/**
 	 * Display the view
@@ -31,12 +33,15 @@ class ContactViewContactsHtml extends JViewHtmlCms
 	 */
 	public function render()
 	{
-		$model = $this->getModel();
-		$this->items		= $model->getItems();
-		$this->pagination	= $model->getPagination();
-		$this->state		= $model->getState();
+		$data  = $this->getData();
+		$this->items      = $data['items'];
+		$this->pagination = $data['pagination'];
+		$this->state      = $data['state'];
 
 		ContactHelper::addSubmenu('contacts');
+
+		$this->addToolbar();
+		$this->sidebar    = JHtmlSidebar::render();
 
 		// Preprocess the list of items to find ordering divisions.
 		// TODO: Complete the ordering stuff with nested sets
@@ -46,15 +51,7 @@ class ContactViewContactsHtml extends JViewHtmlCms
 			$item->order_dn = true;
 		}
 
-		return parent::render();
-	}
-
-	public function getData()
-	{
-		$data = parent::getData();
-		$data['sidebar'] = JHtmlSidebar::render();
-
-		return $data;
+		return parent::render(null);
 	}
 
 	/**
