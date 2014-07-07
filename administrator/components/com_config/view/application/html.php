@@ -16,13 +16,9 @@ defined('_JEXEC') or die;
  * @subpackage  com_config
  * @since       3.2
  */
-class ConfigViewApplicationHtml extends ConfigViewCmsHtml
+class ConfigViewApplicationHtml extends JViewHtmlCms
 {
-	public $state;
-
-	public $form;
-
-	public $data;
+	protected $components;
 
 	/**
 	 * Method to display the view.
@@ -33,47 +29,21 @@ class ConfigViewApplicationHtml extends ConfigViewCmsHtml
 	 */
 	public function render()
 	{
-		$form = null;
-		$data = null;
-
-		try
-		{
-			// Load Form and Data
-			$form = $this->model->getForm();
-			$data = $this->model->getData();
-			$user = JFactory::getUser();
-		}
-		catch (Exception $e)
-		{
-			JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
-
-			return false;
-		}
-
-		// Bind data
-		if ($form && $data)
-		{
-			$form->bind($data);
-		}
+		// @todo don't think these params are being used
+		/**
 		// Get the params for com_users.
 		$usersParams = JComponentHelper::getParams('com_users');
 
 		// Get the params for com_media.
 		$mediaParams = JComponentHelper::getParams('com_media');
 
-		// Load settings for the FTP layer.
-		$ftp = JClientHelper::setCredentialsFromRequest('ftp');
-
-		$this->form = &$form;
-		$this->data = &$data;
-		$this->ftp = &$ftp;
 		$this->usersParams = &$usersParams;
 		$this->mediaParams = &$mediaParams;
+		**/
 
+		// Set the components that have a config. This is also used in the getData() function
 		$this->components = ConfigHelperConfig::getComponentsWithConfig();
 		ConfigHelperConfig::loadLanguageForComponents($this->components);
-
-		$this->userIsSuperAdmin = $user->authorise('core.admin');
 
 		$this->addToolbar();
 
@@ -96,5 +66,49 @@ class ConfigViewApplicationHtml extends ConfigViewCmsHtml
 		JToolbarHelper::cancel('config.cancel.application');
 		JToolbarHelper::divider();
 		JToolbarHelper::help('JHELP_SITE_GLOBAL_CONFIGURATION');
+	}
+
+	/**
+	 * Sets the data to be given to the renderer
+	 *
+	 * @return  array
+	 *
+	 * @since   3.4
+	 */
+	public function getData()
+	{
+		$model = $this->getModel();
+
+		try
+		{
+			// Load Form and Data
+			$user = JFactory::getUser();
+			$form = $model->getForm();
+			$data = $model->getData();
+		}
+		catch (Exception $e)
+		{
+			JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+
+			return false;
+		}
+
+		// Load settings for the FTP layer.
+		$ftp = JClientHelper::setCredentialsFromRequest('ftp');
+
+		if (!isset($this->components))
+		{
+			$this->components = ConfigHelperConfig::getComponentsWithConfig();
+		}
+
+		$data = array(
+			'form' => $form,
+			'data' => $data,
+			'userIsSuperAdmin' => $user->authorise('core.admin'),
+			'ftp' => $ftp,
+			'components' => $this->components,
+		);
+
+		return $data;
 	}
 }

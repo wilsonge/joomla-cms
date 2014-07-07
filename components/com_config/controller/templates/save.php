@@ -29,15 +29,19 @@ class ConfigControllerTemplatesSave extends JControllerUpdate
 		// Check for request forgeries.
 		if (!JSession::checkToken())
 		{
-			$this->setRedirect('index.php', JText::_('JINVALID_TOKEN'));
+			$this->app->enqueueMessage(JText::_('JINVALID_TOKEN'));
+			$this->setRedirect('index.php');
+
+			return false;
 		}
 
 		// Check if the user is authorized to do this.
 		if (!JFactory::getUser()->authorise('core.admin'))
 		{
-			$this->setRedirect('index.php', JText::_('JERROR_ALERTNOAUTHOR'));
+			$this->app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'));
+			$this->setRedirect('index.php');
 
-			return;
+			return false;
 		}
 
 		// Set FTP credentials, if given.

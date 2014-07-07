@@ -16,12 +16,8 @@ defined('_JEXEC') or die;
  * @subpackage  com_config
  * @since       3.2
  */
-class ConfigViewConfigHtml extends ConfigViewCmsHtml
+class ConfigViewConfigHtml extends JViewHtmlCms
 {
-	public $form;
-
-	public $data;
-
 	/**
 	 * Method to render the view.
 	 *
@@ -35,5 +31,22 @@ class ConfigViewConfigHtml extends ConfigViewCmsHtml
 		$this->userIsSuperAdmin = $user->authorise('core.admin');
 
 		return parent::render();
+	}
+
+	/**
+	 * Sets the data to be given to the renderer
+	 *
+	 * @return  array
+	 *
+	 * @since   3.4
+	 */
+	public function getData()
+	{
+		$model = $this->getModel();
+		$data = array(
+			'form' => $model->getForm(),
+		);
+
+		return $data;
 	}
 }

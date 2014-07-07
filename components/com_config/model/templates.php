@@ -70,13 +70,9 @@ class ConfigModelTemplates extends JModelCmsform
 	 */
 	protected function populateState()
 	{
-		$state = $this->loadState();
-
 		// Load the parameters.
 		$params	= JComponentHelper::getParams('com_templates');
-		$state->set('params', $params);
-
-		$this->setState($state);
+		$this->state->set('params', $params);
 	}
 
 	/**
