@@ -9,7 +9,14 @@
 
 defined('_JEXEC') or die;
 
-$form = $displayData->getForm();
+if ($displayData instanceof JViewLegacy)
+{
+	$form = $displayData->getForm();
+}
+else
+{
+	$form = $displayData['form'];
+}
 
 // JLayout for standard handling of metadata fields in the administrator content edit screens.
 $fieldSets = $form->getFieldsets('metadata');
