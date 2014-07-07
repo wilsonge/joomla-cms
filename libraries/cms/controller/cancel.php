@@ -47,6 +47,8 @@ class JControllerCancel extends JControllerCms
 			$redirectUrl .= '&view=' . $this->options[parent::CONTROLLER_VIEW_FOLDER];
 		}
 
+		$this->viewName = $this->input->get('view');
+
 		try
 		{
 			$model = $this->getModel();
@@ -56,13 +58,11 @@ class JControllerCancel extends JControllerCms
 			throw new RuntimeException($e->getMessage(), $e->getCode());
 		}
 
-		$keyName = $model->getKeyName();
-
-		$input = $this->input;
-		$pk    = $input->getInt($keyName, 0);
+		$keyName = $model->getTable()->getKeyName();
+		$pk    = $this->input->getInt($keyName, 0);
 
 		// If we are cancelling an item that already exists then we should
-		// check if back in.
+		// check it back in.
 		if ($pk != 0)
 		{
 			try
@@ -79,8 +79,8 @@ class JControllerCancel extends JControllerCms
 		}
 
 		// Clear the form state
-		$key = $model->getContext() . '.jform.data';
-		$this->setUserState($key, null);
+		$context = $this->config['option'] . '.edit.' . $this->viewName;
+		$this->setUserState($context . '.data', null);
 
 		// By default cancel goes to the default component view.
 		$this->setRedirect(JRoute::_('index.php?option=' . $redirectUrl, false));

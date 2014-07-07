@@ -62,7 +62,15 @@ class JModelCmsitem extends JModelCmsactions implements JModelItemInterface
 			return $this->item;
 		}
 
-		$table = $this->getTable();
+		try
+		{
+			$table = $this->getTable();
+		}
+		catch (Exception $e)
+		{
+			throw new RuntimeException($e->getMessage(), $e->getCode());
+		}
+
 		$tableClassName = get_class($table);
 
 		$this->item = false;
@@ -76,7 +84,6 @@ class JModelCmsitem extends JModelCmsactions implements JModelItemInterface
 		{
 			$table->load($id);
 			$type = $contentType->getType($table->core_type_id);
-
 		}
 		elseif (empty($id))
 		{
@@ -107,6 +114,16 @@ class JModelCmsitem extends JModelCmsactions implements JModelItemInterface
 			}
 		}
 
+		// Get the id if we haven't been specified it
+		if (!$id)
+		{
+			$type = $this->name;
+
+			// Explicitely call get state to ensure the state is populated
+			$state = $this->getState();
+			$id = $state->get($type . '.id');
+		}
+
 		// Attempt to load the row.
 		if (!$table->load($id))
 		{
@@ -117,13 +134,15 @@ class JModelCmsitem extends JModelCmsactions implements JModelItemInterface
 		$properties = $table->getProperties(1);
 		$this->item = JArrayHelper::toObject($properties);
 
+		$this->observers->update('onAfterGetItem', array(&$this, &$this->item));
+
 		return $this->item;
 	}
 
 	/**
-	 * Method to increment the hit counter for the weblink
+	 * Method to increment the hit counter for the item
 	 *
-	 * @param   integer  $id  Optional ID of the weblink.
+	 * @param   integer  $id  Optional ID of the item.
 	 *
 	 * @return  boolean  True on success
 	 *
@@ -134,12 +153,19 @@ class JModelCmsitem extends JModelCmsactions implements JModelItemInterface
 		if (empty($id))
 		{
 			$type = $this->name;
-			$id = $this->getState($type . 'id');
+			$id = $this->state->get($type . '.id');
 		}
 
 		$table = $this->getTable();
+		$table->load($id);
 
-		return $table->hit($id);
+		$this->observers->update('onBeforeHit', array(&$this));
+
+		$result = $table->hit($id);
+
+		$this->observers->update('onAfterHit', array(&$this));
+
+		return $result;
 	}
 
 	/**

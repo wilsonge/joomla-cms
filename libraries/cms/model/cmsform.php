@@ -78,10 +78,7 @@ abstract class JModelCmsform extends JModelCmsitem implements JModelFormInterfac
 			return $this->forms[$hash];
 		}
 
-		// Get the form.
-		// Register the paths for the form -- failing here
-		JForm::addFormPath(JPATH_COMPONENT . '/models/forms');
-		JForm::addFieldPath(JPATH_COMPONENT . '/models/fields');
+		// Solution until JForm supports splqueue
 		JForm::addFormPath(JPATH_COMPONENT . '/model/form');
 		JForm::addFieldPath(JPATH_COMPONENT . '/model/field');
 

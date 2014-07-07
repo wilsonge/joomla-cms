@@ -16,7 +16,7 @@ use Joomla\Renderer\RendererInterface;
  * @subpackage  View
  * @since       3.4
  */
-abstract class JViewHtmlCms extends JViewCms
+class JViewHtmlCms extends JViewCms
 {
 	/**
 	 * The renderer object
@@ -51,6 +51,16 @@ abstract class JViewHtmlCms extends JViewCms
 		$this->setRenderer($renderer);
 
 		parent::__construct($model, $config);
+	}
+
+	/**
+	 * Add the page title and toolbar. Components should override
+	 * this method as necessary
+	 *
+	 * @since   3.4
+	 */
+	protected function addToolbar()
+	{
 	}
 
 	/**
@@ -111,6 +121,9 @@ abstract class JViewHtmlCms extends JViewCms
 	 */
 	public function render()
 	{
+		// Add toolbar items as necessary
+		$this->addToolbar();
+
 		return $this->getRenderer()->render($this->getLayout(), $this->getData());
 	}
 
