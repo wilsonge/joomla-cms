@@ -66,6 +66,42 @@ abstract class JViewHtmlLegacy extends JViewLegacy implements JView
 	}
 
 	/**
+	 * Retrieves the data array from the default model. Will
+	 * automatically deal with the 3 CMS interfaces for single
+	 * model items. For any other situations the method will
+	 * need to be overwritten
+	 *
+	 * @return  array
+	 *
+	 * @since   3.4
+	 */
+	public function getData()
+	{
+		$model = $this->getModel();
+		$data = array(
+			'state' => $model->getState(),
+		);
+
+		if ($model instanceof JModelFormInterface)
+		{
+			$data['form'] = $model->getForm();
+			$data['item'] = $model->getItem();
+		}
+		elseif ($model instanceof JModelItemInterface)
+		{
+			$data['item'] = $model->getItem();
+		}
+		elseif ($model instanceof JModelListInterface)
+		{
+			$data['items'] = $model->getItems();
+			$data['pagination'] = $model->getPagination();
+		}
+
+		// Else just return the state
+		return $data;
+	}
+
+	/**
 	 * Load a template file -- first look in the templates folder for an override
 	 *
 	 * @param   string  $tpl  The name of the template source file; automatically searches the template paths and compiles as needed.
