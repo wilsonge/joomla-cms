@@ -35,6 +35,14 @@ class JModelCmslist extends JModelCmsactions implements JModelListInterface
 	protected $filter_fields = array();
 
 	/**
+	 * List of filter classes.
+	 *
+	 * @var    array
+	 * @since  3.4
+	 */
+	protected $filters = array();
+
+	/**
 	 * An internal cache for the last query used.
 	 *
 	 * @var    JDatabaseQuery
@@ -62,12 +70,32 @@ class JModelCmslist extends JModelCmsactions implements JModelListInterface
 	 */
 	public function __construct(array $config, JDatabaseDriver $db = null, JEventDispatcher $dispatcher = null)
 	{
-		parent::__construct($db, $dispatcher, $config);
+		parent::__construct($config, $db, $dispatcher);
 
 		// Add the ordering filtering fields white list.
 		if (isset($config['filter_fields']))
 		{
 			$this->filter_fields = $config['filter_fields'];
+		}
+
+		$this->addFilters();
+	}
+
+	public function addFilters()
+	{
+		if (empty($this->filters))
+		{
+			return;
+		}
+
+		foreach ($this->filters as $filter)
+		{
+			$class = 'JModelObserverFilter' . ucfirst(strtolower($filter));
+
+			if (class_exists($class))
+			{
+				$class::createObserver($this);
+			}
 		}
 	}
 
@@ -299,7 +327,7 @@ class JModelCmslist extends JModelCmsactions implements JModelListInterface
 		{
 			$app = JFactory::getApplication();
 
-			$value = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'uint');
+			$value = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->get('list_limit'), 'uint');
 			$limit = $value;
 			$this->state->set('list.limit', $limit);
 
@@ -418,15 +446,15 @@ class JModelCmslist extends JModelCmsactions implements JModelListInterface
 			$query = clone $query;
 			$query->clear('select')->clear('order')->select('COUNT(*)');
 
-			$this->_db->setQuery($query);
-			return (int) $this->_db->loadResult();
+			$this->db->setQuery($query);
+			return (int) $this->db->loadResult();
 		}
 
 		// Otherwise fall back to inefficient way of counting all results.
-		$this->_db->setQuery($query);
-		$this->_db->execute();
+		$this->db->setQuery($query);
+		$this->db->execute();
 
-		return (int) $this->_db->getNumRows();
+		return (int) $this->db->getNumRows();
 	}
 
 	/**
@@ -447,7 +475,7 @@ class JModelCmslist extends JModelCmsactions implements JModelListInterface
 
 		if (empty($pks))
 		{
-			$pks = array((int) $this->getState($this->getName() . '.id'));
+			$pks = array((int) $this->state->get($this->getName() . '.id'));
 		}
 
 		// Check in all items.
@@ -476,70 +504,6 @@ class JModelCmslist extends JModelCmsactions implements JModelListInterface
 		}
 
 		return $count;
-	}
-
-	/**
-	 * Method to change the published state of one or more records.
-	 *
-	 * @param   array    &$pks   A list of the primary keys to change.
-	 * @param   integer  $value  The value of the published state.
-	 *
-	 * @return  boolean  True on success.
-	 *
-	 * @since   3.4
-	 * @throws  RuntimeException
-	 */
-	public function publish(&$pks, $value = 1)
-	{
-		$user = JFactory::getUser();
-		$table = $this->getTable();
-		$pks = (array) $pks;
-
-		// Include the content plugins for the change of state event.
-		JPluginHelper::importPlugin('content');
-
-		// Access checks.
-		foreach ($pks as $i => $pk)
-		{
-			$table->reset();
-
-			if ($table->load($pk) && !$this->canEditState($table))
-			{
-				// Prune items that you can't change.
-				unset($pks[$i]);
-				JLog::add(JText::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'), JLog::WARNING, 'jerror');
-
-				return false;
-			}
-		}
-
-		// Attempt to change the state of the records.
-		if (!$table->publish($pks, $value, $user->get('id')))
-		{
-			throw new RuntimeException($table->getError());
-		}
-
-		// If the dispatcher throws an exception abort here
-		try
-		{
-			// Trigger the onContentChangeState event.
-			$result = $this->dispatcher->trigger($this->event_change_state, array($this->contentType, $pks, $value));
-
-			if (in_array(false, $result, true))
-			{
-				// Handle if the plugin is still using JError to set errors
-				throw new RuntimeException($this->dispatcher->getError());
-			}
-		}
-		catch (Exception $e)
-		{
-			throw new RuntimeException($e->getMessage());
-		}
-
-		// Clear the component's cache
-		$this->cleanCache();
-
-		return true;
 	}
 
 	/**

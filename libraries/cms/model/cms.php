@@ -18,7 +18,7 @@ defined('JPATH_PLATFORM') or die;
  * @subpackage  Model
  * @since       3.4
  */
-abstract class JModelCms extends JModelDatabase implements JModelCmsInterface
+abstract class JModelCms extends JModelDatabase implements JObservableInterface, JModelCmsInterface
 {
 	/**
 	 * The model (base) name
@@ -93,6 +93,14 @@ abstract class JModelCms extends JModelDatabase implements JModelCmsInterface
 	protected $event_clean_cache = 'onContentCleanCache';
 
 	/**
+	 * Generic observers for this JModel
+	 *
+	 * @var    JObserverUpdater
+	 * @since  3.4
+	 */
+	protected $observers;
+
+	/**
 	 * Constructor
 	 *
 	 * @param   array             $config      An array of configuration options. Must have model
@@ -165,6 +173,42 @@ abstract class JModelCms extends JModelDatabase implements JModelCmsInterface
 		}
 
 		parent::__construct($state, $db);
+
+		// Implement JObservableInterface:
+		// Create observer updater and attaches all observers interested by $this class:
+		$this->observers = new JObserverUpdater($this);
+		JObserverMapper::attachAllObservers($this);
+	}
+
+	/**
+	 * Implement JObservableInterface:
+	 * Adds an observer to this instance.
+	 * This method will be called fron the constructor of classes implementing JObserverInterface
+	 * which is instanciated by the constructor of $this with JObserverMapper::attachAllObservers($this)
+	 *
+	 * @param   JObserverInterface|JModelObserver  $observer  The observer object
+	 *
+	 * @return  void
+	 *
+	 * @since   3.4
+	 */
+	public function attachObserver(JObserverInterface $observer)
+	{
+		$this->observers->attachObserver($observer);
+	}
+
+	/**
+	 * Gets the instance of the observer of class $observerClass
+	 *
+	 * @param   string  $observerClass  The observer class-name to return the object of
+	 *
+	 * @return  JModelObserver|null
+	 *
+	 * @since   3.4
+	 */
+	public function getObserverOfClass($observerClass)
+	{
+		return $this->observers->getObserverOfClass($observerClass);
 	}
 
 	/**
@@ -288,7 +332,7 @@ abstract class JModelCms extends JModelDatabase implements JModelCmsInterface
 
 		if (!$prefix)
 		{
-			$prefix = $this->option . 'Table';
+			$prefix = ucfirst(substr($this->option, 4)) . 'Table';
 		}
 
 		// Make sure we are giving a JDatabaseDriver object to the table

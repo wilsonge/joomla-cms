@@ -172,7 +172,7 @@ abstract class JModelCmsactions extends JModelCms
 	public function checkin($pk = null)
 	{
 		// Only attempt to check the row in if it exists.
-		if ($pk)
+		if (!$pk)
 		{
 			throw new RuntimeException(JText::_('JLIB_APPLICATION_ERROR_CHECKIN_NO_KEY'));
 		}
@@ -218,7 +218,7 @@ abstract class JModelCmsactions extends JModelCms
 	public function checkout($pk = null)
 	{
 		// Only attempt to check the row in if it exists.
-		if ($pk)
+		if (!$pk)
 		{
 			throw new RuntimeException(JText::_('JLIB_APPLICATION_ERROR_CHECKOUT_NO_KEY'));
 		}
@@ -266,6 +266,9 @@ abstract class JModelCmsactions extends JModelCms
 		}
 
 		$table = $this->getTable();
+
+		$this->observers->update('onBeforeDelete', array(&$this));
+
 		$tableName = $table->getTableName();
 		$key = $table->getKeyName();
 		$db = $this->getDb();
@@ -296,6 +299,9 @@ abstract class JModelCmsactions extends JModelCms
 
 		if ($result && $db->getAffectedRows())
 		{
+			// On after delete only gets called when the delete is successful
+			$this->observers->update('onAfterDelete', array(&$this));
+
 			// Successful result. Return the number of rows affected
 			return $db->getAffectedRows();
 		}
@@ -314,12 +320,12 @@ abstract class JModelCmsactions extends JModelCms
 	 *
 	 * @param   array  $data  The form data.
 	 *
-	 * @return  boolean  True on success, False on error.
+	 * @return  void
 	 *
 	 * @since   3.4
 	 * @throws  RuntimeException
 	 */
-	public function save(&$data)
+	public function save($data)
 	{
 		$table = $this->getTable();
 
@@ -329,7 +335,7 @@ abstract class JModelCmsactions extends JModelCms
 		}
 
 		$key = $table->getKeyName();
-		$pk = (!empty($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
+		$pk = (!empty($data[$key])) ? $data[$key] : (int) $this->state->get($this->getName() . '.id');
 		$isNew = true;
 
 		// Include the content plugins for the on save events.
@@ -349,7 +355,7 @@ abstract class JModelCmsactions extends JModelCms
 		}
 
 		// Prepare the row for saving
-		$table = $this->prepareTable($table);
+		$this->prepareTable($table);
 
 		// Check the data.
 		if (!$table->check())
@@ -360,6 +366,9 @@ abstract class JModelCmsactions extends JModelCms
 		// If the dispatcher throws an exception abort here
 		try
 		{
+			// This is a new feature as of 3.4 and thus on error should always throw an exception
+			$this->observers->update('onBeforeSave', array(&$this, &$query));
+
 			// Trigger the onContentBeforeSave event.
 			$result = $this->dispatcher->trigger($this->event_before_save, array($this->option . '.' . $this->name, $table, $isNew));
 
@@ -383,8 +392,82 @@ abstract class JModelCmsactions extends JModelCms
 		// Clean the cache.
 		$this->cleanCache();
 
+		$this->observers->update('onAfterSave', array(&$this));
+
 		// Trigger the onContentAfterSave event.
 		$this->dispatcher->trigger($this->event_after_save, array($this->option . '.' . $this->name, $table, $isNew));
+
+		// Set the id into the state. This allows the correct redirect id for new items 
+		if (isset($table->$key))
+		{
+			$this->state->set($this->getName() . '.id', $table->$key);
+		}
+	}
+
+	/**
+	 * Method to change the published state of one or more records.
+	 *
+	 * @param   array    &$pks   A list of the primary keys to change.
+	 * @param   integer  $value  The value of the published state.
+	 *
+	 * @return  boolean  True on success.
+	 *
+	 * @since   3.4
+	 * @throws  RuntimeException
+	 */
+	public function publish(&$pks, $value = 1)
+	{
+		$user = JFactory::getUser();
+		$table = $this->getTable();
+		$pks = (array) $pks;
+
+		// Include the content plugins for the change of state event.
+		JPluginHelper::importPlugin('content');
+
+		// Access checks.
+		foreach ($pks as $i => $pk)
+		{
+			$table->reset();
+
+			if ($table->load($pk) && !$this->canEditState($table))
+			{
+				// Prune items that you can't change.
+				unset($pks[$i]);
+				JLog::add(JText::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'), JLog::WARNING, 'jerror');
+
+				return false;
+			}
+		}
+
+		$this->observers->update('onBeforePublish', array(&$this));
+
+		// Attempt to change the state of the records.
+		if (!$table->publish($pks, $value, $user->get('id')))
+		{
+			throw new RuntimeException($table->getError());
+		}
+
+		$this->observers->update('onAfterPublish', array(&$this));
+
+		// If the dispatcher throws an exception abort here
+		try
+		{
+			// Trigger the onContentChangeState event.
+			$result = $this->dispatcher->trigger($this->event_change_state, array($this->contentType, $pks, $value));
+
+			if (in_array(false, $result, true))
+			{
+				// Handle if the plugin is still using JError to set errors
+				throw new RuntimeException($this->dispatcher->getError());
+			}
+		}
+		catch (Exception $e)
+		{
+			throw new RuntimeException($e->getMessage());
+		}
+
+		// Clear the component's cache
+		$this->cleanCache();
 
 		return true;
 	}
@@ -394,7 +477,7 @@ abstract class JModelCmsactions extends JModelCms
 	 *
 	 * @param   JTableInterface  $table  A reference to a JTable object.
 	 *
-	 * @return  JTableInterface
+	 * @return  void
 	 *
 	 * @since   3.4
 	 */

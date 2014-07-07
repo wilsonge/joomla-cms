@@ -114,6 +114,14 @@ class JControllerCms extends JControllerBase implements JControllerCmsInterface
 	protected $viewName;
 
 	/**
+	 * The Cms factory instance.
+	 *
+	 * @var    string
+	 * @since  3.4
+	 */
+	protected $factory;
+
+	/**
 	 * Constructor
 	 *
 	 * @param   JInput           $input   The input object.
@@ -123,10 +131,11 @@ class JControllerCms extends JControllerBase implements JControllerCmsInterface
 	 *
 	 * @since   3.4
 	 */
-	public function __construct(JInput $input = null, JApplicationCms $app = null, array $config, JDocument $doc = null)
+	public function __construct(JInput $input = null, JApplicationCms $app = null, array $config = array(), JDocument $doc = null)
 	{
 		$this->config = $config;
 		$this->doc = $doc ? $doc : JFactory::getDocument();
+		$this->factory = new JControllerFactoryCms;
 
 		parent::__construct($input, $app);
 
@@ -149,7 +158,7 @@ class JControllerCms extends JControllerBase implements JControllerCmsInterface
 	public function execute()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or jexit(JText::_('JInvalid_Token'));
+		$this->factory->checkSession();
 
 		$this->componentFolder = $this->input->getWord('option', 'com_content');
 		$this->viewName     = $this->input->getWord('view', 'articles');
@@ -273,7 +282,7 @@ class JControllerCms extends JControllerBase implements JControllerCmsInterface
 			}
 			else
 			{
-				$name = $this->config['view'];
+				$name = $this->viewName;
 			}
 		}
 
