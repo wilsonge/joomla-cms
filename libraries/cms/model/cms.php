@@ -60,6 +60,14 @@ abstract class JModelCms extends JModelDatabase implements JModelCmsInterface
 	protected $dispatcher = null;
 
 	/**
+	 * The component name.
+	 *
+	 * @var    string
+	 * @since  3.4
+	 */
+	protected $option = null;
+
+	/**
 	 * Public constructor
 	 *
 	 * @param  JRegistry         $state       The state for the model
@@ -82,7 +90,7 @@ abstract class JModelCms extends JModelDatabase implements JModelCmsInterface
 		}
 		else
 		{
-			$state = new JRegistry;
+			$state = $this->loadState();
 		}
 
 		// If we don't have a db param see if one got set in the config for legacy purposes
@@ -100,6 +108,8 @@ abstract class JModelCms extends JModelDatabase implements JModelCmsInterface
 		{
 			$this->ignoreRequest = true;
 		}
+
+		$this->option = $config['option'];
 
 		// Guess the JText message prefix. Defaults to the option.
 		if (isset($config['text_prefix']))
@@ -260,5 +270,34 @@ abstract class JModelCms extends JModelDatabase implements JModelCmsInterface
 
 		// Trigger the onContentCleanCache event.
 		$this->dispatcher->trigger('onContentCleanCache', $options);
+	}
+
+	/**
+	 * Method to get the model name
+	 *
+	 * The model name. By default parsed using the classname or it can be set
+	 * by passing a $config['name'] in the class constructor
+	 *
+	 * @return  string  The name of the model
+	 *
+	 * @since   12.2
+	 * @throws  RuntimeException
+	 */
+	public function getName()
+	{
+		if (empty($this->name))
+		{
+			$className = get_class($this);
+			$modelpos = strpos($className, 'Model');
+
+			if ($modelpos === false)
+			{
+				throw new RuntimeException(JText::_('JLIB_APPLICATION_ERROR_MODEL_GET_NAME'), 500);
+			}
+
+			$this->name = strtolower(substr($className, $modelpos + 5));
+		}
+
+		return $this->name;
 	}
 }

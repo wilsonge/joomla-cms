@@ -34,7 +34,16 @@ abstract class JModelCollection extends JModelRecord
 	 */
 	protected $searchFields = array();
 
-
+	/**
+	 * Public constructor
+	 *
+	 * @param  JRegistry         $state       The state for the model
+	 * @param  JDatabaseDriver   $db          The database object
+	 * @param  JEventDispatcher  $dispatcher  The dispatcher object
+	 * @param  array             $config      Array of config variables
+	 *
+	 * @since  3.4
+	 */
 	public function __construct(JRegistry $state = null, JDatabaseDriver $db = null, JEventDispatcher $dispatcher = null, $config = array())
 	{
 		parent::__construct($state, $db, $dispatcher, $config);
@@ -79,10 +88,10 @@ abstract class JModelCollection extends JModelRecord
 	/**
 	 * Method to add field to filterField and/or to searchFields arrays
 	 *
-	 * @param string $name        name of the filter I.E. "title"
-	 * @param string $dataKeyName name of the database key I.E. "a.title"
-	 * @param bool   $sortable    true to add to the filterFields array
-	 * @param bool   $searchable  true to add to the searchFields array
+	 * @param   string  $name         Name of the filter I.E. "title"
+	 * @param   string  $dataKeyName  Name of the database key I.E. "a.title"
+	 * @param   bool    $sortable     True to add to the filterFields array
+	 * @param   bool    $searchable   True to add to the searchFields array
 	 *
 	 * @return  JModelCollection  $this to allow for chaining
 	 * @since   3.4
@@ -200,10 +209,10 @@ abstract class JModelCollection extends JModelRecord
 
 	/**
 	 * Method to add a left join to the user table for record editor.
-	 * @param JDatabaseQuery $query
-	 * @param string         $rootPrefix
+	 * @param   JDatabaseQuery  $query       The query object
+	 * @param   string          $rootPrefix  The root prefix
 	 *
-	 * @return JDatabaseQuery
+	 * @return  JDatabaseQuery
 	 */
 	protected function addEditorQuery(JDatabaseQuery $query, $rootPrefix = 'a')
 	{
@@ -214,10 +223,10 @@ abstract class JModelCollection extends JModelRecord
 	}
 
 	/**
-	 * Method to add a left join to the viewlevels table for the assess title
+	 * Method to add a left join to the view levels table for the assess title
 	 *
-	 * @param JDatabaseQuery $query
-	 * @param string         $onField the prefixed field name to join on
+	 * @param   JDatabaseQuery  $query
+	 * @param   string          $onField the prefixed field name to join on
 	 *
 	 *
 	 * @return JDatabaseQuery
