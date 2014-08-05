@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_contact
  * @since       1.5
  */
-class ContactModelContact extends JModelCmsform
+class ContactModelContact extends JModelAdministrator
 {
 	/**
 	 * @since   1.6

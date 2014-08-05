@@ -18,7 +18,7 @@ JLoader::register('ContactHelper', JPATH_ADMINISTRATOR . '/components/com_contac
  * @subpackage  com_contact
  * @since       1.6
  */
-class ContactModelContact extends JModelCmsform
+class ContactModelContact extends JModelAdministrator
 {
 	/**
 	 * The type alias for this content type.

@@ -15,7 +15,7 @@ defined('_JEXEC') or die;
  * @package     Joomla.Administrator
  * @subpackage  com_contact
  */
-class ContactModelContacts extends JModelCmslist
+class ContactModelContacts extends JModelAdministrator
 {
 	/**
 	 * List of filter classes.
@@ -43,14 +43,16 @@ class ContactModelContacts extends JModelCmslist
 	}
 
 	/**
-	 * Constructor.
+	 * Public constructor
 	 *
-	 * @param   array  $config  An optional associative array of configuration settings.
+	 * @param  JRegistry         $state       The state for the model
+	 * @param  JDatabaseDriver   $db          The database object
+	 * @param  JEventDispatcher  $dispatcher  The dispatcher object
+	 * @param  array             $config      Array of config variables
 	 *
-	 * @see     JController
-	 * @since   1.6
+	 * @since  3.4
 	 */
-	public function __construct(array $config, JDatabaseDriver $db = null, JEventDispatcher $dispatcher = null)
+	public function __construct(JRegistry $state = null, JDatabaseDriver $db = null, JEventDispatcher $dispatcher = null, $config = array())
 	{
 		if (empty($config['filter_fields']))
 		{
@@ -82,7 +84,7 @@ class ContactModelContacts extends JModelCmslist
 			}
 		}
 
-		parent::__construct($config, $db, $dispatcher);
+		parent::__construct($state, $db, $dispatcher, $config);
 	}
 
 	/**

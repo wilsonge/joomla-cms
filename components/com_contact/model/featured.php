@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
  * @package     Joomla.Site
  * @subpackage  com_contact
  */
-class ContactModelFeatured extends JModelCmslist
+class ContactModelFeatured extends JModelAdministrator
 {
 	/**
 	 * Category items data
