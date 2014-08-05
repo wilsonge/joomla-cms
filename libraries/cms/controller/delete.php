@@ -59,9 +59,6 @@ class JControllerDelete extends JControllerCms
 			return false;
 		}
 
-		// Get the model.
-		$viewName = $this->input->getWord('view', 'articles');
-
 		try
 		{
 			$model = $this->getModel(null, ucfirst($viewName));
