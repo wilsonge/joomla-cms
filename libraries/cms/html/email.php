@@ -47,8 +47,13 @@ abstract class JHtmlEmail
 		// Convert mail
 		$mail = static::convertEncoding($mail);
 
-		// Random hash
-		$rand = md5($mail . rand(1, 100000));
+		// Random number
+		$rand = rand(1, 100000);
+
+		if (static::isCommandLineInterface())
+		{
+			$rand = 999;
+		}
 
 		// Split email by @ symbol
 		$mail       = explode('@', $mail);
@@ -118,6 +123,11 @@ abstract class JHtmlEmail
 		}
 
 		return '<span id="cloak' . $rand . '">' . JText::_('JLIB_HTML_CLOAKING') . '</span>' . $inlineScript;
+	}
+
+	private static function isCommandLineInterface()
+	{
+		return (php_sapi_name() === 'cli');
 	}
 
 	/**
