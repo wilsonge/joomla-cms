@@ -100,7 +100,7 @@ abstract class JModelAdministrator extends JModelUcm
 	public function getForm($data = array(), $loadData = true)
 	{
 		$config = $this->config;
-		$form   = $this->loadForm($config['option'] . '.' . $config['subject'], $config['subject'], array('control' => 'jform', 'load_data' => $loadData));
+		$form   = $this->loadForm($config['option'] . '.' . $this->getName(), $this->getName(), array('control' => 'jform', 'load_data' => $loadData));
 
 		if (empty($form))
 		{
@@ -684,7 +684,7 @@ abstract class JModelAdministrator extends JModelUcm
 		{
 			$config = $this->config;
 			$params = JComponentHelper::getParams($config['option']);
-			$this->setState('params', $params);
+			$this->state->set('params', $params);
 
 			parent::populateState($ordering, $direction);
 		}

@@ -18,14 +18,6 @@ defined('_JEXEC') or die;
 class ContactModelContacts extends JModelAdministrator
 {
 	/**
-	 * List of filter classes.
-	 *
-	 * @var    array
-	 * @since  3.4
-	 */
-	protected $filters = array('access', 'category', 'language', 'published', 'tags');
-
-	/**
 	 * Method to get a table object. The contacts table object is the singular contact.
 	 *
 	 * @param   string  $name     The table name. Optional.
@@ -57,23 +49,23 @@ class ContactModelContacts extends JModelAdministrator
 		if (empty($config['filter_fields']))
 		{
 			$config['filter_fields'] = array(
-				'id', 'a.id',
-				'name', 'a.name',
-				'alias', 'a.alias',
-				'checked_out', 'a.checked_out',
-				'checked_out_time', 'a.checked_out_time',
-				'catid', 'a.catid', 'category_title',
-				'user_id', 'a.user_id',
-				'published', 'a.published',
-				'access', 'a.access', 'access_level',
-				'created', 'a.created',
-				'created_by', 'a.created_by',
-				'ordering', 'a.ordering',
-				'featured', 'a.featured',
-				'language', 'a.language',
-				'publish_up', 'a.publish_up',
-				'publish_down', 'a.publish_down',
-				'ul.name', 'linked_user',
+				array('id', 'a.id'),
+				array('name', 'a.name'),
+				array('alias', 'a.alias'),
+				array('checked_out', 'a.checked_out'),
+				array('checked_out_time', 'a.checked_out_time'),
+				array('catid', 'a.catid', 'category_title'),
+				array('user_id', 'a.user_id'),
+				array('published', 'a.published'),
+				array('access', 'a.access', 'access_level'),
+				array('created', 'a.created'),
+				array('created_by', 'a.created_by'),
+				array('ordering', 'a.ordering'),
+				array('featured', 'a.featured'),
+				array('language', 'a.language'),
+				array('publish_up', 'a.publish_up'),
+				array('publish_down', 'a.publish_down'),
+				array('linked_user', 'ul.name')
 			);
 
 			$assoc = JLanguageAssociations::isEnabled();
@@ -102,26 +94,27 @@ class ContactModelContacts extends JModelAdministrator
 	protected function populateState($ordering = null, $direction = null)
 	{
 		$app = JFactory::getApplication();
+		$context = $this->getContext();
 
 		// Adjust the context to support modal layouts.
 		if ($layout = $app->input->get('layout'))
 		{
-			$this->contentType .= '.' . $layout;
+			$context .= '.' . $layout;
 		}
 
-		$search = $this->getUserStateFromRequest($this->contentType . '.filter.search', 'filter_search');
+		$search = $this->getUserStateFromRequest($context . '.filter.search', 'filter_search');
 		$this->state->set('filter.search', $search);
 
-		$access = $this->getUserStateFromRequest($this->contentType . '.filter.access', 'filter_access', 0, 'int');
+		$access = $this->getUserStateFromRequest($context . '.filter.access', 'filter_access', 0, 'int');
 		$this->state->set('filter.access', $access);
 
-		$published = $this->getUserStateFromRequest($this->contentType . '.filter.published', 'filter_published', '');
+		$published = $this->getUserStateFromRequest($context . '.filter.published', 'filter_published', '');
 		$this->state->set('filter.published', $published);
 
-		$categoryId = $this->getUserStateFromRequest($this->contentType . '.filter.category_id', 'filter_category_id');
+		$categoryId = $this->getUserStateFromRequest($context . '.filter.category_id', 'filter_category_id');
 		$this->state->set('filter.category_id', $categoryId);
 
-		$language = $this->getUserStateFromRequest($this->contentType . '.filter.language', 'filter_language', '');
+		$language = $this->getUserStateFromRequest($context . '.filter.language', 'filter_language', '');
 		$this->state->set('filter.language', $language);
 
 		// force a language
@@ -133,7 +126,7 @@ class ContactModelContacts extends JModelAdministrator
 			$this->state->set('filter.forcedLanguage', $forcedLanguage);
 		}
 
-		$tag = $this->getUserStateFromRequest($this->contentType . '.filter.tag', 'filter_tag', '');
+		$tag = $this->getUserStateFromRequest($context . '.filter.tag', 'filter_tag', '');
 		$this->state->set('filter.tag', $tag);
 
 		// List state information.
@@ -155,11 +148,11 @@ class ContactModelContacts extends JModelAdministrator
 	protected function getStoreId($id = '')
 	{
 		// Compile the store id.
-		$id .= ':' . $this->state->get('filter.search');
-		$id .= ':' . $this->state->get('filter.access');
-		$id .= ':' . $this->state->get('filter.published');
-		$id .= ':' . $this->state->get('filter.category_id');
-		$id .= ':' . $this->state->get('filter.language');
+		$id .= ':' . $this->getStateVar('filter.search');
+		$id .= ':' . $this->getStateVar('filter.access');
+		$id .= ':' . $this->getStateVar('filter.published');
+		$id .= ':' . $this->getStateVar('filter.category_id');
+		$id .= ':' . $this->getStateVar('filter.language');
 
 		return parent::getStoreId($id);
 	}
@@ -172,22 +165,21 @@ class ContactModelContacts extends JModelAdministrator
 	 */
 	protected function getListQuery()
 	{
-		$this->observers->update('onBeforeBuildQuery', array(&$this, &$query));
-
 		// Create a new query object.
 		$db = $this->getDb();
 		$query = $db->getQuery(true);
+		$user = JFactory::getUser();
+		$app = JFactory::getApplication();
 
 		// Select the required fields from the table.
 		$query->select(
-			$this->state->get(
+			$this->getStateVar(
 				'list.select',
 				'a.id, a.name, a.alias, a.checked_out, a.checked_out_time, a.catid, a.user_id' .
 					', a.published, a.access, a.created, a.created_by, a.ordering, a.featured, a.language' .
 					', a.publish_up, a.publish_down'
 			)
 		);
-
 		$query->from('#__contact_details AS a');
 
 		// Join over the users for the linked user.
@@ -212,7 +204,6 @@ class ContactModelContacts extends JModelAdministrator
 
 		// Join over the associations.
 		$assoc = JLanguageAssociations::isEnabled();
-
 		if ($assoc)
 		{
 			$query->select('COUNT(asso2.id)>1 as association')
@@ -221,8 +212,47 @@ class ContactModelContacts extends JModelAdministrator
 				->group('a.id');
 		}
 
+		// Filter by access level.
+		if ($access = $this->getStateVar('filter.access'))
+		{
+			$query->where('a.access = ' . (int) $access);
+		}
+
+		// Implement View Level Access
+		if (!$user->authorise('core.admin'))
+		{
+			$groups = implode(',', $user->getAuthorisedViewLevels());
+			$query->where('a.access IN (' . $groups . ')');
+		}
+
+		// Filter by published state
+		$published = $this->getStateVar('filter.published');
+
+		if (is_numeric($published))
+		{
+			$query->where('a.published = ' . (int) $published);
+		}
+		elseif ($published === '')
+		{
+			$query->where('(a.published = 0 OR a.published = 1)');
+		}
+
+		// Filter by a single or group of categories.
+		$categoryId = $this->getStateVar('filter.category_id');
+
+		if (is_numeric($categoryId))
+		{
+			$query->where('a.catid = ' . (int) $categoryId);
+		}
+		elseif (is_array($categoryId))
+		{
+			JArrayHelper::toInteger($categoryId);
+			$categoryId = implode(',', $categoryId);
+			$query->where('a.catid IN (' . $categoryId . ')');
+		}
+
 		// Filter by search in name.
-		$search = $this->state->get('filter.search');
+		$search = $this->getStateVar('filter.search');
 
 		if (!empty($search))
 		{
@@ -237,25 +267,39 @@ class ContactModelContacts extends JModelAdministrator
 			}
 			else
 			{
-				$search = $db->quote('%' . $db->escape($search, true) . '%');
+				$search = $db->quote('%' . str_replace(' ', '%', $db->escape(trim($search), true) . '%'));
 				$query->where('(a.name LIKE ' . $search . ' OR a.alias LIKE ' . $search . ')');
 			}
 		}
 
-		// Add the list ordering clause.
-		$orderCol = $this->state->get('list.ordering', 'a.name');
-		$orderDirn = $this->state->get('list.direction', 'asc');
+		// Filter on the language.
+		if ($language = $this->getStateVar('filter.language'))
+		{
+			$query->where('a.language = ' . $db->quote($language));
+		}
 
+		// Filter by a single tag.
+		$tagId = $this->getStateVar('filter.tag');
+		if (is_numeric($tagId))
+		{
+			$query->where($db->quoteName('tagmap.tag_id') . ' = ' . (int) $tagId)
+				->join(
+					'LEFT', $db->quoteName('#__contentitem_tag_map', 'tagmap')
+					. ' ON ' . $db->quoteName('tagmap.content_item_id') . ' = ' . $db->quoteName('a.id')
+					. ' AND ' . $db->quoteName('tagmap.type_alias') . ' = ' . $db->quote('com_contact.contact')
+				);
+		}
+
+		// Add the list ordering clause.
+		$orderCol = $this->getStateVar('list.ordering', 'a.name');
+		$orderDirn = $this->getStateVar('list.direction', 'asc');
 		if ($orderCol == 'a.ordering' || $orderCol == 'category_title')
 		{
 			$orderCol = 'c.title ' . $orderDirn . ', a.ordering';
 		}
-
 		$query->order($db->escape($orderCol . ' ' . $orderDirn));
 
-		$this->observers->update('onAfterBuildQuery', array(&$this, &$query));
-
-		//echo nl2br(str_replace('#__','jos_',$query));die;
+		//echo nl2br(str_replace('#__','jos_',$query));
 		return $query;
 	}
 }

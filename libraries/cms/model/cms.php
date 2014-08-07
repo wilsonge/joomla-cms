@@ -216,7 +216,6 @@ abstract class JModelCms extends JModelDatabase implements JModelCmsInterface
 
 	/**
 	 * Method to get the model context.
-	 * $context = $config['option'].'.'.$config['subject'];
 	 *
 	 * @return string
 	 *
@@ -224,8 +223,7 @@ abstract class JModelCms extends JModelDatabase implements JModelCmsInterface
 	 */
 	public function getContext()
 	{
-		$config  = $this->config;
-		$context = $config['option'] . '.' . $config['subject'];
+		$context = substr($this->option, 4) . '.' . $this->getName();
 
 		return $context;
 	}

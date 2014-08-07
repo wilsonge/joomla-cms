@@ -72,8 +72,8 @@ class ContactModelContact extends JModelAdministrator
 	{
 		$form = parent::getForm($data, $loadData);
 
-		$id = $this->state->get('contact.id');
-		$params = $this->state->get('params');
+		$id = $this->getStateVar('contact.id');
+		$params = $this->getStateVar('params');
 
 		$contact = $this->getItem($id);
 
@@ -110,12 +110,9 @@ class ContactModelContact extends JModelAdministrator
 	 *
 	 * @return mixed Object or null
 	 */
-	public function &getItem($pk = null)
+	public function getItem($pk = null)
 	{
-		// Call get state to ensure the state is populated
-		$this->getState();
-
-		$pk = (!empty($pk)) ? $pk : (int) $this->state->get('contact.id');
+		$pk = (!empty($pk)) ? $pk : (int) $this->getStateVar('contact.id');
 
 		if ($this->_item === null)
 		{
@@ -146,7 +143,7 @@ class ContactModelContact extends JModelAdministrator
 				$case_when1 .= ' ELSE ';
 				$case_when1 .= $c_id . ' END as catslug';
 
-				$query->select($this->state->get('item.select', 'a.*') . ',' . $case_when . ',' . $case_when1)
+				$query->select($this->getStateVar('item.select', 'a.*') . ',' . $case_when . ',' . $case_when1)
 					->from('#__contact_details AS a')
 
 				// Join on category table.
@@ -164,8 +161,8 @@ class ContactModelContact extends JModelAdministrator
 				$nowDate = $db->quote(JFactory::getDate()->toSql());
 
 				// Filter by published state.
-				$published = $this->state->get('filter.published');
-				$archived = $this->state->get('filter.archived');
+				$published = $this->getStateVar('filter.published');
+				$archived = $this->getStateVar('filter.archived');
 				if (is_numeric($published))
 				{
 					$query->where('(a.published = ' . (int) $published . ' OR a.published =' . (int) $archived . ')')
@@ -191,7 +188,7 @@ class ContactModelContact extends JModelAdministrator
 				// Convert parameter fields to objects.
 				$registry = new JRegistry;
 				$registry->loadString($data->params);
-				$data->params = clone $this->state->get('params');
+				$data->params = clone $this->getStateVar('params');
 				$data->params->merge($registry);
 
 				$registry = new JRegistry;
@@ -202,7 +199,7 @@ class ContactModelContact extends JModelAdministrator
 				$data->tags->getItemTags('com_contact.contact', $data->id);
 
 				// Compute access permissions.
-				if ($access = $this->state->get('filter.access')) {
+				if ($access = $this->getStateVar('filter.access')) {
 
 					// If the access filter has been set, we already know this user can view.
 					$data->params->set('access-view', true);
@@ -251,7 +248,7 @@ class ContactModelContact extends JModelAdministrator
 		$nullDate = $db->quote($db->getNullDate());
 		$nowDate = $db->quote(JFactory::getDate()->toSql());
 		$user	= JFactory::getUser();
-		$pk = (!empty($pk)) ? $pk : (int) $this->state->get('contact.id');
+		$pk = (!empty($pk)) ? $pk : (int) $this->getStateVar('contact.id');
 		$query	= $db->getQuery(true);
 
 		if ($pk)
@@ -282,7 +279,7 @@ class ContactModelContact extends JModelAdministrator
 				->join('INNER', '#__categories AS cc on cc.id = a.catid')
 
 				->where('a.id = ' . (int) $pk);
-			$published = $this->state->get('filter.published');
+			$published = $this->getStateVar('filter.published');
 
 			if (is_numeric($published))
 			{
@@ -305,11 +302,11 @@ class ContactModelContact extends JModelAdministrator
 
 				// If we are showing a contact list, then the contact parameters take priority
 				// So merge the contact parameters with the merged parameters
-				if ($this->state->get('params')->get('show_contact_list'))
+				if ($this->getStateVar('params')->get('show_contact_list'))
 				{
 					$registry = new JRegistry;
 					$registry->loadString($result->params);
-					$this->state->get('params')->merge($registry);
+					$this->getStateVar('params')->merge($registry);
 				}
 			}
 			catch (Exception $e)

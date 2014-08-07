@@ -375,8 +375,8 @@ abstract class JModelCollection extends JModelRecord
 	{
 		$db = $this->getDb();
 
-		//if this is a select and there are no GROUP BY or HAVING clause
-		//Use COUNT(*) method to improve performance.
+		// If this is a select and there are no GROUP BY or HAVING clause
+		// Use COUNT(*) method to improve performance.
 
 		$isSelect       = ($query->type == 'select');
 		$hasGroupClause = ($query->group === null);
@@ -436,38 +436,38 @@ abstract class JModelCollection extends JModelRecord
 		$app   = JFactory::getApplication();
 		$input = $app->input;
 
-		$old_state = $app->getUserState($key);
-		if (!is_null($old_state))
+		$oldState = $app->getUserState($key);
+
+		if (!is_null($oldState))
 		{
-			$cur_state = $old_state;
+			$cur_state = $oldState;
 		}
 		else
 		{
 			$cur_state = $default;
 		}
 
-		$new_state = $input->get($request, null, $type);
+		$newState = $input->get($request, null, $type);
 
-		$hasChanged = ($cur_state != $new_state);
+		$hasChanged = ($cur_state != $newState);
 
 		if ($hasChanged && $resetPage)
 		{
 			$input->set('limitstart', 0);
 			$input->set('list.total', null);
-
 		}
 
 		// Save the new value only if it is set in this request.
-		if ($new_state !== null)
+		if ($newState !== null)
 		{
-			$app->setUserState($key, $new_state);
+			$app->setUserState($key, $newState);
 		}
 		else
 		{
-			$new_state = $cur_state;
+			$newState = $cur_state;
 		}
 
-		return $new_state;
+		return $newState;
 	}
 
 	/**
@@ -485,11 +485,11 @@ abstract class JModelCollection extends JModelRecord
 
 			foreach ($filters AS $name => $value)
 			{
-				$this->setState('filter.' . $name, $value);
+				$this->state->set('filter.' . $name, $value);
 			}
 
 			$limit = $app->getUserStateFromRequest($context . 'list.limit', 'limit', $app->getCfg('list_limit'), 'uint');
-			$this->setState('list.limit', $limit);
+			$this->state->set('list.limit', $limit);
 
 			// Check if the ordering field is in the white list, otherwise use the incoming value.
 			$orderColName = $app->getUserStateFromRequest($context . '.ordercol', 'filter_order', $ordering);
@@ -500,7 +500,7 @@ abstract class JModelCollection extends JModelRecord
 				$app->setUserState($context . '.ordercol', $orderColName);
 			}
 
-			$this->setState('list.ordering', $orderColName);
+			$this->state->set('list.ordering', $orderColName);
 
 			// Check if the ordering direction is valid, otherwise use the incoming value.
 			$orderDir = $app->getUserStateFromRequest($context . '.orderdirn', 'filter_order_Dir', $direction);
@@ -511,7 +511,7 @@ abstract class JModelCollection extends JModelRecord
 				$app->setUserState($context . '.orderdirn', $orderDir);
 			}
 
-			$this->setState('list.direction', strtoupper($orderDir));
+			$this->state->set('list.direction', strtoupper($orderDir));
 
 			$limitStartValue = $app->getUserStateFromRequest($context . '.limitstart', 'limitstart', 0, 'int');
 
@@ -524,7 +524,7 @@ abstract class JModelCollection extends JModelRecord
 				$limitStart = 0;
 			}
 
-			$this->setState('list.start', $limitStart);
+			$this->state->set('list.start', $limitStart);
 
 			parent::populateState($ordering, $direction);
 		}

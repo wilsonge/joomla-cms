@@ -47,13 +47,16 @@ class ContactModelFeatured extends JModelAdministrator
 	protected $_categories = null;
 
 	/**
-	 * Constructor.
+	 * Public constructor
 	 *
-	 * @param   array  An optional associative array of configuration settings.
-	 * @see     JController
-	 * @since   1.6
+	 * @param  JRegistry         $state       The state for the model
+	 * @param  JDatabaseDriver   $db          The database object
+	 * @param  JEventDispatcher  $dispatcher  The dispatcher object
+	 * @param  array             $config      Array of config variables
+	 *
+	 * @since  3.4
 	 */
-	public function __construct($config = array())
+	public function __construct(JRegistry $state = null, JDatabaseDriver $db = null, JEventDispatcher $dispatcher = null, $config = array())
 	{
 		if (empty($config['filter_fields']))
 		{
@@ -68,7 +71,7 @@ class ContactModelFeatured extends JModelAdministrator
 			);
 		}
 
-		parent::__construct(null, null, null, $config);
+		parent::__construct($state, $db, $dispatcher, $config);
 	}
 
 	/**

@@ -32,7 +32,7 @@ abstract class JModelRecord extends JModelData
 		if (empty($pk))
 		{
 			$context = $this->getContext();
-			$pk      = (int) $this->getState($context . '.id');
+			$pk      = (int) $this->getStateVar($context . '.id');
 		}
 
 		$activeRecord = $this->getActiveRecord($pk);
@@ -48,7 +48,29 @@ abstract class JModelRecord extends JModelData
 			$item->params = $registry->toArray();
 		}
 
-
 		return $item;
+	}
+
+	/**
+	 * Method to increment the hit counter for the record
+	 *
+	 * @param   integer  $id  Optional ID of the record.
+	 *
+	 * @return  boolean  True on success
+	 *
+	 * @since  3.2
+	 */
+	public function hit($id = null)
+	{
+		$type = $this->getName();
+
+		if (empty($id))
+		{
+			$id = $this->getStateVar($type . '.id');
+		}
+
+		$item = $this->getTable();
+
+		return $item->hit($id);
 	}
 }
