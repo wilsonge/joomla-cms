@@ -68,7 +68,7 @@ class ContactModelFeatured extends JModelAdministrator
 			);
 		}
 
-		parent::__construct($config);
+		parent::__construct(null, null, null, null, $config);
 	}
 
 	/**
