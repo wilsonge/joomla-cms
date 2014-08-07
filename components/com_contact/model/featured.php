@@ -58,13 +58,13 @@ class ContactModelFeatured extends JModelAdministrator
 		if (empty($config['filter_fields']))
 		{
 			$config['filter_fields'] = array(
-				'id', 'a.id',
-				'name', 'a.name',
-				'con_position', 'a.con_position',
-				'suburb', 'a.suburb',
-				'state', 'a.state',
-				'country', 'a.country',
-				'ordering', 'a.ordering',
+				array('id', 'a.id'),
+				array('name', 'a.name'),
+				array('con_position', 'a.con_position'),
+				array('suburb', 'a.suburb'),
+				array('state', 'a.state'),
+				array('country', 'a.country'),
+				array('ordering', 'a.ordering'),
 			);
 		}
 
@@ -184,10 +184,12 @@ class ContactModelFeatured extends JModelAdministrator
 		$this->state->set('list.start', $limitstart);
 
 		$orderCol = $app->input->get('filter_order', 'ordering');
-		if (!in_array($orderCol, $this->filter_fields))
+
+		if (array_key_exists($orderCol, $this->filterFields))
 		{
 			$orderCol = 'ordering';
 		}
+
 		$this->state->set('list.ordering', $orderCol);
 
 		$listOrder = $app->input->get('filter_order_Dir', 'ASC');

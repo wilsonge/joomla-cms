@@ -127,7 +127,7 @@ abstract class JModelCollection extends JModelRecord
 		$query = $this->getListQuery();
 
 		$start = $this->getStart();
-		$limit = $this->getState('list.limit', 0);
+		$limit = $this->getStateVar('list.limit', 0);
 
 		$db->setQuery($query, $start, (int) $limit);
 
@@ -171,7 +171,7 @@ abstract class JModelCollection extends JModelRecord
 
 		if (array_key_exists('a.state', $this->filterFields))
 		{
-			$state = $this->getState('filter.state');
+			$state = $this->getStateVar('filter.state');
 
 			if (is_numeric($state))
 			{
@@ -184,6 +184,7 @@ abstract class JModelCollection extends JModelRecord
 		}
 
 		$activeFilters = $this->getActiveFilters();
+
 		foreach ($activeFilters AS $dataKeyName => $value)
 		{
 			$query->where($dataKeyName . ' = ' . $db->quote($value));
@@ -275,7 +276,7 @@ abstract class JModelCollection extends JModelRecord
 	protected function buildSearch()
 	{
 		$db     = JFactory::getDbo();
-		$search = $this->getState('filter.search');
+		$search = $this->getStateVar('filter.search');
 		$where  = null;
 
 		if (!empty($search))
@@ -325,9 +326,8 @@ abstract class JModelCollection extends JModelRecord
 	 */
 	public function getStart()
 	{
-
-		$start = $this->getState('list.start');
-		$limit = $this->getState('list.limit');
+		$start = $this->getStateVar('list.start');
+		$limit = $this->getStateVar('list.limit');
 		$total = $this->getTotal();
 
 		if ($start > $total - $limit)
@@ -348,7 +348,7 @@ abstract class JModelCollection extends JModelRecord
 	public function getTotal()
 	{
 		// Get a storage key.
-		$total = $this->getState('list.total', null);
+		$total = $this->getStateVar('list.total', null);
 
 		if ($total == null)
 		{
@@ -356,7 +356,7 @@ abstract class JModelCollection extends JModelRecord
 			$query = $this->getListQuery();
 
 			$total = (int) $this->_getListCount($query);
-			$this->setState('list.total', $total);
+			$this->state->set('list.total', $total);
 		}
 
 		return $total;
@@ -409,7 +409,7 @@ abstract class JModelCollection extends JModelRecord
 	public function getPagination()
 	{
 		// Create the pagination object.
-		$limit = (int) $this->getState('list.limit') - (int) $this->getState('list.links');
+		$limit = (int) $this->getStateVar('list.limit') - (int) $this->getStateVar('list.links');
 		$page  = new JPagination($this->getTotal(), $this->getStart(), $limit);
 
 		return $page;
@@ -529,5 +529,4 @@ abstract class JModelCollection extends JModelRecord
 			parent::populateState($ordering, $direction);
 		}
 	}
-
 }
