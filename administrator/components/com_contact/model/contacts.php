@@ -49,23 +49,70 @@ class ContactModelContacts extends JModelAdministrator
 		if (empty($config['filter_fields']))
 		{
 			$config['filter_fields'] = array(
-				array('id', 'a.id'),
-				array('name', 'a.name'),
-				array('alias', 'a.alias'),
-				array('checked_out', 'a.checked_out'),
-				array('checked_out_time', 'a.checked_out_time'),
+				array(
+					'name' => 'id',
+					'dataKeyName' => 'a.id'
+				),
+				array(
+					'name' => 'name',
+					'dataKeyName' => 'a.name'
+				),
+				array(
+					'name' => 'alias',
+					'dataKeyName' => 'a.alias'
+				),
+				array(
+					'name' => 'checked_out',
+					'dataKeyName' => 'a.checked_out'
+				),
+				array(
+					'name' => 'checked_out_time',
+					'dataKeyName' => 'a.checked_out_time'
+				),
+				array(
+					'name' => 'user_id',
+					'dataKeyName' => 'a.user_id'
+				),
+				array(
+					'name' => 'published',
+					'dataKeyName' => 'a.published'
+				),
+				array(
+					'name' => 'created',
+					'dataKeyName' => 'a.created'
+				),
+				array(
+					'name' => 'created_by',
+					'dataKeyName' => 'a.created_by'
+				),
+				array(
+					'name' => 'ordering',
+					'dataKeyName' => 'a.ordering'
+				),
+				array(
+					'name' => 'featured',
+					'dataKeyName' => 'a.featured'
+				),
+				array(
+					'name' => 'language',
+					'dataKeyName' => 'a.language'
+				),
+				array(
+					'name' => 'publish_up',
+					'dataKeyName' => 'a.publish_up'
+				),
+				array(
+					'name' => 'publish_down',
+					'dataKeyName' => 'a.publish_down'
+				),
+				array(
+					'name' => 'linked_user',
+					'dataKeyName' => 'ul.name'
+				),
+				
+				// @todo deal with these
 				array('catid', 'a.catid', 'category_title'),
-				array('user_id', 'a.user_id'),
-				array('published', 'a.published'),
 				array('access', 'a.access', 'access_level'),
-				array('created', 'a.created'),
-				array('created_by', 'a.created_by'),
-				array('ordering', 'a.ordering'),
-				array('featured', 'a.featured'),
-				array('language', 'a.language'),
-				array('publish_up', 'a.publish_up'),
-				array('publish_down', 'a.publish_down'),
-				array('linked_user', 'ul.name')
 			);
 
 			$assoc = JLanguageAssociations::isEnabled();
