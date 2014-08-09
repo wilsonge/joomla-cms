@@ -302,7 +302,7 @@ class JControllerCms extends JControllerBase implements JControllerCmsInterface
 			throw new RuntimeException(JText::sprintf('JLIB_APPLICATION_ERROR_MODELCLASS_NOT_FOUND', $class));
 		}
 
-		$this->models[$prefix][$name] = new $class($this->config);
+		$this->models[$prefix][$name] = new $class(null, null, null, $this->config);
 
 		return $this->models[$prefix][$name];
 	}
