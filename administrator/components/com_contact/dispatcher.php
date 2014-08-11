@@ -42,6 +42,7 @@ class ContactDispatcher extends JComponentDispatcher
 			'add' => 'create',
 			'apply' => 'update',
 			'save' => 'update',
+			'save2new' => 'update',
 			'edit' => 'display',
 			'publish' => 'updatestatelist',
 			'unpublish' => 'updatestatelist',
