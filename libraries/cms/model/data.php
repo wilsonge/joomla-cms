@@ -57,7 +57,7 @@ abstract class JModelData extends JModelCms
 	{
 		if (!$name)
 		{
-			$name = ucfirst($this->name);
+			$name = ucfirst($this->getName());
 		}
 
 		if (!$prefix)
@@ -104,17 +104,27 @@ abstract class JModelData extends JModelCms
 	/**
 	 * Method to unlock a record
 	 *
-	 * @param int $pk primary key
+	 * @param  int  $pk  Integer primary key or array of primary keys
 	 *
-	 * @return boolean
+	 * @return  boolean
 	 * @see JCmsModelData::checkout
 	 */
 	public function checkin($pk)
 	{
-		// Get an instance of the row to checkout.
-		$activeRecord = $this->getActiveRecord($pk);
+		if (is_integer($pk))
+		{
+			$pk = array($pk);
+		}
 
-		$activeRecord->checkin($pk);
+		JArrayHelper::toInteger($pk);
+
+		foreach ($pk as $primaryKey)
+		{
+			// Get an instance of the row to checkout.
+			$activeRecord = $this->getActiveRecord($primaryKey);
+
+			$activeRecord->checkin($primaryKey);
+		}
 
 		return true;
 	}

@@ -32,7 +32,7 @@ class JControllerUpdatestatelist extends JControllerCms
 	 *
 	 *  @var  array
 	 */
-	public  $stateOptions = array('published' => 1, 'unpublished' => 0, 'archived' => 2,
+	public  $stateOptions = array('published' => 1, 'unpublished' => 0, 'archived' => 2, 'archive' => 2,
 				'trashed' => -2, 'reported' => -3, 'publish' => 1, 'unpublish' => 0, 'trash' => -2);
 
 	/**

@@ -73,4 +73,33 @@ abstract class JModelRecord extends JModelData
 
 		return $item->hit($id);
 	}
+
+	/**
+	 * Method to auto-populate the model state.
+	 *
+	 * This method should only be called once per instantiation and is designed
+	 * to be called on the first call to the getState() method unless the model
+	 * configuration flag to ignore the request is set.
+	 *
+	 * @param string $ordering  column to order by. I.E. 'a.title'
+	 * @param string $direction 'ASC' or 'DESC'
+	 *
+	 * @return  void
+	 *
+	 * @note    Calling getState in this method will result in recursion.
+	 * @since   3.4
+	 */
+	protected function populateState($ordering = null, $direction = null)
+	{
+		if (!$this->stateIsSet)
+		{
+			$key = $this->getTable()->getKeyName();
+
+			// Get the pk of the record from the request.
+			$pk = JFactory::getApplication()->input->getInt($key);
+			$this->state->set($this->getName() . '.id', $pk);
+
+			parent::populateState($ordering, $direction);
+		}
+	}
 }

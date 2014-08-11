@@ -18,7 +18,7 @@ JLoader::register('ContactHelper', JPATH_ADMINISTRATOR . '/components/com_contac
  * @subpackage  com_contact
  * @since       1.6
  */
-class ContactModelContact extends JModelAdministrator
+class ContactModelContact extends JModelActions
 {
 	/**
 	 * The type alias for this content type.
@@ -452,13 +452,13 @@ class ContactModelContact extends JModelAdministrator
 			}
 			else
 			{
-				$id = $this->state->get($this->name . '.id', 0);
+				$id = $this->getStateVar($this->getName() . '.id', 0);
 			}
 
 			$data = $this->getItem($id);
 
 			// Prime some default values.
-			if ($this->state->get('contact.id') == 0)
+			if ($this->getStateVar('contact.id') == 0)
 			{
 				$app = JFactory::getApplication();
 				$data->set('catid', $app->input->get('catid', $app->getUserState('com_contact.contacts.filter.category_id'), 'int'));

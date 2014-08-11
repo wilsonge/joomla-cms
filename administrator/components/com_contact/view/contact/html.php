@@ -43,7 +43,11 @@ class ContactViewContactHtml extends JViewHtmlLegacy
 
 	public function getData()
 	{
-		$data = parent::getData();
+		$model = $this->getModel();
+		$data = array();
+		$data['state'] = $model->getState();
+		$data['item'] = $model->getItem();
+		$data['form'] = $model->getForm();
 
 		// If in modal set some fields to have readonly values
 		if ($this->getLayout() == 'modal')

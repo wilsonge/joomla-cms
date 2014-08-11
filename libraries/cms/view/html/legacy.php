@@ -91,7 +91,7 @@ abstract class JViewHtmlLegacy extends JViewLegacy implements JView
 		{
 			$data['item'] = $model->getItem();
 		}
-		elseif ($model instanceof JModelListInterface)
+		else
 		{
 			$data['items'] = $model->getItems();
 			$data['pagination'] = $model->getPagination();

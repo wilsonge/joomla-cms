@@ -190,12 +190,7 @@ abstract class JModelCollection extends JModelRecord
 			$query->where($dataKeyName . ' = ' . $db->quote($value));
 		}
 
-		$search = $this->buildSearch();
-
-		if ($search != '' && JString::strlen($search) != 0)
-		{
-			$query->where($search);
-		}
+		$query = $this->buildSearch($query);
 
 		$orderCol  = $this->getStateVar('list.ordering');
 		$orderDirn = $this->getStateVar('list.direction');
@@ -239,6 +234,7 @@ abstract class JModelCollection extends JModelRecord
 
 		return $query;
 	}
+
 	/**
 	 * Function to get the active filters
 	 *
@@ -255,16 +251,17 @@ abstract class JModelCollection extends JModelRecord
 			foreach ($this->filterFields as $filterField)
 			{
 				$filterName = 'filter.' . $filterField['name'];
+				$state = $this->getState();
+				$stateHasFilter = $state->exists($filterName);
 
-				$stateHasFilter = property_exists($this->state, $filterName);
 				if ($stateHasFilter)
 				{
-					$validState      = (!empty($this->state->$filterName) || is_numeric($this->state->$filterName));
+					$validState      = (!empty($state->get($filterName)) || is_numeric($state->get($filterName)));
 					$isPublishFilter = ($filterName == 'filter.state');
 
 					if ($validState && !$isPublishFilter)
 					{
-						$activeFilters[$filterField['dataKeyName']] = $this->getStateVar($filterName);
+						$activeFilters[$filterField['dataKeyName']] = $state->get($filterName);
 					}
 				}
 			}
@@ -273,48 +270,59 @@ abstract class JModelCollection extends JModelRecord
 		return $activeFilters;
 	}
 
-	protected function buildSearch()
+	/**
+	 * Function to get build the search query
+	 *
+	 * @param  JDatabaseQuery  $query  The query object
+	 *
+	 * @return  string  Associative array in the format: array('filter_published' => 0)
+	 *
+	 * @since   3.2
+	 */
+	protected function buildSearch($query)
 	{
-		$db     = JFactory::getDbo();
+		$db     = $this->getDb();
 		$search = $this->getStateVar('filter.search');
-		$where  = null;
 
-		if (!empty($search))
+		if (!empty($search) && isset($this->searchFields))
 		{
-			if (isset($this->searchFields))
+			$searchInList = (array) $this->searchFields;
+
+			$isExact = (JString::strrpos($search, '"'));
+
+			if ($isExact)
 			{
+				$search = JString::substr($search, 1, -1);
+				$where  = '( ';
 
-				$searchInList = (array) $this->searchFields;
-
-				$isExact = (JString::strrpos($search, '"'));
-
-				if ($isExact)
+				foreach ((array) $searchInList as $search_field)
 				{
-					$search = JString::substr($search, 1, -1);
-					$where  = '( ';
-					foreach ((array) $searchInList as $search_field)
-					{
-						$cleanSearch = $db->Quote($db->escape($search, true));
-						$where .= ' ' . $search_field['dataKeyName'] . ' = ' . $cleanSearch . ' OR';
-					}
-					$where = substr($where, 0, -3);
-					$where .= ')';
+					$cleanSearch = $db->Quote($db->escape($search, true));
+					$where .= ' ' . $search_field['dataKeyName'] . ' = ' . $cleanSearch . ' OR';
 				}
-				else
-				{
-					$search = $db->Quote('%' . $db->escape($search, true) . '%');
+				$where = substr($where, 0, -3);
+				$where .= ')';
 
-					$where = '( ';
-					foreach ((array) $searchInList as $search_field)
-					{
-						$where .= ' ' . $search_field['dataKeyName'] . ' LIKE ' . $search . ' OR ';
-					}
-					$where = substr($where, 0, -3);
-					$where .= ')';
+				$query->where($where);
+			}
+			else
+			{
+				$search = $db->Quote('%' . $db->escape($search, true) . '%');
+				$where = '( ';
+
+				foreach ((array) $searchInList as $search_field)
+				{
+					$where .= ' ' . $search_field['dataKeyName'] . ' LIKE ' . $search . ' OR ';
 				}
+
+				$where = substr($where, 0, -3);
+				$where .= ')';
+
+				$query->where($where);
 			}
 		}
-		return $where; //no search found
+
+		return $query; //no search found
 	}
 
 	/**

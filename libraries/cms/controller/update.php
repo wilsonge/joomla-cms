@@ -71,7 +71,7 @@ class JControllerUpdate extends JControllerCms
 		// @todo Potential security risk - we are't validating the data. Data must already be validated if in json view
 		if ($saveFormat == 'json')
 		{
-			return $model->save($data);
+			return $model->update($data);
 		}
 
 		// Must load after serving service-requests
@@ -85,7 +85,7 @@ class JControllerUpdate extends JControllerCms
 
 		try
 		{
-			$model->save($data);
+			$model->update($data);
 		}
 		catch (Exception $e)
 		{

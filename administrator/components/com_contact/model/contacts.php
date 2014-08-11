@@ -15,7 +15,7 @@ defined('_JEXEC') or die;
  * @package     Joomla.Administrator
  * @subpackage  com_contact
  */
-class ContactModelContacts extends JModelAdministrator
+class ContactModelContacts extends JModelActions
 {
 	/**
 	 * Method to get a table object. The contacts table object is the singular contact.
@@ -51,15 +51,20 @@ class ContactModelContacts extends JModelAdministrator
 			$config['filter_fields'] = array(
 				array(
 					'name' => 'id',
-					'dataKeyName' => 'a.id'
+					'dataKeyName' => 'a.id',
+					'sortable' => true,
+					'searchable' => true
 				),
 				array(
 					'name' => 'name',
-					'dataKeyName' => 'a.name'
+					'dataKeyName' => 'a.name',
+					'sortable' => true,
+					'searchable' => true
 				),
 				array(
 					'name' => 'alias',
-					'dataKeyName' => 'a.alias'
+					'dataKeyName' => 'a.alias',
+					'searchable' => true
 				),
 				array(
 					'name' => 'checked_out',
@@ -75,7 +80,8 @@ class ContactModelContacts extends JModelAdministrator
 				),
 				array(
 					'name' => 'published',
-					'dataKeyName' => 'a.published'
+					'dataKeyName' => 'a.published',
+					'sortable' => true
 				),
 				array(
 					'name' => 'created',
@@ -91,11 +97,13 @@ class ContactModelContacts extends JModelAdministrator
 				),
 				array(
 					'name' => 'featured',
-					'dataKeyName' => 'a.featured'
+					'dataKeyName' => 'a.featured',
+					'sortable' => true
 				),
 				array(
 					'name' => 'language',
-					'dataKeyName' => 'a.language'
+					'dataKeyName' => 'a.language',
+					'sortable' => true
 				),
 				array(
 					'name' => 'publish_up',
@@ -107,7 +115,8 @@ class ContactModelContacts extends JModelAdministrator
 				),
 				array(
 					'name' => 'linked_user',
-					'dataKeyName' => 'ul.name'
+					'dataKeyName' => 'ul.name',
+					'sortable' => true
 				),
 				
 				// @todo deal with these
@@ -205,6 +214,41 @@ class ContactModelContacts extends JModelAdministrator
 	}
 
 	/**
+	 * Filter by search in name.
+	 *
+	 * @param  JDatabaseQuery  $query  The query object
+	 *
+	 * @return  JDatabaseQuery  The query object with the necessary where clauses added
+	 *
+	 * @since   3.4
+	 */
+	protected function buildSearch($query)
+	{
+		$db = $this->getDb();
+		$search = $this->getStateVar('filter.search');
+
+		if (!empty($search))
+		{
+			if (stripos($search, 'id:') === 0)
+			{
+				$query->where('a.id = ' . (int) substr($search, 3));
+			}
+			elseif (stripos($search, 'author:') === 0)
+			{
+				$search = $db->quote('%' . $db->escape(substr($search, 7), true) . '%');
+				$query->where('(uc.name LIKE ' . $search . ' OR uc.username LIKE ' . $search . ')');
+			}
+			else
+			{
+				$search = $db->quote('%' . str_replace(' ', '%', $db->escape(trim($search), true) . '%'));
+				$query->where('(a.name LIKE ' . $search . ' OR a.alias LIKE ' . $search . ')');
+			}
+		}
+
+		return $query;
+	}
+
+	/**
 	 * Build an SQL query to load the list data.
 	 *
 	 * @return  JDatabaseQuery
@@ -216,7 +260,6 @@ class ContactModelContacts extends JModelAdministrator
 		$db = $this->getDb();
 		$query = $db->getQuery(true);
 		$user = JFactory::getUser();
-		$app = JFactory::getApplication();
 
 		// Select the required fields from the table.
 		$query->select(
@@ -251,6 +294,7 @@ class ContactModelContacts extends JModelAdministrator
 
 		// Join over the associations.
 		$assoc = JLanguageAssociations::isEnabled();
+
 		if ($assoc)
 		{
 			$query->select('COUNT(asso2.id)>1 as association')
@@ -259,8 +303,12 @@ class ContactModelContacts extends JModelAdministrator
 				->group('a.id');
 		}
 
+		$query = parent::getListQuery($query);
+
 		// Filter by access level.
-		if ($access = $this->getStateVar('filter.access'))
+		$access = $this->getStateVar('filter.access');
+
+		if ($access)
 		{
 			$query->where('a.access = ' . (int) $access);
 		}
@@ -273,7 +321,7 @@ class ContactModelContacts extends JModelAdministrator
 		}
 
 		// Filter by published state
-		$published = $this->getStateVar('filter.published');
+		$published = $this->getStateVar('filter.published', '');
 
 		if (is_numeric($published))
 		{
@@ -298,35 +346,9 @@ class ContactModelContacts extends JModelAdministrator
 			$query->where('a.catid IN (' . $categoryId . ')');
 		}
 
-		// Filter by search in name.
-		$search = $this->getStateVar('filter.search');
-
-		if (!empty($search))
-		{
-			if (stripos($search, 'id:') === 0)
-			{
-				$query->where('a.id = ' . (int) substr($search, 3));
-			}
-			elseif (stripos($search, 'author:') === 0)
-			{
-				$search = $db->quote('%' . $db->escape(substr($search, 7), true) . '%');
-				$query->where('(uc.name LIKE ' . $search . ' OR uc.username LIKE ' . $search . ')');
-			}
-			else
-			{
-				$search = $db->quote('%' . str_replace(' ', '%', $db->escape(trim($search), true) . '%'));
-				$query->where('(a.name LIKE ' . $search . ' OR a.alias LIKE ' . $search . ')');
-			}
-		}
-
-		// Filter on the language.
-		if ($language = $this->getStateVar('filter.language'))
-		{
-			$query->where('a.language = ' . $db->quote($language));
-		}
-
 		// Filter by a single tag.
 		$tagId = $this->getStateVar('filter.tag');
+
 		if (is_numeric($tagId))
 		{
 			$query->where($db->quoteName('tagmap.tag_id') . ' = ' . (int) $tagId)
@@ -340,10 +362,12 @@ class ContactModelContacts extends JModelAdministrator
 		// Add the list ordering clause.
 		$orderCol = $this->getStateVar('list.ordering', 'a.name');
 		$orderDirn = $this->getStateVar('list.direction', 'asc');
+
 		if ($orderCol == 'a.ordering' || $orderCol == 'category_title')
 		{
 			$orderCol = 'c.title ' . $orderDirn . ', a.ordering';
 		}
+
 		$query->order($db->escape($orderCol . ' ' . $orderDirn));
 
 		//echo nl2br(str_replace('#__','jos_',$query));
