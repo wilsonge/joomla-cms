@@ -65,7 +65,7 @@ class ManifestHelper
 
 			case 'library':
 				// A "library" type extension. Its manifest is strictly named and in a predictable path.
-				$return['package_folder'] = JPATH_MANIFESTS . '/libraries/' . $extension->element;
+				$return['package_folder'] = JPATH_MANIFESTS . '/libraries/';
 				$return['manifest_filename'] = $extension->element . '.xml';
 				break;
 
