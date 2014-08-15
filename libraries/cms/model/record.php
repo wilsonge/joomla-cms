@@ -31,8 +31,7 @@ abstract class JModelRecord extends JModelData
 	{
 		if (empty($pk))
 		{
-			$context = $this->getContext();
-			$pk      = (int) $this->getStateVar($context . '.id');
+			$pk = (int) $this->getStateVar($this->getName() . '.id');
 		}
 
 		$activeRecord = $this->getActiveRecord($pk);
