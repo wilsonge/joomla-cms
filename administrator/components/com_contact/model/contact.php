@@ -392,9 +392,12 @@ class ContactModelContact extends JModelActions
 	public function getItem($pk = null)
 	{
 		$item = parent::getItem($pk);
-		$item = JArrayHelper::fromObject($item);
 
-		if ($item = JArrayHelper::toObject($item, 'JObject'))
+		// @todo Before new MVC we returned a JObject. Therefore to keep b/c we will return one here
+		// In Joomla 4.0 we should convert to a JRegistry or stdClass.
+		$item = new JObject($item);
+
+		if ($item)
 		{
 			// Convert the metadata field to an array.
 			$registry = new JRegistry;
