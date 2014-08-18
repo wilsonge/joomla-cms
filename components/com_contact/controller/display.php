@@ -68,8 +68,7 @@ class ContactControllerDisplay extends JControllerDisplay
 
 			if (!class_exists($joomlaClass))
 			{
-				// @todo convert to a proper language string
-				throw new RuntimeException(JText::sprintf('The view %s could not be found', $class));
+				throw new RuntimeException(JText::sprintf('JVIEW_NOT_FOUND', $class), 404);
 			}
 
 			// We've found a relevant Joomla class - use it.
