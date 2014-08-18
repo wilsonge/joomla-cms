@@ -107,10 +107,7 @@ abstract class JViewCms implements JView
 	}
 
 	/**
-	 * Retrieves the data array from the default model. Will
-	 * automatically deal with the 3 CMS interfaces for single
-	 * model items. For any other situations the method will
-	 * need to be overwritten
+	 * Retrieves the data array from the default model.
 	 *
 	 * @return  array
 	 *

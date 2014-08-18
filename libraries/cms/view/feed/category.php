@@ -16,18 +16,16 @@ defined('JPATH_PLATFORM') or die;
  * @subpackage  View
  * @since       3.2
  */
-class JViewFeedCategory extends JViewHtmlLegacy
+class JViewFeedCategory extends JViewCms
 {
 	/**
-	 * Execute and display a template script.
+	 * Method to render the view.
 	 *
-	 * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
+	 * @return  mixed  A string if successful, otherwise an Exception.
 	 *
-	 * @return  mixed  A string if successful, otherwise a Error object.
-	 *
-	 * @since   3.2
+	 * @since  3.4
 	 */
-	public function display($tpl = null)
+	public function render()
 	{
 		$app      = JFactory::getApplication();
 		$document = JFactory::getDocument();
@@ -65,10 +63,9 @@ class JViewFeedCategory extends JViewHtmlLegacy
 			$document->editorEmail = $siteEmail;
 		}
 
-		// Get some data from the model
-		$model    = $this->getModel();
-		$items    = $model->getItems();
-		$category = $model->getCategory();
+		$data = $this->getData();
+		$items = $data['items'];
+		$category = $data['category'];
 
 		foreach ($items as $item)
 		{
@@ -142,5 +139,23 @@ class JViewFeedCategory extends JViewHtmlLegacy
 		{
 			$item->title = $item->name;
 		}
+	}
+
+	/**
+	 * Retrieves the data from the default model.
+	 *
+	 * @return  array
+	 *
+	 * @since   3.4
+	 */
+	public function getData()
+	{
+		// Get some data from the model
+		$model            = $this->getModel();
+		$data             = array();
+		$data['items']    = $model->getItems();
+		$data['category'] = $model->getCategory();
+
+		return $data;
 	}
 }
