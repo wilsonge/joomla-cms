@@ -91,24 +91,6 @@ class JViewHtmlCategory extends JViewHtmlLegacy
 	protected $defaultPageTitle;
 
 	/**
-	 * The JDocument object
-	 *
-	 * @var    JDocument
-	 * @since  3.4
-	 */
-	protected $document;
-
-	public function __construct(JModel $model, SplPriorityQueue $paths = null, $config = array(), JDocument $document = null)
-	{
-		if (!$document)
-		{
-			$this->document = JFactory::getDocument();
-		}
-
-		return parent::__construct($model, $paths, $config);
-	}
-
-	/**
 	 * Method with common display elements used in category list displays
 	 *
 	 * @return  void

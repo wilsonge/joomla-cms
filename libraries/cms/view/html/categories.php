@@ -43,24 +43,6 @@ class JViewHtmlCategories extends JViewHtmlLegacy
 	protected $pageHeading;
 
 	/**
-	 * The JDocument object
-	 *
-	 * @var    JDocument
-	 * @since  3.4
-	 */
-	protected $document;
-
-	public function __construct(JModel $model, SplPriorityQueue $paths = null, $config = array(), JDocument $document = null)
-	{
-		if (!$document)
-		{
-			$this->document = JFactory::getDocument();
-		}
-
-		return parent::__construct($model, $paths, $config);
-	}
-
-	/**
 	 * Execute and display a template script.
 	 *
 	 * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.

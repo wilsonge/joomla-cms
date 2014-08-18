@@ -79,7 +79,7 @@ class ContactControllerDisplay extends JControllerDisplay
 		// So initalise it separately
 		if(strtolower($type) != 'html')
 		{
-			$view = new $class($model, $this->config);
+			$view = new $class($model, $this->doc, $this->config);
 		}
 		else
 		{
@@ -95,7 +95,7 @@ class ContactControllerDisplay extends JControllerDisplay
 				$paths->insert(JPATH_BASE . '/components/' . $this->config['option'] . '/view/' . $this->viewName . '/tmpl', 1);
 			}
 
-			$view = new $class($model, $paths);
+			$view = new $class($model, $this->doc, $paths);
 
 
 			// If in html view then we set the layout

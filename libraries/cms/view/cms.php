@@ -75,19 +75,29 @@ abstract class JViewCms implements JView
 	protected $config;
 
 	/**
+	 * Document Object.
+	 *
+	 * @var    JDocument
+	 * @since  3.4
+	 */
+	protected $document;
+
+	/**
 	 * Method to instantiate the view.
 	 *
-	 * @param   JModelCmsInterface  $model   The model object.
-	 * @param   array               $config  An array of config options. Should contain component
-	 *                                       name and view name.
+	 * @param   JModelCmsInterface  $model     The model object.
+	 * @param   JDocument           $document  The document object.
+	 * @param   array               $config    An array of config options. Should contain component
+	 *                                         name and view name.
 	 *
 	 * @since   3.4
 	 */
-	public function __construct(JModelCmsInterface $model, array $config)
+	public function __construct(JModelCmsInterface $model, JDocument $document, array $config)
 	{
 		// Setup dependencies.
 		$this->setModel($model, null, true);
 		$this->config = new JRegistry($config);
+		$this->document = $document;
 		$this->name = $config['view'];
 		$this->option = $config['option'];
 	}
@@ -107,7 +117,10 @@ abstract class JViewCms implements JView
 	}
 
 	/**
-	 * Retrieves the data array from the default model.
+	 * Retrieves the data array from the default model. Will
+	 * automatically deal with the 3 CMS interfaces for single
+	 * model items. For any other situations the method will
+	 * need to be overwritten
 	 *
 	 * @return  array
 	 *

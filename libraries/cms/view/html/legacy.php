@@ -21,18 +21,28 @@ defined('JPATH_PLATFORM') or die;
 abstract class JViewHtmlLegacy extends JViewLegacy implements JView
 {
 	/**
+	 * Document Object.
+	 *
+	 * @var    JDocument
+	 * @since  3.4
+	 */
+	protected $document;
+
+	/**
 	 * Method to instantiate the view.
 	 *
 	 * @param   JModel            $model  The model object.
+	 * @param   JDocument           $document  The document object.
 	 * @param   SplPriorityQueue  $paths  The paths queue.
 	 *
 	 * @since   3.2
 	 */
-	public function __construct(JModel $model, SplPriorityQueue $paths = null, $config = array())
+	public function __construct(JModel $model, JDocument $document, SplPriorityQueue $paths = null, $config = array())
 	{
 		$app = JFactory::getApplication();
 		$component = JApplicationHelper::getComponentName();
 		$this->setModel($model, true);
+		$this->document = $document;
 
 		if (isset($paths))
 		{

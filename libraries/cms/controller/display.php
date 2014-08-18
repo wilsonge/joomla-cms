@@ -138,7 +138,8 @@ class JControllerDisplay extends JControllerCms
 
 			if (!class_exists($joomlaClass))
 			{
-				throw new RuntimeException(JText::sprintf('JVIEW_NOT_FOUND', $class), 404);
+				// @todo convert to a proper language string
+				throw new RuntimeException(JText::sprintf('The view %s could not be found', $class));
 			}
 
 			// We've found a relevant Joomla class - use it.
@@ -149,14 +150,14 @@ class JControllerDisplay extends JControllerCms
 		// So initalise it separately
 		if(strtolower($type) != 'html')
 		{
-			$view = new $class($model, $this->config);
+			$view = new $class($model, $this->doc, $this->config);
 		}
 		else
 		{
 			$renderer = $this->getRenderer();
 
 			// Initialise the view class
-			$view = new $class($model, $renderer, $this->config);
+			$view = new $class($model, $this->doc, $renderer, $this->config);
 
 			// If in html view then we set the layout
 			$layoutName   = $this->input->getWord('layout', 'default');

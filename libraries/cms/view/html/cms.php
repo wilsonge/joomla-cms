@@ -30,13 +30,14 @@ class JViewHtmlCms extends JViewCms
 	 * Method to instantiate the view.
 	 *
 	 * @param   JModelCmsInterface  $model     The model object.
+	 * @param   JDocument           $document  The document object.
 	 * @param   RendererInterface   $renderer  The renderer object. Defaults to JLayout if not set.
 	 * @param   array               $config    An array of config options. Should contain component
 	 *                                         name and view name.
 	 *
 	 * @since   3.4
 	 */
-	public function __construct(JModelCmsInterface $model, RendererInterface $renderer = null, $config = array())
+	public function __construct(JModelCmsInterface $model, JDocument $document, RendererInterface $renderer = null, $config = array())
 	{
 		// If we don't have a renderer use the JLayout renderer
 		if (!$renderer)
@@ -50,7 +51,7 @@ class JViewHtmlCms extends JViewCms
 		// Set the renderer.
 		$this->setRenderer($renderer);
 
-		parent::__construct($model, $config);
+		parent::__construct($model, $document, $config);
 	}
 
 	/**
