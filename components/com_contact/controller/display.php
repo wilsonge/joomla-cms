@@ -78,7 +78,7 @@ class ContactControllerDisplay extends JControllerDisplay
 
 		// The Html view must have a renderer object injected into it.
 		// So initalise it separately
-		if(strtolower($type) != 'html')
+		if(strtolower($type) != 'html' && strtolower($type) != 'feed')
 		{
 			$view = new $class($model, $this->config);
 		}
