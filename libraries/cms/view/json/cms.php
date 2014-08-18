@@ -35,9 +35,9 @@ class JViewJsonCms extends JViewCms
 	 *
 	 * @since   3.4
 	 */
-	public function __construct(JModelCmsInterface $model, array $config)
+	public function __construct(JModelCmsInterface $model, JDocument $document, array $config)
 	{
-		parent::__construct($model, $config);
+		parent::__construct($model, $document, $config);
 
 		if (isset($config['use_hypermedia']))
 		{
@@ -49,10 +49,7 @@ class JViewJsonCms extends JViewCms
 	}
 
 	/**
-	 * Retrieves the data array from the default model. Will
-	 * automatically deal with the 3 CMS interfaces for single
-	 * model items. For any other situations the method will
-	 * need to be overwritten
+	 * Retrieves the data array from the default model.
 	 *
 	 * @return  array
 	 *
@@ -128,8 +125,6 @@ class JViewJsonCms extends JViewCms
 		// Check if the layout path was found.
 		if (!$path)
 		{
-			$this->useHypermedia = true;
-
 			// Default JSON behaviour in case the template isn't there
 			if ($this->useHypermedia)
 			{
@@ -144,7 +139,7 @@ class JViewJsonCms extends JViewCms
 				else
 				{
 					// No item or items to render. With no template we'll just play safe and abort
-					throw new RuntimeException('Layout Path Not Found');
+					throw new RuntimeException('There are no items to render');
 				}
 
 				$json = $haldocument->render('json');
@@ -169,7 +164,7 @@ class JViewJsonCms extends JViewCms
 				$defaultName = $input->getCmd('view', 'joomla');
 				$filename = $input->getCmd('basename', $defaultName);
 				
-				$document = JFactory::getDocument();
+				$document = $this->document;
 				$document->setName($filename);
 
 				return $json;

@@ -28,7 +28,7 @@ class JViewFeedCategory extends JViewCms
 	public function render()
 	{
 		$app      = JFactory::getApplication();
-		$document = JFactory::getDocument();
+		$document = $this->document;
 
 		$extension      = $app->input->getString('option');
 		$contentType = $extension . '.' . $this->viewName;
