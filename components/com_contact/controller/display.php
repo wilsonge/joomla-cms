@@ -84,13 +84,6 @@ class ContactControllerDisplay extends JControllerDisplay
 		}
 		else
 		{
-			/**
-			$renderer = $this->getRenderer();
-
-			// Initialise the view class
-			$view = new $class($model, $renderer, $this->config);
-			**/
-
 			// Register the layout paths for the view
 			$paths = new SplPriorityQueue;
 

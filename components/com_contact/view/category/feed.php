@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_contact
  * @since       1.5
  */
-class ContactViewCategory extends JViewCategoryfeed
+class ContactViewCategory extends JViewFeedCategory
 {
 	/**
 	 * @var    string  The name of the view to link individual items to

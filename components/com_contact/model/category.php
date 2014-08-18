@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_contact
  * @since       1.5
  */
-class ContactModelCategory extends JModelList
+class ContactModelCategory extends JModelAdministrator
 {
 	/**
 	 * Category items data
@@ -48,32 +48,67 @@ class ContactModelCategory extends JModelList
 	protected $_categories = null;
 
 	/**
-	 * Constructor.
+	 * Public constructor
 	 *
-	 * @param   array  An optional associative array of configuration settings.
-	 * @see     JController
-	 * @since   1.6
+	 * @param  JRegistry         $state       The state for the model
+	 * @param  JDatabaseDriver   $db          The database object
+	 * @param  JEventDispatcher  $dispatcher  The dispatcher object
+	 * @param  array             $config      Array of config variables
+	 *
+	 * @since  3.4
 	 */
-	public function __construct($config = array())
+	public function __construct(JRegistry $state = null, JDatabaseDriver $db = null, JEventDispatcher $dispatcher = null, $config = array())
 	{
 		if (empty($config['filter_fields']))
 		{
 			$config['filter_fields'] = array(
-				'id', 'a.id',
-				'name', 'a.name',
-				'con_position', 'a.con_position',
-				'suburb', 'a.suburb',
-				'state', 'a.state',
-				'country', 'a.country',
-				'ordering', 'a.ordering',
-				'sortname',
-				'sortname1', 'a.sortname1',
-				'sortname2', 'a.sortname2',
-				'sortname3', 'a.sortname3'
+				array(
+					'name' => 'id',
+					'dataKeyName' => 'a.id',
+				),
+				array(
+					'name' => 'name',
+					'dataKeyName' => 'a.name',
+				),
+				array(
+					'name' => 'con_position',
+					'dataKeyName' => 'a.con_position',
+				),
+				array(
+					'name' => 'suburb',
+					'dataKeyName' => 'a.suburb',
+				),
+				array(
+					'name' => 'state',
+					'dataKeyName' => 'a.state',
+				),
+				array(
+					'name' => 'country',
+					'dataKeyName' => 'a.country',
+				),
+				array(
+					'name' => 'ordering',
+					'dataKeyName' => 'a.ordering',
+				),
+				array(
+					'name' => 'sortname1',
+					'dataKeyName' => 'a.sortname1',
+				),
+				array(
+					'name' => 'sortname2',
+					'dataKeyName' => 'a.sortname2',
+				),
+				array(
+					'name' => 'sortname3',
+					'dataKeyName' => 'a.sortname3',
+				),
+
+				// @todo deal with sortname
+				//'sortname',
 			);
 		}
 
-		parent::__construct($config);
+		parent::__construct(null, null, null, $config);
 	}
 
 	/**
@@ -116,7 +151,7 @@ class ContactModelCategory extends JModelList
 		$groups = implode(',', $user->getAuthorisedViewLevels());
 
 		// Create a new query object.
-		$db = $this->getDbo();
+		$db = $this->getDb();
 		$query = $db->getQuery(true);
 
 		// Select required fields from the categories.
@@ -136,7 +171,7 @@ class ContactModelCategory extends JModelList
 		$case_when1 .= $query->concatenate(array($c_id, 'c.alias'), ':');
 		$case_when1 .= ' ELSE ';
 		$case_when1 .= $c_id . ' END as catslug';
-		$query->select($this->getState('list.select', 'a.*') . ',' . $case_when . ',' . $case_when1)
+		$query->select($this->getStateVar('list.select', 'a.*') . ',' . $case_when . ',' . $case_when1)
 		// TODO: we actually should be doing it but it's wrong this way
 		//	. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
 		//	. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END AS catslug ');
@@ -145,7 +180,7 @@ class ContactModelCategory extends JModelList
 			->where('a.access IN (' . $groups . ')');
 
 		// Filter by category.
-		if ($categoryId = $this->getState('category.id'))
+		if ($categoryId = $this->getStateVar('category.id'))
 		{
 			$query->where('a.catid = ' . (int) $categoryId)
 				->where('c.access IN (' . $groups . ')');
@@ -159,7 +194,7 @@ class ContactModelCategory extends JModelList
 			->join('LEFT', '#__users AS uam ON uam.id = a.modified_by');
 
 		// Filter by state
-		$state = $this->getState('filter.published');
+		$state = $this->getStateVar('filter.published');
 
 		if (is_numeric($state))
 		{
@@ -169,14 +204,14 @@ class ContactModelCategory extends JModelList
 		$nullDate = $db->quote($db->getNullDate());
 		$nowDate = $db->quote(JFactory::getDate()->toSql());
 
-		if ($this->getState('filter.publish_date'))
+		if ($this->getStateVar('filter.publish_date'))
 		{
 			$query->where('(a.publish_up = ' . $nullDate . ' OR a.publish_up <= ' . $nowDate . ')')
 				->where('(a.publish_down = ' . $nullDate . ' OR a.publish_down >= ' . $nowDate . ')');
 		}
 
 		// Filter by search in title
-		$search = $this->getState('list.filter');
+		$search = $this->getStateVar('list.filter');
 		if (!empty($search))
 		{
 			$search = $db->quote('%' . $db->escape($search, true) . '%');
@@ -184,21 +219,21 @@ class ContactModelCategory extends JModelList
 		}
 
 		// Filter by language
-		if ($this->getState('filter.language'))
+		if ($this->getStateVar('filter.language'))
 		{
 			$query->where('a.language in (' . $db->quote(JFactory::getLanguage()->getTag()) . ',' . $db->quote('*') . ')');
 		}
 
 		// Set sortname ordering if selected
-		if ($this->getState('list.ordering') == 'sortname')
+		if ($this->getStateVar('list.ordering') == 'sortname')
 		{
-			$query->order($db->escape('a.sortname1') . ' ' . $db->escape($this->getState('list.direction', 'ASC')))
-				->order($db->escape('a.sortname2') . ' ' . $db->escape($this->getState('list.direction', 'ASC')))
-				->order($db->escape('a.sortname3') . ' ' . $db->escape($this->getState('list.direction', 'ASC')));
+			$query->order($db->escape('a.sortname1') . ' ' . $db->escape($this->getStateVar('list.direction', 'ASC')))
+				->order($db->escape('a.sortname2') . ' ' . $db->escape($this->getStateVar('list.direction', 'ASC')))
+				->order($db->escape('a.sortname3') . ' ' . $db->escape($this->getStateVar('list.direction', 'ASC')));
 		}
 		else
 		{
-			$query->order($db->escape($this->getState('list.ordering', 'a.ordering')) . ' ' . $db->escape($this->getState('list.direction', 'ASC')));
+			$query->order($db->escape($this->getStateVar('list.ordering', 'a.ordering')) . ' ' . $db->escape($this->getStateVar('list.direction', 'ASC')));
 		}
 
 		return $query;
@@ -220,19 +255,19 @@ class ContactModelCategory extends JModelList
 		$format = $app->input->getWord('format');
 		if ($format == 'feed')
 		{
-			$limit = $app->getCfg('feed_limit');
+			$limit = $app->get('feed_limit');
 		}
 		else
 		{
 			$limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'uint');
 		}
-		$this->setState('list.limit', $limit);
+		$this->state->set('list.limit', $limit);
 
 		$limitstart = $app->input->get('limitstart', 0, 'uint');
-		$this->setState('list.start', $limitstart);
+		$this->state->set('list.start', $limitstart);
 
 		// Optional filter text
-		$this->setState('list.filter', $app->input->getString('filter-search'));
+		$this->state->set('list.filter', $app->input->getString('filter-search'));
 
 		// Get list ordering default from the parameters
 		$menuParams = new JRegistry;
@@ -244,35 +279,35 @@ class ContactModelCategory extends JModelList
 		$mergedParams->merge($menuParams);
 
 		$orderCol = $app->input->get('filter_order', $mergedParams->get('initial_sort', 'ordering'));
-		if (!in_array($orderCol, $this->filter_fields))
+		if (!in_array($orderCol, $this->filterFields))
 		{
 			$orderCol = 'ordering';
 		}
-		$this->setState('list.ordering', $orderCol);
+		$this->state->set('list.ordering', $orderCol);
 
 		$listOrder = $app->input->get('filter_order_Dir', 'ASC');
 		if (!in_array(strtoupper($listOrder), array('ASC', 'DESC', '')))
 		{
 			$listOrder = 'ASC';
 		}
-		$this->setState('list.direction', $listOrder);
+		$this->state->set('list.direction', $listOrder);
 
 		$id = $app->input->get('id', 0, 'int');
-		$this->setState('category.id', $id);
+		$this->state->set('category.id', $id);
 
 		$user = JFactory::getUser();
 		if ((!$user->authorise('core.edit.state', 'com_contact')) && (!$user->authorise('core.edit', 'com_contact')))
 		{
 			// limit to published for people who can't edit or edit.state.
-			$this->setState('filter.published', 1);
+			$this->state->set('filter.published', 1);
 
 			// Filter by start and end dates.
-			$this->setState('filter.publish_date', true);
+			$this->state->set('filter.publish_date', true);
 		}
-		$this->setState('filter.language', JLanguageMultilang::isEnabled());
+		$this->state->set('filter.language', JLanguageMultilang::isEnabled());
 
 		// Load the parameters.
-		$this->setState('params', $params);
+		$this->state->set('params', $params);
 	}
 
 	/**
@@ -300,7 +335,7 @@ class ContactModelCategory extends JModelList
 			$options = array();
 			$options['countItems'] = $params->get('show_cat_items', 1) || $params->get('show_empty_categories', 0);
 			$categories = JCategories::getInstance('Contact', $options);
-			$this->_item = $categories->get($this->getState('category.id', 'root'));
+			$this->_item = $categories->get($this->getStateVar('category.id', 'root'));
 			if (is_object($this->_item))
 			{
 				$this->_children = $this->_item->getChildren();
@@ -393,7 +428,7 @@ class ContactModelCategory extends JModelList
 
 		if ($hitcount)
 		{
-			$pk = (!empty($pk)) ? $pk : (int) $this->getState('category.id');
+			$pk = (!empty($pk)) ? $pk : (int) $this->getStateVar('category.id');
 
 			$table = JTable::getInstance('Category', 'JTable');
 			$table->load($pk);

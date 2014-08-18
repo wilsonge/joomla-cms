@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_contact
  * @since       1.6
  */
-class ContactModelCategories extends JModelList
+class ContactModelCategories extends JModelActions
 {
 	/**
 	 * Model context string.
@@ -46,17 +46,17 @@ class ContactModelCategories extends JModelList
 	protected function populateState($ordering = null, $direction = null)
 	{
 		$app = JFactory::getApplication();
-		$this->setState('filter.extension', $this->_extension);
+		$this->state->set('filter.extension', $this->_extension);
 
 		// Get the parent id if defined.
 		$parentId = $app->input->getInt('id');
-		$this->setState('filter.parentId', $parentId);
+		$this->state->set('filter.parentId', $parentId);
 
 		$params = $app->getParams();
-		$this->setState('params', $params);
+		$this->state->set('params', $params);
 
-		$this->setState('filter.published',	1);
-		$this->setState('filter.access',	true);
+		$this->state->set('filter.published',	1);
+		$this->state->set('filter.access',	true);
 	}
 
 	/**
@@ -73,10 +73,10 @@ class ContactModelCategories extends JModelList
 	protected function getStoreId($id = '')
 	{
 		// Compile the store id.
-		$id	.= ':'.$this->getState('filter.extension');
-		$id	.= ':'.$this->getState('filter.published');
-		$id	.= ':'.$this->getState('filter.access');
-		$id	.= ':'.$this->getState('filter.parentId');
+		$id	.= ':'.$this->getStateVar('filter.extension');
+		$id	.= ':'.$this->getStateVar('filter.published');
+		$id	.= ':'.$this->getStateVar('filter.access');
+		$id	.= ':'.$this->getStateVar('filter.parentId');
 
 		return parent::getStoreId($id);
 	}
@@ -101,7 +101,7 @@ class ContactModelCategories extends JModelList
 			$options = array();
 			$options['countItems'] = $params->get('show_cat_items_cat', 1) || !$params->get('show_empty_categories_cat', 0);
 			$categories = JCategories::getInstance('Contact', $options);
-			$this->_parent = $categories->get($this->getState('filter.parentId', 'root'));
+			$this->_parent = $categories->get($this->getStateVar('filter.parentId', 'root'));
 			if (is_object($this->_parent))
 			{
 				$this->_items = $this->_parent->getChildren();

@@ -71,6 +71,14 @@ class JControllerDisplayform extends JControllerDisplay
 			return false;
 		}
 
+		// Checkout the item if not new
+		$id = $this->input->get($idName);
+
+		if ($id != 0)
+		{
+			$model->checkout($id);
+		}
+
 		// The default view for a form is an edit view
 		$layoutName   = $this->input->set('layout', 'edit');
 

@@ -201,7 +201,7 @@ abstract class JViewHtmlLegacy extends JViewLegacy implements JView
 	 */
 	public function render()
 	{
-		return parent::display(null);
+		return $this->display(null);
 	}
 
 	/**

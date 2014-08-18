@@ -61,8 +61,7 @@ class JControllerCancel extends JControllerCms
 		$keyName = $model->getTable()->getKeyName();
 		$pk    = $this->input->getInt($keyName, 0);
 
-		// If we are cancelling an item that already exists then we should
-		// check it back in.
+		// If we are cancelling an item that already exists then we should check it back in.
 		if ($pk != 0)
 		{
 			try
@@ -72,7 +71,7 @@ class JControllerCancel extends JControllerCms
 			catch (Exception $e)
 			{
 				$msg = $e->getMessage();
-				$this->setRedirect($redirectUrl, $msg, 'warning');
+				$this->setRedirect(JRoute::_('index.php?option=' . $redirectUrl, false), $msg, 'warning');
 
 				return false;
 			}

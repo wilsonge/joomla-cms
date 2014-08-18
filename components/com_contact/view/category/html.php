@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_contact
  * @since       1.5
  */
-class ContactViewCategory extends JViewCategory
+class ContactViewCategoryHtml extends JViewHtmlCategory
 {
 	/**
 	 * @var    string  The name of the extension for the category
