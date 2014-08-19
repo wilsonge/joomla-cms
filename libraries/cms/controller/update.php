@@ -15,7 +15,7 @@ defined('_JEXEC') or die('Restricted access');
  * @package     Joomla.Libraries
  * @subpackage  Controller
  * @since       3.4
-*/
+ */
 class JControllerUpdate extends JControllerCms
 {
 	/*

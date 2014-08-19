@@ -269,7 +269,6 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 		return $append;
 	}
 
-
 	/**
 	 * Method to get a model, creating it if it does not already exist.
 	 * Uses the prefix and $name to create the class name. Format $prefix.'Model'.$name
