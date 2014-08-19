@@ -18,23 +18,6 @@ defined('_JEXEC') or die;
 class ContactModelContacts extends JModelActions
 {
 	/**
-	 * Method to get a table object. The contacts table object is the singular contact.
-	 *
-	 * @param   string  $name     The table name. Optional.
-	 * @param   string  $prefix   The class prefix. Optional.
-	 * @param   array   $options  Configuration array for model. Optional.
-	 *
-	 * @return  JTableInterface  A JTableInterface object
-	 *
-	 * @since   3.4
-	 * @throws  RuntimeException
-	 */
-	public function getTable($name = null, $prefix = null, $options = array())
-	{
-		return parent::getTable('Contact', $prefix, $options);
-	}
-
-	/**
 	 * Public constructor
 	 *
 	 * @param  JRegistry         $state       The state for the model
@@ -133,6 +116,50 @@ class ContactModelContacts extends JModelActions
 		}
 
 		parent::__construct($state, $db, $dispatcher, $config);
+	}
+
+	/**
+	 * Method to test whether a record can be deleted.
+	 *
+	 * @param   string  $action  The action to check
+	 * @param   object  $record  A record object.
+	 *
+	 * @return  boolean  True if allowed to delete the record. Defaults to the permission set in the component.
+	 *
+	 * @since   3.2
+	 * @throws  RuntimeException
+	 */
+	protected function canDelete($action = 'core.delete', $record)
+	{
+		if (!empty($record->id))
+		{
+			// We can only delete records that have been trashed
+			if ($record->published != -2)
+			{
+				return false;
+			}
+
+			return parent::allowAction('core.delete', 'com_contact.category.' . (int) $record->catid);
+		}
+
+		throw new RuntimeException('An invalid record object was passed');
+	}
+
+	/**
+	 * Method to get a table object. The contacts table object is the singular contact.
+	 *
+	 * @param   string  $name     The table name. Optional.
+	 * @param   string  $prefix   The class prefix. Optional.
+	 * @param   array   $options  Configuration array for model. Optional.
+	 *
+	 * @return  JTableInterface  A JTableInterface object
+	 *
+	 * @since   3.4
+	 * @throws  RuntimeException
+	 */
+	public function getTable($name = null, $prefix = null, $options = array())
+	{
+		return parent::getTable('Contact', $prefix, $options);
 	}
 
 	/**

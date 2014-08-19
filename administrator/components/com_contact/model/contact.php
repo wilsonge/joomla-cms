@@ -296,28 +296,6 @@ class ContactModelContact extends JModelActions
 	}
 
 	/**
-	 * Method to test whether a record can be deleted.
-	 *
-	 * @param   object  $record  A record object.
-	 *
-	 * @return  boolean  True if allowed to delete the record. Defaults to the permission set in the component.
-	 *
-	 * @since   1.6
-	 */
-	protected function canDelete($record)
-	{
-		if (!empty($record->id))
-		{
-			if ($record->published != -2)
-			{
-				return;
-			}
-			$user = JFactory::getUser();
-			return $user->authorise('core.delete', 'com_contact.category.' . (int) $record->catid);
-		}
-	}
-
-	/**
 	 * Method to test whether a record can have its state edited.
 	 *
 	 * @param   object  $record  A record object.
