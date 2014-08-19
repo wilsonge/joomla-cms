@@ -174,7 +174,7 @@ abstract class JModelActions extends JModelAdministrator
 
 				if (in_array(false, $result, true))
 				{
-					throw new RuntimeException($activeRecord->getError());
+					throw new RuntimeException($dispatcher->getError());
 				}
 
 				$activeRecord->delete($pk);
