@@ -158,7 +158,7 @@ abstract class JModelAdministrator extends JModelUcm
 	 * @return  void
 	 *
 	 * @see     JFormField
-	 * @since   12.2
+	 * @since   3.4
 	 *
 	 * @throws  RuntimeException if there is an error in the form event.
 	 */
@@ -196,7 +196,7 @@ abstract class JModelAdministrator extends JModelUcm
 	 *
 	 * @see     JFormRule
 	 * @see     JFilterInput
-	 * @since   12.2
+	 * @since   3.4
 	 * @throws  RuntimeException
 	 */
 	public function validate($form, $data, $group = null)

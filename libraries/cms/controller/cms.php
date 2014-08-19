@@ -16,7 +16,7 @@ defined('_JEXEC') or die('Restricted access');
  * @subpackage  Controller
  * @since       3.4
 */
-class JControllerCms extends JControllerBase implements JControllerCmsInterface
+abstract class JControllerCms extends JControllerBase implements JControllerCmsInterface
 {
 	// Constants that define the form of the controller passed in options params
 	const CONTROLLER_PREFIX = 0;
@@ -247,6 +247,28 @@ class JControllerCms extends JControllerBase implements JControllerCmsInterface
 
 		return $append;
 	}
+
+	/**
+	 * Gets the URL arguments to append to a list redirect.
+	 *
+	 * @return  string  The arguments to append to the redirect URL.
+	 *
+	 * @since   3.4
+	 */
+	protected function getRedirectToListAppend()
+	{
+		$tmpl = JFactory::getApplication()->input->get('tmpl');
+		$append = '';
+
+		// Setup redirect info.
+		if ($tmpl)
+		{
+			$append .= '&tmpl=' . $tmpl;
+		}
+
+		return $append;
+	}
+
 
 	/**
 	 * Method to get a model, creating it if it does not already exist.

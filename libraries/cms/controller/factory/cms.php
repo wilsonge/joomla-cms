@@ -10,7 +10,8 @@
 defined('_JEXEC') or die('Restricted access');
 
 /**
- * Factory Provider. Allows easier injection of dependencies into the controllers for one off tasks
+ * Factory Provider. Allows easier injection of dependencies into the controllers for unit
+ * testing
  *
  * @package     Joomla.Libraries
  * @subpackage  Controller
@@ -29,17 +30,5 @@ class JControllerFactoryCms
 	{
 		// Check for request forgeries
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
-	}
-
-	/*
-	 * Translates a language constant into a string
-	 *
-	 * @return  string  The translated string
-	 *
-	 * @since   3.4
-	 */
-	public function translate($text)
-	{
-		return JText::_($text);
 	}
 }
