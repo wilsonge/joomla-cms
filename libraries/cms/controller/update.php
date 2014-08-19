@@ -37,7 +37,8 @@ class JControllerUpdate extends JControllerCms
 	 */
 	public function execute()
 	{
-		parent::execute();
+		// Check for request forgeries
+		$this->factory->checkSession();
 
 		// Check if the user is authorized to do this.
 		if ($this->app->isAdmin() && !JFactory::getUser()->authorise('core.manage'))

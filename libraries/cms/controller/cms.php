@@ -155,16 +155,7 @@ class JControllerCms extends JControllerBase implements JControllerCmsInterface
 	 *
 	 * @since   3.4
 	 */
-	public function execute()
-	{
-		// Check for request forgeries
-		$this->factory->checkSession();
-
-		$this->componentFolder = $this->input->getWord('option', 'com_content');
-		$this->viewName     = $this->input->getWord('view', 'articles');
-
-		return true;
-	}
+	abstract public function execute();
 
 	/**
 	 * Set a URL for browser redirection.
