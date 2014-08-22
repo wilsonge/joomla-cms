@@ -148,7 +148,7 @@ class JControllerDisplay extends JControllerCms
 
 		// The Html view must have a renderer object injected into it.
 		// So initalise it separately
-		if(strtolower($type) != 'html')
+		if (strtolower($type) != 'html')
 		{
 			$view = new $class($model, $this->doc, $this->config);
 		}
