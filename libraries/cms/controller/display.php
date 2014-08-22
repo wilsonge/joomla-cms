@@ -138,7 +138,7 @@ class JControllerDisplay extends JControllerCms
 
 			if (!class_exists($joomlaClass))
 			{
-				throw new RuntimeException(JText::sprintf('JLIB_APPLICATION_ERROR_VIEW_NOT_FOUND', $name, $type, $prefix . 'View'));
+				throw new RuntimeException(JText::sprintf('JLIB_APPLICATION_ERROR_VIEW_NOT_FOUND', $name, $type, $prefix));
 			}
 
 			// We've found a relevant Joomla class - use it.
