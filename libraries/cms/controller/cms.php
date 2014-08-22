@@ -34,7 +34,7 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 	 */
 	protected $app;
 
-	/*
+	/**
 	 * Prefix for the view and model classes
 	 *
 	 * @var    string
@@ -42,7 +42,7 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 	 */
 	public $prefix;
 
-	/*
+	/**
 	 * An array of options
 	 *
 	 * @var    string
@@ -50,7 +50,7 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 	 */
 	public $options;
 
-	/*
+	/**
 	 * The JDocument object
 	 *
 	 * @var    JDocument
@@ -58,7 +58,7 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 	 */
 	public $doc;
 
-	/*
+	/**
 	 * Injected configuration array
 	 *
 	 * @var    array
@@ -66,7 +66,7 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 	 */
 	public $config;	
 
-	/*
+	/**
 	 * Permission needed for the action. Defaults to most restrictive
 	 *
 	 * @var    string
@@ -280,7 +280,7 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 	 *
 	 * @return  JModelCms
 	 *
-	 * @since 3.4
+	 * @since   3.4
 	 * @throws  RuntimeException
 	 */
 	public function getModel($prefix = null, $name = null)
@@ -330,7 +330,7 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 	 *
 	 * @return  string  The prefix for models and views
 	 *
-	 * @since 3.4
+	 * @since   3.4
 	 */
 	protected function getPrefix($option = null)
 	{
@@ -348,16 +348,16 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 	 * Method to save the user input into state.
 	 * This is intended to be used to preserve form data when server side validation fails
 	 *
-	 * @param string $key dot delimited string format $context.$dataIdentifier
-	 * @param mixed $data the data to store
+	 * @param   string  $key dot delimited string format $context.$dataIdentifier
+	 * @param   mixed   $data the data to store
 	 *
-	 * @return void
+	 * @return  void
 	 *
-	 * @since 3.4
+	 * @since   3.4
 	 */
 	protected function setUserState($key = null, $data = null)
 	{
-		if(!is_null($key))
+		if (!is_null($key))
 		{
 			$this->app->setUserState($key, $data);
 		}
