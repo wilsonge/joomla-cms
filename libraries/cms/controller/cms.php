@@ -7,7 +7,7 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-defined('_JEXEC') or die('Restricted access');
+defined('JPATH_PLATFORM') or die;
 
 /**
  * Base Controller
@@ -19,10 +19,10 @@ defined('_JEXEC') or die('Restricted access');
 abstract class JControllerCms extends JControllerBase implements JControllerCmsInterface
 {
 	// Constants that define the form of the controller passed in options params
-	const CONTROLLER_PREFIX = 0;
-	const CONTROLLER_ACTIVITY = 1;
+	const CONTROLLER_PREFIX      = 0;
+	const CONTROLLER_ACTIVITY    = 1;
 	const CONTROLLER_VIEW_FOLDER = 2;
-	const CONTROLLER_OPTION = 3;
+	const CONTROLLER_OPTION      = 3;
 	const CONTROLLER_CORE_OPTION = 2;
 
 	/**
@@ -69,7 +69,7 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 	/*
 	 * Permission needed for the action. Defaults to most restrictive
 	 *
-	 * @var  string
+	 * @var    string
 	 * @since  3.4
 	 */
 	public $permission = '';
@@ -77,7 +77,9 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 	/**
 	 * Associative array of models
 	 * stored as $models[$prefix][$name] used by get models
-	 * @var array
+	 *
+	 * @var    array
+	 * @since  3.4
 	 */
 	protected $models = array();
 
@@ -133,8 +135,8 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 	 */
 	public function __construct(JInput $input = null, JApplicationCms $app = null, array $config = array(), JDocument $doc = null)
 	{
-		$this->config = $config;
-		$this->doc = $doc ? $doc : JFactory::getDocument();
+		$this->config  = $config;
+		$this->doc     = $doc ? $doc : JFactory::getDocument();
 		$this->factory = new JControllerFactoryCms;
 
 		parent::__construct($input, $app);
@@ -257,7 +259,7 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 	 */
 	protected function getRedirectToListAppend()
 	{
-		$tmpl = JFactory::getApplication()->input->get('tmpl');
+		$tmpl   = JFactory::getApplication()->input->get('tmpl');
 		$append = '';
 
 		// Setup redirect info.
@@ -277,6 +279,8 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 	 * @param   string  $name    The model name
 	 *
 	 * @return  JModelCms
+	 *
+	 * @since 3.4
 	 * @throws  RuntimeException
 	 */
 	public function getModel($prefix = null, $name = null)
@@ -299,8 +303,8 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 		}
 
 		$this->config['model'] = $name;
-		$prefix = ucfirst($prefix);
-		$name   = ucfirst($name);
+		$prefix                = ucfirst($prefix);
+		$name                  = ucfirst($name);
 
 		if (isset($this->models[$prefix][$name]))
 		{
@@ -325,6 +329,8 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 	 * @param   string  $option  Component option string 'com_{componentName}'
 	 *
 	 * @return  string  The prefix for models and views
+	 *
+	 * @since 3.4
 	 */
 	protected function getPrefix($option = null)
 	{
@@ -346,6 +352,8 @@ abstract class JControllerCms extends JControllerBase implements JControllerCmsI
 	 * @param mixed $data the data to store
 	 *
 	 * @return void
+	 *
+	 * @since 3.4
 	 */
 	protected function setUserState($key = null, $data = null)
 	{
