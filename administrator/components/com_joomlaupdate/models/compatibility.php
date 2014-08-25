@@ -104,9 +104,10 @@ class JoomlaupdateModelCompatibility extends JModelLegacy
 					case 'mysql':
 						$db = JFactory::getDbo();
 						$connectors = $db->getConnectors();
+
 						foreach ($connectors as $connector)
 						{
-							if($connector === $with)
+							if ($connector === $with)
 							{
 								$current_version = $db->getVersion();
 								$compatible_found = $compatiblity->check($current_version, $with);
@@ -122,9 +123,10 @@ class JoomlaupdateModelCompatibility extends JModelLegacy
 					case 'postgresql':
 						$db = JFactory::getDbo();
 						$connectors = $db->getConnectors();
+
 						foreach ($connectors as $connector)
 						{
-							if($connector === $with)
+							if ($connector === $with)
 							{
 								$current_version = $db->getVersion();
 								$compatible_found = $compatiblity->check($current_version, $with);
@@ -140,9 +142,10 @@ class JoomlaupdateModelCompatibility extends JModelLegacy
 					case 'sqlazure':
 						$db = JFactory::getDbo();
 						$connectors = $db->getConnectors();
+
 						foreach ($connectors as $connector)
 						{
-							if($connector === $with)
+							if ($connector === $with)
 							{
 								$current_version = $db->getVersion();
 								$compatible_found = $compatiblity->check($current_version, $with);
