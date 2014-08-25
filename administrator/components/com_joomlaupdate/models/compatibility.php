@@ -101,6 +101,60 @@ class JoomlaupdateModelCompatibility extends JModelLegacy
 						$current_version = PHP_VERSION;
 						$compatible_found = $compatiblity->check($current_version, $with);
 						break;
+					case 'mysql':
+						$db = JFactory::getDbo();
+						$connectors = $db->getConnectors();
+						foreach ($connectors as $connector)
+						{
+							if($connector === $with)
+							{
+								$current_version = $db->getVersion();
+								$compatible_found = $compatiblity->check($current_version, $with);
+								break;
+							}
+							else
+							{
+								// Connector doesn't exist therefore mark as true
+								$compatible_found = true;
+							}
+						}
+						break;
+					case 'postgresql':
+						$db = JFactory::getDbo();
+						$connectors = $db->getConnectors();
+						foreach ($connectors as $connector)
+						{
+							if($connector === $with)
+							{
+								$current_version = $db->getVersion();
+								$compatible_found = $compatiblity->check($current_version, $with);
+								break;
+							}
+							else
+							{
+								// Connector doesn't exist therefore mark as true
+								$compatible_found = true;
+							}
+						}
+						break;
+					case 'sqlazure':
+						$db = JFactory::getDbo();
+						$connectors = $db->getConnectors();
+						foreach ($connectors as $connector)
+						{
+							if($connector === $with)
+							{
+								$current_version = $db->getVersion();
+								$compatible_found = $compatiblity->check($current_version, $with);
+								break;
+							}
+							else
+							{
+								// Connector doesn't exist therefore mark as true
+								$compatible_found = true;
+							}
+						}
+						break;
 					default:
 						$extensionInfo = JTable::getInstance('extension');
 						$extensionInfo->load( $extensionInfo->find(array('element' => (string)$with)) );
