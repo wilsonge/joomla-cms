@@ -59,12 +59,6 @@ class JSessionTest extends TestCase
 	 */
 	protected function tearDown()
 	{
-		if (session_id())
-		{
-			session_unset();
-			session_destroy();
-		}
-
 		$this->restoreFactoryState();
 	}
 
