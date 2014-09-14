@@ -106,7 +106,8 @@ class JSessionTest extends TestCase
 	public function testGetInstance($store, $options)
 	{
 		$oldSession = $this->object;
-		$newSession = JSession::getInstance($store, $options);
+		$handler = new JSessionHandlerArray;
+		$newSession = JSession::getInstance($store, $options, $handler);
 
 		// The properties and values should be identical to each other.
 		$this->assertThat(
