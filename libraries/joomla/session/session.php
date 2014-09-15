@@ -123,12 +123,7 @@ class JSession implements IteratorAggregate
 	public function __construct($store = 'none', array $options = array(), JSessionHandlerInterface $handlerInterface = null)
 	{
 		// Set the session handler
-		if (!$handlerInterface)
-		{
-			$handlerInterface = new JSessionHandlerNative;
-		}
-
-		$this->setHandler($handlerInterface);
+		$this->_handler = $handlerInterface instanceof JSessionHandlerInterface ? $handlerInterface : new JSessionHandlerNative;
 
 		// Clear any existing sessions
 		$this->_handler->clear();
@@ -185,11 +180,6 @@ class JSession implements IteratorAggregate
 	{
 		if (!is_object(self::$instance))
 		{
-			if (!$handlerInterface)
-			{
-				$handlerInterface = new JSessionHandlerNative;
-			}
-
 			self::$instance = new JSession($store, $options, $handlerInterface);
 		}
 
