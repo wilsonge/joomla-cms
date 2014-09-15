@@ -104,9 +104,6 @@ class JApplicationCmsTest extends TestCaseDatabase
 
 		// Get a new JApplicationCmsInspector instance.
 		$this->class = new JApplicationCmsInspector(null, $config);
-
-		JFactory::$document = $this->getMockDocument();
-		JFactory::$language = $this->getMockLanguage();
 	}
 
 	/**

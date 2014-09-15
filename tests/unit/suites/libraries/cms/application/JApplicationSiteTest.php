@@ -103,9 +103,6 @@ class JApplicationSiteTest extends TestCaseDatabase
 		// Get a new JApplicationSite instance.
 		$this->class = new JApplicationSite(null, $config);
 		TestReflection::setValue('JApplicationCms', 'instances', array('site' => $this->class));
-
-		JFactory::$document = $this->getMockDocument();
-		//JFactory::$language = $this->getMockLanguage();
 	}
 
 	/**

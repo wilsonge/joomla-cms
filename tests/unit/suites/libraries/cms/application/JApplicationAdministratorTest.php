@@ -103,9 +103,6 @@ class JApplicationAdministratorTest extends TestCaseDatabase
 		// Get a new JApplicationAdministrator instance.
 		$this->class = new JApplicationAdministrator(null, $config);
 		TestReflection::setValue('JApplicationCms', 'instances', array('administrator' => $this->class));
-
-		JFactory::$document = $this->getMockDocument();
-		JFactory::$language = $this->getMockLanguage();
 	}
 
 	/**
