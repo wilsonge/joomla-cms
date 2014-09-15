@@ -34,6 +34,13 @@ class JSessionTest extends TestCase
 
 		$this->saveFactoryState();
 
+		// Empty any stored instances as they probably contain a instance with a native php session
+		// which will break the unit tests
+		$reflectedClass = new \ReflectionClass('JSession');
+		$reflectedProperty = $reflectedClass->getProperty('instance');
+		$reflectedProperty->setAccessible(true);
+		$reflectedProperty->setValue(null);
+
 		$handler = new JSessionHandlerArray(md5('PHPSESSID'));
 		$config = array(
 			'expire' => 20,
