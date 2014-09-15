@@ -123,7 +123,7 @@ class JSession implements IteratorAggregate
 	public function __construct($store = 'none', array $options = array(), JSessionHandlerInterface $handlerInterface = null)
 	{
 		// Set the session handler
-		if (!$handlerInterface)
+		if (! ($handlerInterface instanceof JSessionHandlerInterface))
 		{
 			$handlerInterface = new JSessionHandlerNative;
 		}
