@@ -9,12 +9,12 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\Registry\Registry;
+
 /**
  * User model.
  *
- * @package     Joomla.Administrator
- * @subpackage  com_users
- * @since       1.6
+ * @since  1.6
  */
 class UsersModelUser extends JModelAdmin
 {
@@ -46,7 +46,7 @@ class UsersModelUser extends JModelAdmin
 	 * @return  JTable  A database object
 	 *
 	 * @since   1.6
-	*/
+	 */
 	public function getTable($type = 'User', $prefix = 'JTable', $config = array())
 	{
 		$table = JTable::getInstance($type, $prefix, $config);
@@ -93,7 +93,7 @@ class UsersModelUser extends JModelAdmin
 	public function getForm($data = array(), $loadData = true)
 	{
 		$plugin = JPluginHelper::getPlugin('user', 'joomla');
-		$pluginParams = new JRegistry($plugin->params);
+		$pluginParams = new Registry($plugin->params);
 
 		// Get the form.
 		$form = $this->loadForm('com_users.user', 'user', array('control' => 'jform', 'load_data' => $loadData));

@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\Registry\Registry;
+
 JLoader::register('MenusHelper', JPATH_ADMINISTRATOR . '/components/com_menus/helpers/menus.php');
 
 JLoader::register('MultilangstatusHelper', JPATH_ADMINISTRATOR . '/components/com_languages/helpers/multilangstatus.php');
@@ -16,9 +18,7 @@ JLoader::register('MultilangstatusHelper', JPATH_ADMINISTRATOR . '/components/co
 /**
  * Joomla! Language Filter Plugin.
  *
- * @package     Joomla.Plugin
- * @subpackage  System.languagefilter
- * @since       1.6
+ * @since  1.6
  */
 class PlgSystemLanguageFilter extends JPlugin
 {
@@ -68,7 +68,7 @@ class PlgSystemLanguageFilter extends JPlugin
 				self::$lang_codes 	= JLanguageHelper::getLanguages('lang_code');
 				self::$default_lang = JComponentHelper::getParams('com_languages')->get('site', 'en-GB');
 				self::$default_sef 	= self::$lang_codes[self::$default_lang]->sef;
-				self::$homes		= MultilangstatusHelper::getHomes();
+				self::$homes		= MultilangstatusHelper::getHomepages();
 
 				$user = JFactory::getUser();
 				$levels = $user->getAuthorisedViewLevels();
@@ -407,7 +407,7 @@ class PlgSystemLanguageFilter extends JPlugin
 	{
 		if ($this->params->get('automatic_change', '1') == '1' && key_exists('params', $user))
 		{
-			$registry = new JRegistry;
+			$registry = new Registry;
 			$registry->loadString($user['params']);
 			self::$user_lang_code = $registry->get('language');
 
@@ -436,7 +436,7 @@ class PlgSystemLanguageFilter extends JPlugin
 	{
 		if ($this->params->get('automatic_change', '1') == '1' && key_exists('params', $user) && $success)
 		{
-			$registry = new JRegistry;
+			$registry = new Registry;
 			$registry->loadString($user['params']);
 			$lang_code = $registry->get('language');
 
@@ -637,13 +637,10 @@ class PlgSystemLanguageFilter extends JPlugin
 						// Check if language is the default site language and remove url language code is on
 						if ($language->sef == self::$default_sef && $this->params->get('remove_default_prefix') == '1')
 						{
-							$relLink = str_replace('/' . $language->sef, '', $link);
-							$doc->addHeadLink($server . $relLink, 'alternate', 'rel', array('hreflang' => $language->lang_code));
+							$link = preg_replace('|/' . $language->sef . '/|', '/', $link, 1);
 						}
-						else
-						{
-							$doc->addHeadLink($server . $link, 'alternate', 'rel', array('hreflang' => $language->lang_code));
-						}
+
+						$doc->addHeadLink($server . $link, 'alternate', 'rel', array('hreflang' => $language->lang_code));
 					}
 					elseif (isset($associations[$language->lang_code]))
 					{
@@ -663,13 +660,10 @@ class PlgSystemLanguageFilter extends JPlugin
 							// Check if language is the default site language and remove url language code is on
 							if ($language->sef == self::$default_sef && $this->params->get('remove_default_prefix') == '1')
 							{
-								$relLink = str_replace('/' . $language->sef, '', $link);
-								$doc->addHeadLink($server . $relLink, 'alternate', 'rel', array('hreflang' => $language->lang_code));
+								$link = preg_replace('|/' . $language->sef . '/|', '/', $link, 1);
 							}
-							else
-							{
-								$doc->addHeadLink($server . $link, 'alternate', 'rel', array('hreflang' => $language->lang_code));
-							}
+
+							$doc->addHeadLink($server . $link, 'alternate', 'rel', array('hreflang' => $language->lang_code));
 						}
 					}
 				}
@@ -700,13 +694,10 @@ class PlgSystemLanguageFilter extends JPlugin
 						// Check if language is the default site language and remove url language code is on
 						if ($language->sef == self::$default_sef && $this->params->get('remove_default_prefix') == '1')
 						{
-							$relLink = str_replace('/' . $language->sef, '', $link);
-							$doc->addHeadLink($server . $relLink, 'alternate', 'rel', array('hreflang' => $language->lang_code));
+							$link = preg_replace('|/' . $language->sef . '/|', '/', $link, 1);
 						}
-						else
-						{
-							$doc->addHeadLink($server . $link, 'alternate', 'rel', array('hreflang' => $language->lang_code));
-						}
+
+						$doc->addHeadLink($server . $link, 'alternate', 'rel', array('hreflang' => $language->lang_code));
 					}
 				}
 			}

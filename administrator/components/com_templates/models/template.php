@@ -12,14 +12,24 @@ defined('_JEXEC') or die;
 /**
  * Template model class.
  *
- * @package     Joomla.Administrator
- * @subpackage  com_templates
- * @since       1.6
+ * @since  1.6
  */
 class TemplatesModelTemplate extends JModelForm
 {
+	/**
+	 * The information in a template
+	 *
+	 * @var    stdClass
+	 * @since  1.6
+	 */
 	protected $template = null;
 
+	/**
+	 * The path to the template
+	 *
+	 * @var    stdClass
+	 * @since  3.2
+	 */
 	protected $element = null;
 
 	/**
@@ -691,14 +701,8 @@ class TemplatesModelTemplate extends JModelForm
 			$fileName     = end($explodeArray);
 			$outFile      = reset(explode('.', $fileName));
 
-			// Load the RAD layer to use its LESS compiler
-			if (!defined('FOF_INCLUDED'))
-			{
-				require_once JPATH_LIBRARIES . '/fof/include.php';
-			}
-
-			$less = new FOFLess;
-			$less->setFormatter(new FOFLessFormatterJoomla);
+			$less = new JLess;
+			$less->setFormatter(new JLessFormatterJoomla);
 
 			try
 			{
@@ -1159,9 +1163,9 @@ class TemplatesModelTemplate extends JModelForm
 	/**
 	 * Copy a file.
 	 *
-	 * @param   string  $newName    The name of the copied file
-	 * @param   string  $location   The final location where the file is to be copied
-	 * @param   string  $file    	The name and location of the file
+	 * @param   string  $newName   The name of the copied file
+	 * @param   string  $location  The final location where the file is to be copied
+	 * @param   string  $file      The name and location of the file
 	 *
 	 * @return   boolean  true if image resize successful, false otherwise.
 	 *

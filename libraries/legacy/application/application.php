@@ -9,6 +9,8 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\Registry\Registry;
+
 JLog::add('JApplication is deprecated.', JLog::WARNING, 'deprecated');
 
 /**
@@ -18,8 +20,6 @@ JLog::add('JApplication is deprecated.', JLog::WARNING, 'deprecated');
  * supporting API functions. Derived clases should supply the route(), dispatch()
  * and render() functions.
  *
- * @package     Joomla.Legacy
- * @subpackage  Application
  * @since       11.1
  * @deprecated  4.0  Use JApplicationCms instead unless specified otherwise
  */
@@ -786,7 +786,7 @@ class JApplication extends JApplicationBase
 		$template = new stdClass;
 
 		$template->template = 'system';
-		$template->params   = new JRegistry;
+		$template->params   = new Registry;
 
 		if ($params)
 		{
@@ -1097,7 +1097,7 @@ class JApplication extends JApplicationBase
 
 		if ($session->isNew())
 		{
-			$session->set('registry', new JRegistry('session'));
+			$session->set('registry', new Registry('session'));
 			$session->set('user', new JUser);
 		}
 	}
