@@ -652,7 +652,7 @@ abstract class JDatabaseQuery
 				break;
 
 			case 'offset':
-				$this->offset = 0;
+				$this->offset = null;
 				break;
 
 			case 'union':
