@@ -580,7 +580,7 @@ class JDatabaseDriverPostgresql extends JDatabaseDriver
 	{
 		$this->connect();
 		$insertQuery = $this->getQuery(false, true);
-		$table = $insertQuery->__get('insert')->getElements();
+		$table = $insertQuery->insert->getElements();
 
 		/* find sequence column name */
 		$colNameQuery = $this->getQuery(true);
