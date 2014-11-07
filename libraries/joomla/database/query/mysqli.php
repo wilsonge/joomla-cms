@@ -29,6 +29,32 @@ class JDatabaseQueryMysqli extends JDatabaseQuery implements JDatabaseQueryLimit
 	protected $limit;
 
 	/**
+	 * Clear data from the query or a specific clause of the query.
+	 *
+	 * @param   string  $clause  Optionally, the name of the clause to clear, or nothing to clear the whole query.
+	 *
+	 * @return  JDatabaseQueryMysqli  Returns this object to allow chaining.
+	 *
+	 * @since   11.3
+	 */
+	public function clear($clause = null)
+	{
+		switch ($clause)
+		{
+			// Mysql requires a offset if a limit is set. So only set this to 0.
+			case 'offset':
+				$this->offset = 0;
+				break;
+
+			default:
+				parent::clear($clause);
+				break;
+		}
+
+		return $this;
+	}
+
+	/**
 	 * Method to modify a query already in string format with the needed
 	 * additions to make the query limited to a particular number of
 	 * results, or start at a particular offset.
