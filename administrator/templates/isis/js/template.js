@@ -124,7 +124,7 @@
 			if ($visible)
 			{
 				$sidebarToggle.hide();
-				$sidebar.removeClass('j-sidebar-visible').addClass('j-sidebar-hidden');
+				$sidebar.removeClass('j-sidebar-visible').addClass('j-sidebar-hidden').attr('aria-hidden', true);
 				$toggleButtonWrapper.removeClass('j-toggle-visible').addClass('j-toggle-hidden');
 				$toggleSidebarIcon.removeClass('j-toggle-visible').addClass('j-toggle-hidden');
 				$message.removeClass('span10').addClass('span12');
@@ -144,7 +144,7 @@
 			else
 			{
 				$sidebarToggle.show();
-				$sidebar.removeClass('j-sidebar-hidden').addClass('j-sidebar-visible');
+				$sidebar.removeClass('j-sidebar-hidden').addClass('j-sidebar-visible').attr('aria-hidden', false);
 				$toggleButtonWrapper.removeClass('j-toggle-hidden').addClass('j-toggle-visible');
 				$toggleSidebarIcon.removeClass('j-toggle-hidden').addClass('j-toggle-visible');
 				$message.removeClass('span12').addClass('span10');
