@@ -10,6 +10,7 @@
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\Registry\Registry;
+use Joomla\DI\Container;
 
 /**
  * Joomla! CMS Application class
@@ -86,6 +87,14 @@ class JApplicationCms extends JApplicationWeb
 	protected $template = null;
 
 	/**
+	 * DI Container
+	 *
+	 * @var    Container
+	 * @since  3.5
+	 */
+	private $container;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param   JInput                 $input   An optional argument to provide dependency injection for the application's
@@ -130,6 +139,41 @@ class JApplicationCms extends JApplicationWeb
 		{
 			$this->loadSession();
 		}
+	}
+
+	/**
+	 * Get the DI container.
+	 *
+	 * @return  Container
+	 *
+	 * @since   3.5
+	 *
+	 * @throws  UnexpectedValueException May be thrown if the container has not been set.
+	 */
+	public function getContainer()
+	{
+		if ($this->container)
+		{
+			return $this->container;
+		}
+
+		throw new UnexpectedValueException('Container not set in ' . __CLASS__);
+	}
+
+	/**
+	 * Set the DI container.
+	 *
+	 * @param   Container  $container  The DI container.
+	 *
+	 * @return  mixed  Returns itself to support chaining.
+	 *
+	 * @since   3.5
+	 */
+	public function setContainer(Container $container)
+	{
+		$this->container = $container;
+
+		return $this;
 	}
 
 	/**

@@ -43,5 +43,18 @@ JDEBUG ? $_PROFILER->mark('afterLoad') : null;
 // Instantiate the application.
 $app = JFactory::getApplication('administrator');
 
+// We require an application object in the Service Provider (because it's just to backport a DIC to the 3.x series)
+try
+{
+	$container = (new Joomla\DI\Container)
+		->registerServiceProvider(new JServiceCms($app));
+}
+catch (Exception $e)
+{
+	JErrorPage::render($e);
+}
+
+$app->setContainer($container);
+
 // Execute the application.
 $app->execute();
