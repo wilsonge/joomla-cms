@@ -53,24 +53,24 @@ class JServiceCms implements ServiceProviderInterface
 	{
 		// Document
 		$container->alias('document', 'JDocumentHtml')
-			->share('JDocumentHtml', array('JFactory', 'getDocument'));
+			->set('JDocumentHtml', array('JFactory', 'getDocument'), false, true);
 
 		// User
 		$container->alias('user', 'JUser')
-			->share('JUser', array('JFactory', 'getUser'));
+			->set('JUser', array('JFactory', 'getUser'), false, true);
 
 		// Database
 		$container->alias('database', 'JDatabase')
-			->share('JDatabase', array('JFactory', 'getDbo'));
+			->set('JDatabase', array('JFactory', 'getDbo'), false, true);
 
 		// Note $this is only allowed in anonymous functions since PHP 5.4 so we'll just inject it.
 		$app = $this->app;
 
 		// Input
 		$container->alias('input', 'JInput')
-			->share('JInput', function () use($app) {
+			->set('JInput', function () use($app) {
 				return $app->input;
-			});
+			}, false, true);
 
 		/**
 		 * Session - trying to access this via JFactory gives us an error because the method
@@ -79,8 +79,8 @@ class JServiceCms implements ServiceProviderInterface
 		 * but takes no param in it's method so we'll use this class.
 		 */
 		$container->alias('session', 'JSession')
-			->share('JSession', function () use($app) {
+			->set('JSession', function () use($app) {
 				return $app->getSession();
-			});
+			}, false, true);
 	}
 }
