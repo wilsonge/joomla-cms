@@ -10,6 +10,15 @@
 defined('_JEXEC') or die;
 $params = JComponentHelper::getParams('com_media');
 $path = 'file_path';
+JFactory::getDocument()->addScriptDeclaration(
+	"
+		jQuery(document).ready(function($){
+			$('.modal').on('hidden', function () {
+					$('.mejs-playpause-button').find('button').click();
+			});
+		});
+	"
+);
 ?>
 <form target="_parent" action="index.php?option=com_media&amp;tmpl=index&amp;folder=<?php echo $this->state->folder; ?>" method="post" id="mediamanager-form" name="mediamanager-form">
 	<div class="muted">
