@@ -33,8 +33,9 @@ JFactory::getDocument()->addScriptDeclaration(
 JHtml::_('behavior.keepalive');
 JHtml::_('bootstrap.framework');
 JHtml::_('script', 'media/mediamanager.min.js', false, true);
-JHtml::_('script', 'media/mediaelement/mediaelement-and-player.js', false, false);
-JHtml::_('stylesheet', 'media/mediaelement/mediaelementplayer.css', array(), false);
+JHtml::_('script', 'mediaelement/mediaelement-and-player.js', false, true);
+JHtml::_('stylesheet', 'mediaelement/mediaelementplayer.css', array(), true);
+JHtml::_('stylesheet', 'mediaelement/mejs-skins.css', array(), true);
 JHtml::_('stylesheet', 'system/mootree.css', array(), true);
 
 if ($lang->isRtl())
@@ -133,7 +134,7 @@ echo JHtml::_(
 		'footer' => '<button class="btn" data-dismiss="modal" aria-hidden="true">'
 			. JText::_("JLIB_HTML_BEHAVIOR_CLOSE") . '</button>'
 	),
-	'<div id="videoPlayer" style="z-index: -100;"><video id="mejsPlayer" style="height: 250px;"/></div>'
+	'<div id="videoPlayer" style="z-index: -100;"><video id="mejsPlayer" class="mejs-ted" style="height: 250px;"/></div>'
 );
 ?>
 	<!-- End Content -->
