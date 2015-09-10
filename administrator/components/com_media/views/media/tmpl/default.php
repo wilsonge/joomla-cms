@@ -11,6 +11,37 @@ defined('_JEXEC') or die;
 
 $user  = JFactory::getUser();
 $input = JFactory::getApplication()->input;
+$lang  = JFactory::getLanguage();
+$style = JFactory::getApplication()->getUserStateFromRequest('media.list.layout', 'layout', 'thumbs', 'word');
+
+if (DIRECTORY_SEPARATOR == '\\')
+{
+	$base = str_replace(DIRECTORY_SEPARATOR, "\\\\", COM_MEDIA_BASE);
+}
+else
+{
+	$base = COM_MEDIA_BASE;
+}
+
+JFactory::getDocument()->addScriptDeclaration(
+	"
+		var basepath = '" . $base . "';
+		var viewstyle = '" . $style . "';
+	"
+);
+
+JHtml::_('behavior.keepalive');
+JHtml::_('bootstrap.framework');
+JHtml::_('script', 'media/mediamanager.min.js', false, true);
+JHtml::_('script', 'mediaelement/mediaelement-and-player.js', false, true);
+JHtml::_('stylesheet', 'mediaelement/mediaelementplayer.css', array(), true);
+JHtml::_('stylesheet', 'mediaelement/mejs-skins.css', array(), true);
+JHtml::_('stylesheet', 'system/mootree.css', array(), true);
+
+if ($lang->isRtl())
+{
+	JHtml::_('stylesheet', 'media/mootree_rtl.css', array(), true);
+}
 ?>
 <div class="row-fluid">
 	<!-- Begin Sidebar -->
@@ -82,5 +113,29 @@ $input = JFactory::getApplication()->input;
 			</div>
 		</form>
 	</div>
+<?php // Pre render all the bootstrap modals on the parent window
+
+echo JHtml::_(
+	'bootstrap.renderModal',
+	'imagePreview',
+	array(
+		'title' => JText::_('COM_MEDIA_IMAGE_PREVIEW'),
+		'footer' => '<button class="btn" data-dismiss="modal" aria-hidden="true">'
+			. JText::_("JLIB_HTML_BEHAVIOR_CLOSE") . '</button>'
+	),
+	'<div id="image" style="text-align:center;"><img id="imagePreviewSrc" src="/media/jui/img/alpha.png" alt="preview" style="max-width:100%; max-height:300px;"/></div>'
+);
+
+echo JHtml::_(
+	'bootstrap.renderModal',
+	'videoPreview',
+	array(
+		'title' => JText::_('COM_MEDIA_VIDEO_PREVIEW'),
+		'footer' => '<button class="btn" data-dismiss="modal" aria-hidden="true">'
+			. JText::_("JLIB_HTML_BEHAVIOR_CLOSE") . '</button>'
+	),
+	'<div id="videoPlayer" style="z-index: -100;"><video id="mejsPlayer" class="mejs-ted" style="height: 250px;"/></div>'
+);
+?>
 	<!-- End Content -->
 </div>
