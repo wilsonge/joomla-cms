@@ -2,7 +2,7 @@
 <extension version="3.4" type="plugin" group="system" method="upgrade">
 	<name>plg_system_stats</name>
 	<author>Joomla! Project</author>
-	<creationDate>November 2013</creationDate>
+	<creationDate>November 2015</creationDate>
 	<copyright>Copyright (C) 2005 - 2015 Open Source Matters. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>admin@joomla.org</authorEmail>
@@ -13,9 +13,9 @@
 		<filename plugin="stats">stats.php</filename>
 		<folder>fields</folder>
 	</files>
-	<languages folder="language">
-		<language tag="en-GB">en-GB/en-GB.plg_system_stats.ini</language>
-		<language tag="en-GB">en-GB/en-GB.plg_system_stats.sys.ini</language>
+	<languages>
+		<language tag="en-GB">en-GB.plg_system_stats.ini</language>
+		<language tag="en-GB">en-GB.plg_system_stats.sys.ini</language>
 	</languages>
 	<config>
 		<fields name="params" addfieldpath="/plugins/system/stats/fields">
