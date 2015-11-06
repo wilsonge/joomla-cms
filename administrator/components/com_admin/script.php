@@ -333,6 +333,7 @@ class JoomlaInstallerScript
 			array('plugin', 'yubikey', 'twofactorauth', 0),
 			array('plugin', 'updatenotification', 'system', 0),
 			array('plugin', 'module', 'editors-xtd', 0),
+			array('plugin', 'stats', 'system', 0),
 
 			// Templates
 			array('template', 'beez3', '', 0),
