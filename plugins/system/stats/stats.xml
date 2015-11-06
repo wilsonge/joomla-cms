@@ -8,7 +8,7 @@
 	<authorEmail>admin@joomla.org</authorEmail>
 	<authorUrl>www.joomla.org</authorUrl>
 	<version>3.5.0</version>
-	<description>PLG_STATS_XML_DESCRIPTION</description>
+	<description>PLG_SYSTEM_STATS_XML_DESCRIPTION</description>
 	<files>
 		<filename plugin="stats">stats.php</filename>
 		<folder>fields</folder>
@@ -23,8 +23,8 @@
 				<field
 					name="unique_id"
 					type="stats.uniqueid"
-					description="PLG_STATS_UNIQUE_ID_DESC"
-					label="PLG_STATS_UNIQUE_ID_LABEL"
+					description="PLG_SYSTEM_STATS_UNIQUE_ID_DESC"
+					label="PLG_SYSTEM_STATS_UNIQUE_ID_LABEL"
 					size="10"
 				/>
 				<field
@@ -33,8 +33,8 @@
 					filter="url"
 					size="30"
 					default="https://developer.joomla.org/stats/submit"
-					description="PLG_STATS_URL_DESC"
-					label="PLG_STATS_URL_LABEL"					
+					description="PLG_SYSTEM_STATS_URL_DESC"
+					label="PLG_SYSTEM_STATS_URL_LABEL"					
 				/>
 				<field
 					name="lastrun"
