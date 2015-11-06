@@ -37,6 +37,6 @@ class StatsFormFieldUniqueid extends JFormField
 
 		return '<input type="hidden" name="' . $this->name . '" id="' . $this->id . '" value="'
 			. htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8') . '" /> <a class="btn" ' . $onclick . '>'
-			. '<span class="icon-refresh"></span> ' . JText::_('PLG_STATS_RESET_UNIQUE_ID') . '</a>';
+			. '<span class="icon-refresh"></span> ' . JText::_('PLG_SYSTEM_STATS_RESET_UNIQUE_ID') . '</a>';
 	}
 }
