@@ -605,6 +605,47 @@ class InstallationModelDatabase extends JModelBase
 			}
 		}
 
+		$utf8mb4IsSupported = $db->hasUTF8mb4Support();
+
+		// Now try and do the utf8mb4 upgrade if available
+		if ((($type == 'mysql') || ($type == 'mysqli') || ($type == 'pdomysql')) && $utf8mb4IsSupported)
+		{
+			// Setup the adapter for the indexer.
+			$format = $db->name;
+
+			if ($format == 'mysqli' || $format == 'pdomysql')
+			{
+				$format = 'mysql';
+			}
+
+			if ($format == 'mysql')
+			{
+				$fileName = JPATH_ADMINISTRATOR . "/components/com_admin/sql/utf8mb4/" . $format . ".sql";
+
+				// Split the queries
+				$fileContents = @file_get_contents($fileName);
+				$queries = $db->splitSql($fileContents);
+
+				// Execute the queries
+				foreach ($queries as $query)
+				{
+					$query = trim($query);
+
+					if ($query != '' && $query{0} != '#')
+					{
+						try
+						{
+							$db->setQuery($query)->execute();
+						}
+						catch (RuntimeException $e)
+						{
+							$app->enqueueMessage(JText::sprintf('JLIB_DATABASE_QUERY_FAILED', $e->getCode(), $e->getMessage()));
+						}
+					}
+				}
+			}
+		}
+
 		// Load the localise.sql for translating the data in joomla.sql.
 		if (($type == 'mysql') || ($type == 'mysqli') || ($type == 'pdomysql'))
 		{
@@ -934,23 +975,6 @@ class InstallationModelDatabase extends JModelBase
 			// If the query isn't empty and is not a MySQL or PostgreSQL comment, execute it.
 			if (!empty($query) && ($query{0} != '#') && ($query{0} != '-'))
 			{
-				/**
-				 * If we don't have UTF-8 Multibyte support we'll have to convert queries to plain UTF-8
-				 *
-				 * Note: the JDatabaseDriver::convertUtf8mb4QueryToUtf8 performs the conversion ONLY when
-				 * necessary, so there's no need to check the conditions in JInstaller.
-				 */
-				$query = $db->convertUtf8mb4QueryToUtf8($query);
-
-				/**
-				 * This is a query which was supposed to convert tables to utf8mb4 charset but the server doesn't
-				 * support utf8mb4. Therefore we don't have to run it, it has no effect and it's a mere waste of time.
-				 */
-				if (!$db->hasUTF8mb4Support() && stristr($query, 'CONVERT TO CHARACTER SET utf8 '))
-				{
-					continue;
-				}
-
 				// Execute the query.
 				$db->setQuery($query);
 
