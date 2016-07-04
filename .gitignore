@@ -75,13 +75,8 @@ Desktop.ini
 /libraries/vendor/joomla/*/composer.json
 /libraries/vendor/joomla/*/phpunit.xml.dist
 /libraries/vendor/joomla/*/README.md
-/libraries/vendor/joomla/session/Joomla/Session/_Tests
-/libraries/vendor/joomla/session/Joomla/Session/build
-/libraries/vendor/joomla/session/Joomla/Session/Tests
-/libraries/vendor/joomla/session/Joomla/Session/CONTRIBUTING.md
-/libraries/vendor/joomla/session/Joomla/Session/composer.json
-/libraries/vendor/joomla/session/Joomla/Session/phpunit.xml.dist
-/libraries/vendor/joomla/session/Joomla/Session/README.md
+/libraries/vendor/joomla/*/.gitattributes
+/libraries/vendor/joomla/*/.scrutinizer.yml
 /libraries/vendor/leafo/lessphp/docs
 /libraries/vendor/leafo/lessphp/tests
 /libraries/vendor/leafo/lessphp/.gitignore

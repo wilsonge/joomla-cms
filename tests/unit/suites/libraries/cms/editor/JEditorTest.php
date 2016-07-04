@@ -56,25 +56,6 @@ class JEditorTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the getState method
-	 *
-	 * @return  void
-	 *
-	 * @since   3.0
-	 * @covers JEditor::getState
-	 */
-	public function testGetState()
-	{
-		// Preload the state to test it
-		TestReflection::setValue($this->object, '_state', 'JEditor::getState()');
-
-		$this->assertEquals(
-			'JEditor::getState()',
-			$this->object->getState()
-		);
-	}
-
-	/**
 	 * @testdox Test attaching a single closure as an observer in the JEditor class
 	 *
 	 * @since  3.4.4

@@ -329,7 +329,7 @@ class InstallerModelUpdatesites extends InstallerModel
 							JPluginHelper::importPlugin('extension', 'joomla');
 
 							// Fire the onExtensionAfterUpdate
-							JEventDispatcher::getInstance()->trigger('onExtensionAfterUpdate', array('installer' => $tmpInstaller, 'eid' => $eid));
+							JFactory::getApplication()->triggerEvent('onExtensionAfterUpdate', array('installer' => $tmpInstaller, 'eid' => $eid));
 
 							$count++;
 						}
