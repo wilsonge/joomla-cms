@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\Event\Event;
+
 /**
  * TinyMCE Editor Plugin
  *
@@ -1013,7 +1015,13 @@ class PlgEditorTinymce extends JPlugin
 	private function tinyButtons($name, $excluded)
 	{
 		// Get the available buttons
-		$buttons = $this->_subject->getButtons($name, $excluded);
+		$buttonsEvent = new Event('getButtons', [
+			'name'    => $this->_name,
+			'buttons' => $excluded,
+		]);
+
+		$buttonsResult = $this->getDispatcher()->dispatch('getButtons', $buttonsEvent);
+		$buttons       = $buttonsResult['result'];
 
 		// Init the arrays for the buttons
 		$tinyBtns  = array();

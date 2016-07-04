@@ -31,7 +31,30 @@ class JInstallerTest extends TestCaseDatabase
 	{
 		parent::setUp();
 
+		$this->saveFactoryState();
+
+		$mockApp = $this->getMockCmsApp();
+		$mockApp->expects($this->any())
+			->method('getDispatcher')
+			->willReturn($this->getMockDispatcher());
+		JFactory::$application = $mockApp;
+
 		$this->object = new JInstaller;
+	}
+
+	/**
+	 * Tears down the fixture, for example, closes a network connection.
+	 * This method is called after a test is executed.
+	 *
+	 * @return  void
+	 *
+	 * @since   4.0
+	 */
+	protected function tearDown()
+	{
+		$this->restoreFactoryState();
+
+		parent::tearDown();
 	}
 
 	/**

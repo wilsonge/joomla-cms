@@ -34,7 +34,30 @@ class JTableContenttypeTest extends TestCaseDatabase
 	{
 		parent::setUp();
 
+		$this->saveFactoryState();
+
+		$mockApp = $this->getMockCmsApp();
+		$mockApp->expects($this->any())
+			->method('getDispatcher')
+			->willReturn($this->getMockDispatcher());
+		JFactory::$application = $mockApp;
+
 		$this->object = new JTableContenttype(static::$driver);
+	}
+
+	/**
+	 * Tears down the fixture, for example, closes a network connection.
+	 * This method is called after a test is executed.
+	 *
+	 * @return  void
+	 *
+	 * @since   3.1
+	 */
+	protected function tearDown()
+	{
+		$this->restoreFactoryState();
+
+		parent::tearDown();
 	}
 
 	/**
