@@ -9,6 +9,8 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\Cms\Error\AbstractRenderer;
+
 /**
  * Displays the custom error page when an uncaught exception occurs.
  *
@@ -35,42 +37,44 @@ class JErrorPage
 		{
 			try
 			{
+				$app = JFactory::getApplication();
+
 				// If site is offline and it's a 404 error, just go to index (to see offline message, instead of 404)
 				if ($error->getCode() == '404' && JFactory::getConfig()->get('offline') == 1)
 				{
-					JFactory::getApplication()->redirect('index.php');
+					$app->redirect('index.php');
 				}
 
 				$app      = JFactory::getApplication();
-				$document = JDocument::getInstance('error');
 
-				if (!$document)
+				/*
+				 * Try and determine the format to render the error page in
+				 *
+				 * First we check if a JDocument instance was registered to JFactory and use the type from that if available
+				 * If a type doesn't exist for that format, we try to use the format from the application's JInput object
+				 * Lastly, if all else fails, we default onto the HTML format to at least render something
+				 */
+				if (JFactory::$document)
 				{
 					// We're probably in an CLI environment
-					jexit($error->getMessage());
+					$format = JFactory::getDocument()->getType();
 				}
-
-				// Get the current template from the application
-				$template = $app->getTemplate();
-
-				// Push the error object into the document
-				$document->setError($error);
-
-				if (ob_get_contents())
+				else
 				{
-					ob_end_clean();
+					$format = $app->input->getString('format', 'html');
 				}
 
-				$document->setTitle(JText::_('Error') . ': ' . $error->getCode());
+				try
+				{
+					$renderer = AbstractRenderer::getRenderer($format);
+				}
+				catch (InvalidArgumentException $e)
+				{
+					// Default to the HTML renderer
+					$renderer = AbstractRenderer::getRenderer('html');
+				}
 
-				$data = $document->render(
-					false,
-					array(
-						'template'  => $template,
-						'directory' => JPATH_THEMES,
-						'debug'     => JDEBUG
-					)
-				);
+				$data = $renderer->render($error);
 
 				// Do not allow cache
 				$app->allowCache(false);
