@@ -204,6 +204,12 @@ abstract class JModelLegacy extends JObject
 			}
 		}
 
+		// Check for a possible service from the container otherwise manually instantiate the class
+		if (JFactory::getContainer()->exists($modelClass))
+		{
+			return JFactory::getContainer()->get($modelClass);
+		}
+
 		return new $modelClass($config);
 	}
 
