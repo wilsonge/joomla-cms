@@ -9,6 +9,8 @@
  
 require JPATH_BASE . '/plugins/content/emailcloak/emailcloak.php';
 
+use Joomla\Registry\Registry;
+
 /**
  * Test class for Email cloaking plugin.
  *
@@ -35,15 +37,30 @@ class PlgContentEmailcloakTest extends TestCaseDatabase
 	 */
 	public function setup()
 	{
+		$this->saveFactoryState();
+
 		// Create a mock dispatcher instance
-		$dispatcher = TestCaseDatabase::getMockDispatcher();
+		$dispatcher = $this->getMockDispatcher();
+		JFactory::$application = $this->getMockCmsApp();
 
 		$plugin = array();
 		$plugin['name'] = 'emailcloak';
 		$plugin['type'] = 'Content';
-		$plugin['params'] = new JRegistry;
+		$plugin['params'] = new Registry;
 
 		$this->class = new PlgContentEmailcloak($dispatcher, (array) ($plugin));
+	}
+
+	/**
+	 * Tears down the fixture, for example, closes a network connection.
+	 * This method is called after a test is executed.
+	 *
+	 * @return  void
+	 */
+	protected function tearDown()
+	{
+		$this->restoreFactoryState();
+		parent::tearDown();
 	}
 
 	/**
