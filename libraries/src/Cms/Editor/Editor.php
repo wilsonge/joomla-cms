@@ -7,6 +7,8 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Editor;
+
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\Event\DispatcherAwareInterface;
@@ -15,13 +17,18 @@ use Joomla\Event\DispatcherInterface;
 use Joomla\Event\Event;
 use Joomla\Event\AbstractEvent;
 use Joomla\Registry\Registry;
+use JFactory;
+use JText;
+use JPluginHelper;
+use JFilterInput;
+use JLog;
 
 /**
- * JEditor class to handle WYSIWYG editors
+ * Editor class to handle WYSIWYG editors
  *
  * @since  1.5
  */
-class JEditor implements DispatcherAwareInterface
+class Editor implements DispatcherAwareInterface
 {
 	use DispatcherAwareTrait;
 
@@ -60,7 +67,7 @@ class JEditor implements DispatcherAwareInterface
 	/**
 	 * JEditor instances container.
 	 *
-	 * @var    JEditor[]
+	 * @var    Editor[]
 	 * @since  2.5
 	 */
 	protected static $instances = array();
@@ -103,7 +110,7 @@ class JEditor implements DispatcherAwareInterface
 	 *
 	 * @param   string  $editor  The editor to use.
 	 *
-	 * @return  JEditor The Editor object.
+	 * @return  Editor The Editor object.
 	 *
 	 * @since   1.5
 	 */

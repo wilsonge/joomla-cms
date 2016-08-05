@@ -7,6 +7,8 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
+namespace Joomla\Cms\Captcha;
+
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\Event\DispatcherAwareInterface;
@@ -15,6 +17,11 @@ use Joomla\Event\DispatcherInterface;
 use Joomla\Event\Dispatcher;
 use Joomla\Event\Event;
 use Joomla\Registry\Registry;
+use JFactory;
+use JPlugin;
+use JFilterInput;
+use JText;
+use JPluginHelper;
 
 /**
  * Joomla! Captcha base object
@@ -24,7 +31,7 @@ use Joomla\Registry\Registry;
  * @subpackage  Captcha
  * @since       2.5
  */
-class JCaptcha implements DispatcherAwareInterface
+class Captcha implements DispatcherAwareInterface
 {
 	use DispatcherAwareTrait;
 
@@ -73,7 +80,7 @@ class JCaptcha implements DispatcherAwareInterface
 	 * @param   string  $captcha  The plugin to use.
 	 * @param   array   $options  Associative array of options.
 	 *
-	 * @return  JCaptcha|null  Instance of this class.
+	 * @return  Captcha|null  Instance of this class.
 	 *
 	 * @since   2.5
 	 */

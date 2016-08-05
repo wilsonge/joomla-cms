@@ -15,3 +15,7 @@ JLoader::registerAlias('JRegistryFormatXml',  '\\Joomla\\Registry\\Format\\Xml')
 JLoader::registerAlias('JStringInflector',    '\\Joomla\\String\\Inflector');
 JLoader::registerAlias('JStringNormalise',    '\\Joomla\\String\\Normalise');
 JLoader::registerAlias('JApplicationWebClient', '\\Joomla\\Application\\Web\\WebClient');
+JLoader::registerAlias('JCaptcha',              '\\Joomla\\Cms\\Captcha');
+JLoader::registerAlias('JEditor',               '\\Joomla\\Cms\\Editor');
+JLoader::registerAlias('JHelp',                 '\\Joomla\\Cms\\Help');
+JLoader::registerAlias('JVersion',              '\\Joomla\\Cms\\Version');

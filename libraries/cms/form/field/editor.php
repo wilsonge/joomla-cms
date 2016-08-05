@@ -9,6 +9,8 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\Cms\Editor;
+
 JFormHelper::loadFieldClass('textarea');
 
 /**
@@ -302,7 +304,7 @@ class JFormFieldEditor extends JFormFieldTextarea
 				$editor = $conf->get('editor');
 			}
 
-			$this->editor = JEditor::getInstance($editor);
+			$this->editor = Joomla\Cms\Editor\Editor::getInstance($editor);
 		}
 
 		return $this->editor;

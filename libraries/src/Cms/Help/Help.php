@@ -7,14 +7,22 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Help;
+
 defined('JPATH_PLATFORM') or die;
+
+use JFactory;
+use JComponentHelper;
+use JVersion;
+use JText;
+use JApplicationHelper;
 
 /**
  * Help system class
  *
  * @since  1.5
  */
-class JHelp
+class Help
 {
 	/**
 	 * Create a URL for a given help key reference

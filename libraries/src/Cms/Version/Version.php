@@ -7,14 +7,21 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Version;
+
 defined('JPATH_PLATFORM') or die;
+
+use JLog;
+use JLibraryHelper;
+use JDate;
+use JFactory;
 
 /**
  * Version information class for the Joomla CMS.
  *
  * @since  1.0
  */
-final class JVersion
+final class Version
 {
 	/**
 	 * Product name.
@@ -291,7 +298,7 @@ final class JVersion
 	/**
 	 * Function to refresh the media version
 	 *
-	 * @return  JVersion  Instance of $this to allow chaining.
+	 * @return  Version  Instance of $this to allow chaining.
 	 *
 	 * @since   3.2
 	 */
@@ -307,7 +314,7 @@ final class JVersion
 	 *
 	 * @param   string  $mediaVersion  The media version.
 	 *
-	 * @return  JVersion  Instance of $this to allow chaining.
+	 * @return  Version  Instance of $this to allow chaining.
 	 *
 	 * @since   3.2
 	 */

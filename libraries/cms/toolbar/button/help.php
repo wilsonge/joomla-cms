@@ -9,6 +9,8 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\Cms\Help;
+
 /**
  * Renders a help popup window button
  *
@@ -76,7 +78,7 @@ class JToolbarButtonHelp extends JToolbarButton
 	protected function _getCommand($ref, $com, $override, $component)
 	{
 		// Get Help URL
-		$url = JHelp::createUrl($ref, $com, $override, $component);
+		$url = Help\Help::createUrl($ref, $com, $override, $component);
 		$url = htmlspecialchars($url, ENT_QUOTES);
 		$cmd = "Joomla.popupWindow('$url', '" . JText::_('JHELP', true) . "', 700, 500, 1)";
 
