@@ -54,7 +54,7 @@ class Captcha implements DispatcherAwareInterface
 	/**
 	 * Array of instances of this class.
 	 *
-	 * @var	   JCaptcha[]
+	 * @var	   Captcha[]
 	 * @since  2.5
 	 */
 	private static $_instances = array();

@@ -9,8 +9,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\Cms\Version\Version;
-
 // Set the platform root path as a constant if necessary.
 defined('JPATH_PLATFORM') or define('JPATH_PLATFORM', __DIR__);
 
@@ -67,7 +65,7 @@ if (!class_exists('FOFAutoloaderFof'))
 set_exception_handler(['JErrorPage', 'render']);
 
 // Define the Joomla version if not already defined.
-defined('VERSION') or define('VERSION', (new Version)->getShortVersion());
+defined('JVERSION') or define('JVERSION', (new JVersion)->getShortVersion());
 
 // Set up the message queue logger for web requests
 if (array_key_exists('REQUEST_METHOD', $_SERVER))
