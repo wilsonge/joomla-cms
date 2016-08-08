@@ -7,17 +7,31 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
+namespace Joomla\Cms\Application;
+
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\DI\Container;
 use Joomla\Registry\Registry;
+use Joomla\Cms\Application\ApplicationCms;
+use JInput;
+use JFactory;
+use JRoute;
+use JUri;
+use JText;
+use JLanguageHelper;
+use JComponentHelper;
+use stdClass;
+use JLanguage;
+use JPluginHelper;
+use JFilterInput;
 
 /**
  * Joomla! Site Application class
  *
  * @since  3.2
  */
-final class JApplicationSite extends JApplicationCms
+final class ApplicationSite extends ApplicationCms
 {
 	/**
 	 * Option to filter by language

@@ -7,6 +7,8 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
+namespace Joomla\Cms\Application;
+
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\DI\Container;
@@ -14,13 +16,30 @@ use Joomla\DI\ContainerAwareInterface;
 use Joomla\DI\ContainerAwareTrait;
 use Joomla\Registry\Registry;
 use Joomla\Session\SessionEvent;
+use JApplicationWeb;
+use JUser;
+use JFactory;
+use JInput;
+use JText;
+use JDocument;
+use JRoute;
+use JPluginHelper;
+use JUri;
+use JError;
+use JAuthentication;
+use JLanguage;
+use stdClass;
+use JRouter;
+use JProfiler;
+use JMenu;
+use JPathway;
 
 /**
  * Joomla! CMS Application class
  *
  * @since  3.2
  */
-class JApplicationCms extends JApplicationWeb implements ContainerAwareInterface
+class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 {
 	use ContainerAwareTrait;
 
@@ -35,7 +54,7 @@ class JApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 	/**
 	 * Application instances container.
 	 *
-	 * @var    JApplicationCms[]
+	 * @var    ApplicationCms[]
 	 * @since  3.2
 	 */
 	protected static $instances = array();

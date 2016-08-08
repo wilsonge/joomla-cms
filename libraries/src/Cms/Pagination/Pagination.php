@@ -115,10 +115,7 @@ class Pagination
 	 */
 	public function __construct($total, $limitstart, $limit, $prefix = '', JApplicationCms $app = null)
 	{
-        //including relevant PaginatinObject class
-	    include 'Object.php';
-
-		// Value/type checking.
+        // Value/type checking.
 		$this->total = (int) $total;
 		$this->limitstart = (int) max($limitstart, 0);
 		$this->limit = (int) max($limit, 0);

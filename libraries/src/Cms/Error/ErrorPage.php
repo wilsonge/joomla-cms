@@ -7,16 +7,18 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
+namespace Joomla\Cms\Error;
+
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\Cms\Error\AbstractRenderer;
-
+use JFactory;
 /**
  * Displays the custom error page when an uncaught exception occurs.
  *
  * @since  3.0
  */
-class JErrorPage
+class ErrorPage
 {
 	/**
 	 * Render the error page based on an exception.

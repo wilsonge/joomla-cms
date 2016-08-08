@@ -7,17 +7,30 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
+namespace Joomla\Cms\Application;
+
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\DI\Container;
 use Joomla\Registry\Registry;
+use JInput;
+use JUri;
+use JAdministratorHelper;
+use JFactory;
+use JText;
+use JPluginHelper;
+use JLanguage;
+use JRouter;
+use JComponentHelper;
+use JSession;
+use JFilterInput;
 
 /**
  * Joomla! Administrator Application class
  *
  * @since  3.2
  */
-class JApplicationAdministrator extends JApplicationCms
+class ApplicationAdministrator extends ApplicationCms
 {
 	/**
 	 * Class constructor.

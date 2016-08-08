@@ -7,7 +7,11 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Response;
+
 defined('JPATH_PLATFORM') or die;
+
+use JFactory;
 
 /**
  * JSON Response class.
@@ -17,7 +21,7 @@ defined('JPATH_PLATFORM') or die;
  *
  * @since  3.1
  */
-class JResponseJson
+class ResponseJson
 {
 	/**
 	 * Determines whether the request was successful

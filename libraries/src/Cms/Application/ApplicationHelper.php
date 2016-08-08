@@ -7,14 +7,23 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Application;
+
 defined('JPATH_PLATFORM') or die;
+
+use JFactory;
+use JFilterOutput;
+use JComponentHelper;
+use stdClass;
+use JLog;
+use JText;
 
 /**
  * Application helper functions
  *
  * @since  1.5
  */
-class JApplicationHelper
+class ApplicationHelper
 {
 	/**
 	 * Client information array
