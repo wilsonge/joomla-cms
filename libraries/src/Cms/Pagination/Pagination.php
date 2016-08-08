@@ -15,10 +15,9 @@ use JFactory;
 use JText;
 use JLayoutHelper;
 use JHtml;
-use Joomla\Cms\Pagination\PaginationObject;
 use JRoute;
 use stdClass;
-
+use JApplicationCms;
 /**
  * Pagination Class. Provides a common interface for content pagination for the Joomla! CMS.
  *
@@ -116,6 +115,9 @@ class Pagination
 	 */
 	public function __construct($total, $limitstart, $limit, $prefix = '', JApplicationCms $app = null)
 	{
+        //including relevant PaginatinObject class
+	    include 'Object.php';
+
 		// Value/type checking.
 		$this->total = (int) $total;
 		$this->limitstart = (int) max($limitstart, 0);
@@ -702,7 +704,7 @@ class Pagination
 	/**
 	 * Method to create an active pagination link to the item
 	 *
-	 * @param   JPaginationObject  $item  The object with which to make an active link.
+	 * @param   PaginationObject  $item  The object with which to make an active link.
 	 *
 	 * @return  string  HTML link
 	 *
@@ -734,7 +736,7 @@ class Pagination
 	/**
 	 * Method to create an inactive pagination string
 	 *
-	 * @param   JPaginationObject  $item  The item to be processed
+	 * @param   PaginationObject  $item  The item to be processed
 	 *
 	 * @return  string
 	 *
@@ -773,6 +775,7 @@ class Pagination
 				$params .= '&' . $key . '=' . $value;
 			}
 		}
+
 
 		$data->all = new PaginationObject(JText::_('JLIB_HTML_VIEW_ALL'), $this->prefix);
 
