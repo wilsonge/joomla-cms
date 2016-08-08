@@ -19,3 +19,6 @@ JLoader::registerAlias('JCaptcha',              '\\Joomla\\Cms\\Captcha\\Captcha
 JLoader::registerAlias('JEditor',               '\\Joomla\\Cms\\Editor\\Editor');
 JLoader::registerAlias('JHelp',                 '\\Joomla\\Cms\\Help\\Help');
 JLoader::registerAlias('JVersion',              '\\Joomla\\Cms\\Version\\Version');
+JLoader::registerAlias('JSearchHelper',         '\\Joomla\\Cms\\Search\\Helper');
+JLoader::registerAlias('JPagination',            '\\Joomla\\Cms\\Pagination\\Pagination');
+JLoader::registerAlias('JPagination',            '\\Joomla\\Cms\\Pagination\\Object');

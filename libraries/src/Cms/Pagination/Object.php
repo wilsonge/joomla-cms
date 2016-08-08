@@ -7,6 +7,8 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Pagination;
+
 defined('JPATH_PLATFORM') or die;
 
 /**
@@ -14,7 +16,7 @@ defined('JPATH_PLATFORM') or die;
  *
  * @since  1.5
  */
-class JPaginationObject
+class PaginationObject
 {
 	/**
 	 * @var    string  The link text.

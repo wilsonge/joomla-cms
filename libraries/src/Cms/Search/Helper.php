@@ -7,14 +7,19 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
+namespace Joomla\Cms\Search;
+
 defined('JPATH_PLATFORM') or die;
+
+use JFactory;
+use JComponentHelper;
 
 /**
  * Helper class for Joomla! Search components
  *
  * @since  3.0
  */
-class JSearchHelper
+class SearchHelper
 {
 	/**
 	 * Method to log search terms to the database
