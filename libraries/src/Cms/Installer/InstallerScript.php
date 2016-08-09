@@ -7,7 +7,15 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
+namespace Joomla\Cms\Installer;
+
 defined('_JEXEC') or die;
+
+use JLog;
+use JText;
+use JFactory;
+use JFolder;
+use JFile;
 
 jimport('joomla.filesystem.file');
 jimport('joomla.filesystem.folder');
@@ -17,7 +25,7 @@ jimport('joomla.filesystem.folder');
  *
  * @since  3.6
  */
-class JInstallerScript
+class InstallerScript
 {
 	/**
 	 * The version number of the extension.

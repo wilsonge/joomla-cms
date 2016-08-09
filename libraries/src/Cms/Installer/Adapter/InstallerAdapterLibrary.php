@@ -7,7 +7,22 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Installer\Adapter;
+
 defined('JPATH_PLATFORM') or die;
+
+use Joomla\Cms\Installer\InstallerAdapter;
+use Joomla\Cms\Installer\Installer;
+use Joomla\Cms\Installer\Manifest\InstallerManifestLibrary;
+use RuntimeException;
+use JText;
+use JLog;
+use JFolder;
+use JTable;
+use JTableUpdate;
+use JFilterInput;
+use JPath;
+use JFile;
 
 jimport('joomla.filesystem.folder');
 
@@ -16,7 +31,7 @@ jimport('joomla.filesystem.folder');
  *
  * @since  3.1
  */
-class JInstallerAdapterLibrary extends JInstallerAdapter
+class InstallerAdapterLibrary extends InstallerAdapter
 {
 	/**
 	 * Method to check if the extension is present in the filesystem, flags the route as update if so
@@ -235,7 +250,7 @@ class JInstallerAdapterLibrary extends JInstallerAdapter
 		// Discover installs are stored a little differently
 		if ($this->route == 'discover_install')
 		{
-			$manifest_details = JInstaller::parseXMLInstallFile($this->parent->getPath('manifest'));
+			$manifest_details = Installer::parseXMLInstallFile($this->parent->getPath('manifest'));
 
 			$this->extension->manifest_cache = json_encode($manifest_details);
 			$this->extension->state = 0;
@@ -321,7 +336,7 @@ class JInstallerAdapterLibrary extends JInstallerAdapter
 		$this->set('element', $element);
 
 		// We don't want to compromise this instance!
-		$installer = new JInstaller;
+		$installer = new Installer;
 		$db = $this->parent->getDbo();
 		$query = $db->getQuery(true)
 			->select($db->quoteName('extension_id'))
@@ -383,7 +398,7 @@ class JInstallerAdapterLibrary extends JInstallerAdapter
 		// Because libraries may not have their own folders we cannot use the standard method of finding an installation manifest
 		if (file_exists($manifestFile))
 		{
-			$manifest = new JInstallerManifestLibrary($manifestFile);
+			$manifest = new InstallerManifestLibrary($manifestFile);
 
 			// Set the library root path
 			$this->parent->setPath('extension_root', JPATH_PLATFORM . '/' . $manifest->libraryname);
@@ -457,7 +472,7 @@ class JInstallerAdapterLibrary extends JInstallerAdapter
 
 		foreach ($file_list as $file)
 		{
-			$manifest_details = JInstaller::parseXMLInstallFile(JPATH_MANIFESTS . '/libraries/' . $file);
+			$manifest_details = Installer::parseXMLInstallFile(JPATH_MANIFESTS . '/libraries/' . $file);
 			$file = JFile::stripExt($file);
 			$extension = JTable::getInstance('extension');
 			$extension->set('type', 'library');
@@ -488,7 +503,7 @@ class JInstallerAdapterLibrary extends JInstallerAdapter
 		$this->parent->manifest = $this->parent->isManifest($manifestPath);
 		$this->parent->setPath('manifest', $manifestPath);
 
-		$manifest_details = JInstaller::parseXMLInstallFile($this->parent->getPath('manifest'));
+		$manifest_details = Installer::parseXMLInstallFile($this->parent->getPath('manifest'));
 		$this->parent->extension->manifest_cache = json_encode($manifest_details);
 		$this->parent->extension->name = $manifest_details['name'];
 

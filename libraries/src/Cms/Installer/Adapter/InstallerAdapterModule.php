@@ -7,9 +7,21 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Installer\Adapter;
+
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\Utilities\ArrayHelper;
+use Joomla\Cms\Installer\InstallerAdapter;
+use Joomla\Cms\Application\ApplicationHelper;
+use Joomla\Cms\Installer\Installer;
+use RuntimeException;
+use JText;
+use JLog;
+use JFolder;
+use JTable;
+use JTableModule;
+use SimpleXMLElement;
 
 jimport('joomla.filesystem.folder');
 
@@ -18,7 +30,7 @@ jimport('joomla.filesystem.folder');
  *
  * @since  3.1
  */
-class JInstallerAdapterModule extends JInstallerAdapter
+class InstallerAdapterModule extends InstallerAdapter
 {
 	/**
 	 * The install client ID
@@ -234,7 +246,7 @@ class JInstallerAdapterModule extends JInstallerAdapter
 	 */
 	public function prepareDiscoverInstall()
 	{
-		$client = JApplicationHelper::getClientInfo($this->parent->extension->client_id);
+		$client = ApplicationHelper::getClientInfo($this->parent->extension->client_id);
 		$manifestPath = $client->path . '/modules/' . $this->parent->extension->element . '/' . $this->parent->extension->element . '.xml';
 		$this->parent->manifest = $this->parent->isManifest($manifestPath);
 		$this->parent->setPath('manifest', $manifestPath);
@@ -257,7 +269,7 @@ class JInstallerAdapterModule extends JInstallerAdapter
 		if ($cname)
 		{
 			// Attempt to map the client to a base path
-			$client = JApplicationHelper::getClientInfo($cname, true);
+			$client = ApplicationHelper::getClientInfo($cname, true);
 
 			if ($client === false)
 			{
@@ -307,7 +319,7 @@ class JInstallerAdapterModule extends JInstallerAdapter
 		// Discover installs are stored a little differently
 		if ($this->route == 'discover_install')
 		{
-			$manifest_details = JInstaller::parseXMLInstallFile($this->parent->getPath('manifest'));
+			$manifest_details = Installer::parseXMLInstallFile($this->parent->getPath('manifest'));
 
 			$this->extension->manifest_cache = json_encode($manifest_details);
 			$this->extension->state = 0;
@@ -430,14 +442,14 @@ class JInstallerAdapterModule extends JInstallerAdapter
 		$results = array();
 		$site_list = JFolder::folders(JPATH_SITE . '/modules');
 		$admin_list = JFolder::folders(JPATH_ADMINISTRATOR . '/modules');
-		$site_info = JApplicationHelper::getClientInfo('site', true);
-		$admin_info = JApplicationHelper::getClientInfo('administrator', true);
+		$site_info = ApplicationHelper::getClientInfo('site', true);
+		$admin_info = ApplicationHelper::getClientInfo('administrator', true);
 
 		foreach ($site_list as $module)
 		{
 			if (file_exists(JPATH_SITE . "/modules/$module/$module.xml"))
 			{
-				$manifest_details = JInstaller::parseXMLInstallFile(JPATH_SITE . "/modules/$module/$module.xml");
+				$manifest_details = Installer::parseXMLInstallFile(JPATH_SITE . "/modules/$module/$module.xml");
 				$extension = JTable::getInstance('extension');
 				$extension->set('type', 'module');
 				$extension->set('client_id', $site_info->id);
@@ -455,7 +467,7 @@ class JInstallerAdapterModule extends JInstallerAdapter
 		{
 			if (file_exists(JPATH_ADMINISTRATOR . "/modules/$module/$module.xml"))
 			{
-				$manifest_details = JInstaller::parseXMLInstallFile(JPATH_ADMINISTRATOR . "/modules/$module/$module.xml");
+				$manifest_details = Installer::parseXMLInstallFile(JPATH_ADMINISTRATOR . "/modules/$module/$module.xml");
 				$extension = JTable::getInstance('extension');
 				$extension->set('type', 'module');
 				$extension->set('client_id', $admin_info->id);
@@ -481,11 +493,11 @@ class JInstallerAdapterModule extends JInstallerAdapter
 	 */
 	public function refreshManifestCache()
 	{
-		$client = JApplicationHelper::getClientInfo($this->parent->extension->client_id);
+		$client = ApplicationHelper::getClientInfo($this->parent->extension->client_id);
 		$manifestPath = $client->path . '/modules/' . $this->parent->extension->element . '/' . $this->parent->extension->element . '.xml';
 		$this->parent->manifest = $this->parent->isManifest($manifestPath);
 		$this->parent->setPath('manifest', $manifestPath);
-		$manifest_details = JInstaller::parseXMLInstallFile($this->parent->getPath('manifest'));
+		$manifest_details = Installer::parseXMLInstallFile($this->parent->getPath('manifest'));
 		$this->parent->extension->manifest_cache = json_encode($manifest_details);
 		$this->parent->extension->name = $manifest_details['name'];
 
@@ -535,7 +547,7 @@ class JInstallerAdapterModule extends JInstallerAdapter
 
 		// Get the extension root path
 		$element = $this->extension->element;
-		$client  = JApplicationHelper::getClientInfo($this->extension->client_id);
+		$client  = ApplicationHelper::getClientInfo($this->extension->client_id);
 
 		if ($client === false)
 		{

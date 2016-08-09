@@ -7,7 +7,22 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Installer;
+
 defined('JPATH_PLATFORM') or die;
+
+use Joomla\Cms\Version\Version;
+use Joomla\Cms\Plugin\PluginHelper;
+use JFactory;
+use JLog;
+use JText;
+use RuntimeException;
+use JHttpFactory;
+use JFile;
+use JPath;
+use Exception;
+use JFolder;
+use JArchive;
 
 jimport('joomla.filesystem.file');
 jimport('joomla.filesystem.folder');
@@ -18,7 +33,7 @@ jimport('joomla.filesystem.path');
  *
  * @since  3.1
  */
-abstract class JInstallerHelper
+abstract class InstallerHelper
 {
 	/**
 	 * Downloads a package
@@ -39,12 +54,12 @@ abstract class JInstallerHelper
 		ini_set('track_errors', true);
 
 		// Set user agent
-		$version = new JVersion;
+		$version = new Version;
 		ini_set('user_agent', $version->getUserAgent('Installer'));
 
 		// Load installer plugins, and allow url and headers modification
 		$headers = array();
-		JPluginHelper::importPlugin('installer');
+		PluginHelper::importPlugin('installer');
 		JFactory::getApplication()->triggerEvent('onInstallerBeforePackageDownload', array(&$url, &$headers));
 
 		try

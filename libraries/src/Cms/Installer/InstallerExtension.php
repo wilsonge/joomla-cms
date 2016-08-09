@@ -7,14 +7,22 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Installer;
+
 defined('JPATH_PLATFORM') or die;
+
+use Joomla\Cms\Application\ApplicationHelper;
+use JText;
+use JObject;
+use JLog;
+use SimpleXMLElement;
 
 /**
  * Extension object
  *
  * @since  3.1
  */
-class JInstallerExtension extends JObject
+class InstallerExtension extends JObject
 {
 	/**
 	 * Filename of the extension
@@ -105,7 +113,7 @@ class JInstallerExtension extends JObject
 				case 'template':
 				case 'language':
 					$this->client = (string) $element->attributes()->client;
-					$tmp_client_id = JApplicationHelper::getClientInfo($this->client, 1);
+					$tmp_client_id = ApplicationHelper::getClientInfo($this->client, 1);
 
 					if ($tmp_client_id == null)
 					{
@@ -126,7 +134,7 @@ class JInstallerExtension extends JObject
 					// Get and set client and group if we don't recognise the extension
 					if ($element->attributes()->client)
 					{
-						$this->client_id = JApplicationHelper::getClientInfo($this->client, 1);
+						$this->client_id = ApplicationHelper::getClientInfo($this->client, 1);
 						$this->client_id = $this->client_id->id;
 					}
 

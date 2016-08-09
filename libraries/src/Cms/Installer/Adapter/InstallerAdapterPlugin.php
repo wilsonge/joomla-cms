@@ -7,7 +7,20 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Installer\Adapter;
+
 defined('JPATH_PLATFORM') or die;
+
+use Joomla\Cms\Installer\InstallerAdapter;
+use Joomla\Cms\Application\ApplicationHelper;
+use Joomla\Cms\Installer\Installer;
+use RuntimeException;
+use JText;
+use JLog;
+use JFolder;
+use JTable;
+use JTableUpdate;
+use JFile;
 
 jimport('joomla.filesystem.folder');
 
@@ -16,7 +29,7 @@ jimport('joomla.filesystem.folder');
  *
  * @since  3.1
  */
-class JInstallerAdapterPlugin extends JInstallerAdapter
+class InstallerAdapterPlugin extends InstallerAdapter
 {
 	/**
 	 * `<scriptfile>` element of the extension manifest
@@ -125,7 +138,7 @@ class JInstallerAdapterPlugin extends JInstallerAdapter
 		if ($this->route == 'update')
 		{
 			// Create a new installer because findManifest sets stuff; side effects!
-			$tmpInstaller = new JInstaller;
+			$tmpInstaller = new Installer;
 
 			// Look in the extension root
 			$tmpInstaller->setPath('source', $this->parent->getPath('extension_root'));
@@ -305,7 +318,7 @@ class JInstallerAdapterPlugin extends JInstallerAdapter
 	 */
 	public function prepareDiscoverInstall()
 	{
-		$client   = JApplicationHelper::getClientInfo($this->extension->client_id);
+		$client   = ApplicationHelper::getClientInfo($this->extension->client_id);
 		$basePath = $client->path . '/plugins/' . $this->extension->folder;
 
 		if (is_dir($basePath . '/' . $this->extension->element))
@@ -361,7 +374,7 @@ class JInstallerAdapterPlugin extends JInstallerAdapter
 		// Discover installs are stored a little differently
 		if ($this->route == 'discover_install')
 		{
-			$manifest_details = JInstaller::parseXMLInstallFile($this->parent->getPath('manifest'));
+			$manifest_details = Installer::parseXMLInstallFile($this->parent->getPath('manifest'));
 
 			$this->extension->manifest_cache = json_encode($manifest_details);
 			$this->extension->state = 0;
@@ -626,7 +639,7 @@ class JInstallerAdapterPlugin extends JInstallerAdapter
 
 			foreach ($file_list as $file)
 			{
-				$manifest_details = JInstaller::parseXMLInstallFile(JPATH_SITE . '/plugins/' . $folder . '/' . $file);
+				$manifest_details = Installer::parseXMLInstallFile(JPATH_SITE . '/plugins/' . $folder . '/' . $file);
 				$file = JFile::stripExt($file);
 
 				// Ignore example plugins
@@ -657,7 +670,7 @@ class JInstallerAdapterPlugin extends JInstallerAdapter
 
 				foreach ($file_list as $file)
 				{
-					$manifest_details = JInstaller::parseXMLInstallFile(
+					$manifest_details = Installer::parseXMLInstallFile(
 						JPATH_SITE . '/plugins/' . $folder . '/' . $plugin_folder . '/' . $file
 					);
 					$file = JFile::stripExt($file);
@@ -701,12 +714,12 @@ class JInstallerAdapterPlugin extends JInstallerAdapter
 		 * Similar to modules and templates, rather easy
 		 * If it's not in the extensions table we just add it
 		 */
-		$client = JApplicationHelper::getClientInfo($this->parent->extension->client_id);
+		$client = ApplicationHelper::getClientInfo($this->parent->extension->client_id);
 		$manifestPath = $client->path . '/plugins/' . $this->parent->extension->folder . '/' . $this->parent->extension->element . '/'
 			. $this->parent->extension->element . '.xml';
 		$this->parent->manifest = $this->parent->isManifest($manifestPath);
 		$this->parent->setPath('manifest', $manifestPath);
-		$manifest_details = JInstaller::parseXMLInstallFile($this->parent->getPath('manifest'));
+		$manifest_details = Installer::parseXMLInstallFile($this->parent->getPath('manifest'));
 		$this->parent->extension->manifest_cache = json_encode($manifest_details);
 
 		$this->parent->extension->name = $manifest_details['name'];

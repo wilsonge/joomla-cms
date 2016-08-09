@@ -7,14 +7,30 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Installer\Adapter;
+
 defined('JPATH_PLATFORM') or die;
+
+use Joomla\Cms\Installer\InstallerAdapter;
+use Joomla\Cms\Application\ApplicationHelper;
+use Joomla\Cms\Installer\Installer;
+use Joomla\Cms\Installer\InstallerHelper;
+use Joomla\Cms\Installer\Manifest\InstallerManifestPackage;
+use RuntimeException;
+use JText;
+use JLog;
+use JFolder;
+use JTable;
+use JTableUpdate;
+use JFile;
+use JFilterInput;
 
 /**
  * Package installer
  *
  * @since  3.1
  */
-class JInstallerAdapterPackage extends JInstallerAdapter
+class InstallerAdapterPackage extends InstallerAdapter
 {
 	/**
 	 * The results of each installed extensions
@@ -116,15 +132,15 @@ class JInstallerAdapterPackage extends JInstallerAdapter
 				// If it's actually a directory then fill it up
 				$package = array();
 				$package['dir'] = $file;
-				$package['type'] = JInstallerHelper::detectType($file);
+				$package['type'] = InstallerHelper::detectType($file);
 			}
 			else
 			{
 				// If it's an archive
-				$package = JInstallerHelper::unpack($file);
+				$package = InstallerHelper::unpack($file);
 			}
 
-			$tmpInstaller  = new JInstaller;
+			$tmpInstaller  = new Installer;
 			$installResult = $tmpInstaller->{$this->route}($package['dir']);
 
 			if (!$installResult)
@@ -484,7 +500,7 @@ class JInstallerAdapterPackage extends JInstallerAdapter
 		}
 
 		$manifestFile = JPATH_MANIFESTS . '/packages/' . $row->get('element') . '.xml';
-		$manifest = new JInstallerManifestPackage($manifestFile);
+		$manifest = new InstallerManifestPackage($manifestFile);
 
 		// Set the package root path
 		$this->parent->setPath('extension_root', JPATH_MANIFESTS . '/packages/' . $manifest->packagename);
@@ -563,9 +579,9 @@ class JInstallerAdapterPackage extends JInstallerAdapter
 
 		foreach ($manifest->filelist as $extension)
 		{
-			$tmpInstaller = new JInstaller;
+			$tmpInstaller = new Installer;
 			$id = $this->_getExtensionId($extension->type, $extension->id, $extension->client, $extension->group);
-			$client = JApplicationHelper::getClientInfo($extension->client, true);
+			$client = ApplicationHelper::getClientInfo($extension->client, true);
 
 			if ($id)
 			{
@@ -646,7 +662,7 @@ class JInstallerAdapterPackage extends JInstallerAdapter
 			case 'module':
 			case 'template':
 				// Languages, modules and templates have a client but not a folder
-				$client = JApplicationHelper::getClientInfo($client, true);
+				$client = ApplicationHelper::getClientInfo($client, true);
 				$query->where('client_id = ' . (int) $client->id);
 				break;
 		}
@@ -673,7 +689,7 @@ class JInstallerAdapterPackage extends JInstallerAdapter
 		$this->parent->manifest = $this->parent->isManifest($manifestPath);
 		$this->parent->setPath('manifest', $manifestPath);
 
-		$manifest_details = JInstaller::parseXMLInstallFile($this->parent->getPath('manifest'));
+		$manifest_details = Installer::parseXMLInstallFile($this->parent->getPath('manifest'));
 		$this->parent->extension->manifest_cache = json_encode($manifest_details);
 		$this->parent->extension->name = $manifest_details['name'];
 

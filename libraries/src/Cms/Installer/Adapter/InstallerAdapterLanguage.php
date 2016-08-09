@@ -7,9 +7,23 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Installer\Adapter;
+
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\Registry\Registry;
+
+use Joomla\Cms\Installer\InstallerAdapter;
+use Joomla\Cms\Application\ApplicationHelper;
+use Joomla\Cms\Installer\Installer;
+use Joomla\Cms\Component\ComponentHelper;
+use RuntimeException;
+use JText;
+use JLog;
+use JFolder;
+use JTable;
+use JFactory;
+use JFilterInput;
 
 jimport('joomla.filesystem.folder');
 
@@ -18,7 +32,7 @@ jimport('joomla.filesystem.folder');
  *
  * @since  3.1
  */
-class JInstallerAdapterLanguage extends JInstallerAdapter
+class InstallerAdapterLanguage extends InstallerAdapter
 {
 	/**
 	 * Core language pack flag
@@ -96,7 +110,7 @@ class JInstallerAdapterLanguage extends JInstallerAdapter
 		if ($cname = (string) $this->getManifest()->attributes()->client)
 		{
 			// Attempt to map the client to a base path
-			$client = JApplicationHelper::getClientInfo($cname, true);
+			$client = ApplicationHelper::getClientInfo($cname, true);
 
 			if ($client === null)
 			{
@@ -328,7 +342,7 @@ class JInstallerAdapterLanguage extends JInstallerAdapter
 		$cname = $xml->attributes()->client;
 
 		// Attempt to map the client to a base path
-		$client = JApplicationHelper::getClientInfo($cname, true);
+		$client = ApplicationHelper::getClientInfo($cname, true);
 
 		if ($client === null || (empty($cname) && $cname !== 0))
 		{
@@ -472,7 +486,7 @@ class JInstallerAdapterLanguage extends JInstallerAdapter
 		$extension->load($eid);
 
 		// Grab a copy of the client details
-		$client = JApplicationHelper::getClientInfo($extension->get('client_id'));
+		$client = ApplicationHelper::getClientInfo($extension->get('client_id'));
 
 		// Check the element isn't blank to prevent nuking the languages directory...just in case
 		$element = $extension->get('element');
@@ -495,7 +509,7 @@ class JInstallerAdapterLanguage extends JInstallerAdapter
 		}
 
 		// Verify that it's not the default language for that client
-		$params = JComponentHelper::getParams('com_languages');
+		$params = ComponentHelper::getParams('com_languages');
 
 		if ($params->get($client->name) == $element)
 		{
@@ -600,7 +614,7 @@ class JInstallerAdapterLanguage extends JInstallerAdapter
 		{
 			if (file_exists(JPATH_SITE . '/language/' . $language . '/' . $language . '.xml'))
 			{
-				$manifest_details = JInstaller::parseXMLInstallFile(JPATH_SITE . '/language/' . $language . '/' . $language . '.xml');
+				$manifest_details = Installer::parseXMLInstallFile(JPATH_SITE . '/language/' . $language . '/' . $language . '.xml');
 				$extension = JTable::getInstance('extension');
 				$extension->set('type', 'language');
 				$extension->set('client_id', 0);
@@ -618,7 +632,7 @@ class JInstallerAdapterLanguage extends JInstallerAdapter
 		{
 			if (file_exists(JPATH_ADMINISTRATOR . '/language/' . $language . '/' . $language . '.xml'))
 			{
-				$manifest_details = JInstaller::parseXMLInstallFile(JPATH_ADMINISTRATOR . '/language/' . $language . '/' . $language . '.xml');
+				$manifest_details = Installer::parseXMLInstallFile(JPATH_ADMINISTRATOR . '/language/' . $language . '/' . $language . '.xml');
 				$extension = JTable::getInstance('extension');
 				$extension->set('type', 'language');
 				$extension->set('client_id', 1);
@@ -646,14 +660,14 @@ class JInstallerAdapterLanguage extends JInstallerAdapter
 	public function discover_install()
 	{
 		// Need to find to find where the XML file is since we don't store this normally
-		$client = JApplicationHelper::getClientInfo($this->parent->extension->client_id);
+		$client = ApplicationHelper::getClientInfo($this->parent->extension->client_id);
 		$short_element = $this->parent->extension->element;
 		$manifestPath = $client->path . '/language/' . $short_element . '/' . $short_element . '.xml';
 		$this->parent->manifest = $this->parent->isManifest($manifestPath);
 		$this->parent->setPath('manifest', $manifestPath);
 		$this->parent->setPath('source', $client->path . '/language/' . $short_element);
 		$this->parent->setPath('extension_root', $this->parent->getPath('source'));
-		$manifest_details = JInstaller::parseXMLInstallFile($this->parent->getPath('manifest'));
+		$manifest_details = Installer::parseXMLInstallFile($this->parent->getPath('manifest'));
 		$this->parent->extension->manifest_cache = json_encode($manifest_details);
 		$this->parent->extension->state = 0;
 		$this->parent->extension->name = $manifest_details['name'];
@@ -682,11 +696,11 @@ class JInstallerAdapterLanguage extends JInstallerAdapter
 	 */
 	public function refreshManifestCache()
 	{
-		$client = JApplicationHelper::getClientInfo($this->parent->extension->client_id);
+		$client = ApplicationHelper::getClientInfo($this->parent->extension->client_id);
 		$manifestPath = $client->path . '/language/' . $this->parent->extension->element . '/' . $this->parent->extension->element . '.xml';
 		$this->parent->manifest = $this->parent->isManifest($manifestPath);
 		$this->parent->setPath('manifest', $manifestPath);
-		$manifest_details = JInstaller::parseXMLInstallFile($this->parent->getPath('manifest'));
+		$manifest_details = Installer::parseXMLInstallFile($this->parent->getPath('manifest'));
 		$this->parent->extension->manifest_cache = json_encode($manifest_details);
 		$this->parent->extension->name = $manifest_details['name'];
 

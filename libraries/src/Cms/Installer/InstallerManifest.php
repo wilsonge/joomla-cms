@@ -7,7 +7,12 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Installer;
+
 defined('JPATH_PLATFORM') or die;
+
+use JText;
+use SimpleXMLElement;
 
 jimport('joomla.filesystem.file');
 
@@ -16,7 +21,7 @@ jimport('joomla.filesystem.file');
  *
  * @since  3.1
  */
-abstract class JInstallerManifest
+abstract class InstallerManifest
 {
 	/**
 	 * Path to the manifest file

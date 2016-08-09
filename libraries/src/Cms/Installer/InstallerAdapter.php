@@ -7,20 +7,33 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Installer;
+
 defined('JPATH_PLATFORM') or die;
 
 jimport('joomla.base.adapterinstance');
 
+use JAdapterInstance;
+use JTableExtension;
+use JDatabaseDriver;
+use JTable;
+use JTableInterface;
+use RuntimeException;
+use JText;
+use JFolder;
+use JFactory;
+use JFilterInput;
+
 /**
  * Abstract adapter for the installer.
  *
- * @method         JInstaller  getParent()  Retrieves the parent object.
- * @property-read  JInstaller  $parent      Parent object
+ * @method         Installer  getParent()  Retrieves the parent object.
+ * @property-read  Installer  $parent      Parent object
  *
  * @since  3.4
  * @note   As of 4.0, this class will no longer extend from JAdapterInstance
  */
-abstract class JInstallerAdapter extends JAdapterInstance
+abstract class InstallerAdapter extends JAdapterInstance
 {
 	/**
 	 * ID for the currently installed extension if present
@@ -109,13 +122,13 @@ abstract class JInstallerAdapter extends JAdapterInstance
 	/**
 	 * Constructor
 	 *
-	 * @param   JInstaller       $parent   Parent object
+	 * @param   Installer       $parent   Parent object
 	 * @param   JDatabaseDriver  $db       Database object
 	 * @param   array            $options  Configuration Options
 	 *
 	 * @since   3.4
 	 */
-	public function __construct(JInstaller $parent, JDatabaseDriver $db, array $options = array())
+	public function __construct(Installer $parent, JDatabaseDriver $db, array $options = array())
 	{
 		parent::__construct($parent, $db, $options);
 

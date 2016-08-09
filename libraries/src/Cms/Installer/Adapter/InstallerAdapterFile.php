@@ -7,7 +7,20 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Installer\Adapter;
+
 defined('JPATH_PLATFORM') or die;
+
+use Joomla\Cms\Installer\Installer;
+use Joomla\Cms\Installer\InstallerAdapter;
+use RuntimeException;
+use JFolder;
+use JText;
+use JLog;
+use JTable;
+use JPath;
+use JFile;
+use JFactory;
 
 jimport('joomla.filesystem.folder');
 
@@ -16,7 +29,7 @@ jimport('joomla.filesystem.folder');
  *
  * @since  3.1
  */
-class JInstallerAdapterFile extends JInstallerAdapter
+class InstallerAdapterFile extends InstallerAdapter
 {
 	/**
 	 * `<scriptfile>` element of the extension manifest
@@ -621,7 +634,7 @@ class JInstallerAdapterFile extends JInstallerAdapter
 		$this->parent->manifest = $this->parent->isManifest($manifestPath);
 		$this->parent->setPath('manifest', $manifestPath);
 
-		$manifest_details = JInstaller::parseXMLInstallFile($this->parent->getPath('manifest'));
+		$manifest_details = Installer::parseXMLInstallFile($this->parent->getPath('manifest'));
 		$this->parent->extension->manifest_cache = json_encode($manifest_details);
 		$this->parent->extension->name = $manifest_details['name'];
 

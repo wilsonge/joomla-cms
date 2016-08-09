@@ -7,7 +7,21 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Installer\Adapter;
+
 defined('JPATH_PLATFORM') or die;
+
+use Joomla\Cms\Installer\InstallerAdapter;
+use Joomla\Cms\Application\ApplicationHelper;
+use Joomla\Cms\Installer\Installer;
+use RuntimeException;
+use JText;
+use JLog;
+use JFolder;
+use JTable;
+use JTableUpdate;
+use JFactory;
+use SimpleXMLElement;
 
 jimport('joomla.filesystem.folder');
 
@@ -16,7 +30,7 @@ jimport('joomla.filesystem.folder');
  *
  * @since  3.1
  */
-class JInstallerAdapterTemplate extends JInstallerAdapter
+class InstallerAdapterTemplate extends InstallerAdapter
 {
 	/**
 	 * The install client ID
@@ -260,7 +274,7 @@ class JInstallerAdapterTemplate extends JInstallerAdapter
 	 */
 	public function prepareDiscoverInstall()
 	{
-		$client = JApplicationHelper::getClientInfo($this->extension->client_id);
+		$client = ApplicationHelper::getClientInfo($this->extension->client_id);
 		$manifestPath = $client->path . '/templates/' . $this->extension->element . '/templateDetails.xml';
 		$this->parent->manifest = $this->parent->isManifest($manifestPath);
 		$this->parent->setPath('manifest', $manifestPath);
@@ -283,7 +297,7 @@ class JInstallerAdapterTemplate extends JInstallerAdapter
 		if ($cname)
 		{
 			// Attempt to map the client to a base path
-			$client = JApplicationHelper::getClientInfo($cname, true);
+			$client = ApplicationHelper::getClientInfo($cname, true);
 
 			if ($client === false)
 			{
@@ -327,7 +341,7 @@ class JInstallerAdapterTemplate extends JInstallerAdapter
 		// Discover installs are stored a little differently
 		if ($this->route == 'discover_install')
 		{
-			$manifest_details = JInstaller::parseXMLInstallFile($this->parent->getPath('manifest'));
+			$manifest_details = Installer::parseXMLInstallFile($this->parent->getPath('manifest'));
 
 			$this->extension->manifest_cache = json_encode($manifest_details);
 			$this->extension->state = 0;
@@ -447,7 +461,7 @@ class JInstallerAdapterTemplate extends JInstallerAdapter
 		}
 
 		// Get the template root path
-		$client = JApplicationHelper::getClientInfo($clientId);
+		$client = ApplicationHelper::getClientInfo($clientId);
 
 		if (!$client)
 		{
@@ -524,8 +538,8 @@ class JInstallerAdapterTemplate extends JInstallerAdapter
 		$results = array();
 		$site_list = JFolder::folders(JPATH_SITE . '/templates');
 		$admin_list = JFolder::folders(JPATH_ADMINISTRATOR . '/templates');
-		$site_info = JApplicationHelper::getClientInfo('site', true);
-		$admin_info = JApplicationHelper::getClientInfo('administrator', true);
+		$site_info = ApplicationHelper::getClientInfo('site', true);
+		$admin_info = ApplicationHelper::getClientInfo('administrator', true);
 
 		foreach ($site_list as $template)
 		{
@@ -537,7 +551,7 @@ class JInstallerAdapterTemplate extends JInstallerAdapter
 					continue;
 				}
 
-				$manifest_details = JInstaller::parseXMLInstallFile(JPATH_SITE . "/templates/$template/templateDetails.xml");
+				$manifest_details = Installer::parseXMLInstallFile(JPATH_SITE . "/templates/$template/templateDetails.xml");
 				$extension = JTable::getInstance('extension');
 				$extension->set('type', 'template');
 				$extension->set('client_id', $site_info->id);
@@ -561,7 +575,7 @@ class JInstallerAdapterTemplate extends JInstallerAdapter
 					continue;
 				}
 
-				$manifest_details = JInstaller::parseXMLInstallFile(JPATH_ADMINISTRATOR . "/templates/$template/templateDetails.xml");
+				$manifest_details = Installer::parseXMLInstallFile(JPATH_ADMINISTRATOR . "/templates/$template/templateDetails.xml");
 				$extension = JTable::getInstance('extension');
 				$extension->set('type', 'template');
 				$extension->set('client_id', $admin_info->id);
@@ -588,12 +602,12 @@ class JInstallerAdapterTemplate extends JInstallerAdapter
 	public function refreshManifestCache()
 	{
 		// Need to find to find where the XML file is since we don't store this normally.
-		$client = JApplicationHelper::getClientInfo($this->parent->extension->client_id);
+		$client = ApplicationHelper::getClientInfo($this->parent->extension->client_id);
 		$manifestPath = $client->path . '/templates/' . $this->parent->extension->element . '/templateDetails.xml';
 		$this->parent->manifest = $this->parent->isManifest($manifestPath);
 		$this->parent->setPath('manifest', $manifestPath);
 
-		$manifest_details = JInstaller::parseXMLInstallFile($this->parent->getPath('manifest'));
+		$manifest_details = Installer::parseXMLInstallFile($this->parent->getPath('manifest'));
 		$this->parent->extension->manifest_cache = json_encode($manifest_details);
 		$this->parent->extension->name = $manifest_details['name'];
 

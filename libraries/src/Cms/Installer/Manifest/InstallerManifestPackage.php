@@ -7,14 +7,20 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Installer\Manifest;
+
 defined('JPATH_PLATFORM') or die;
+
+use Joomla\Cms\Installer\InstallerManifest;
+use Joomla\Cms\Installer\InstallerExtension;
+use SimpleXMLElement;
 
 /**
  * Joomla! Package Manifest File
  *
  * @since  3.1
  */
-class JInstallerManifestPackage extends JInstallerManifest
+class InstallerManifestPackage extends InstallerManifest
 {
 	/**
 	 * Unique name of the package
@@ -69,7 +75,7 @@ class JInstallerManifestPackage extends JInstallerManifest
 			{
 				// NOTE: JInstallerExtension doesn't expect a string.
 				// DO NOT CAST $file
-				$this->filelist[] = new JInstallerExtension($file);
+				$this->filelist[] = new InstallerExtension($file);
 			}
 		}
 
@@ -80,7 +86,7 @@ class JInstallerManifestPackage extends JInstallerManifest
 			{
 				// NOTE: JInstallerExtension doesn't expect a string.
 				// DO NOT CAST $folder
-				$this->filelist[] = new JInstallerExtension($folder);
+				$this->filelist[] = new InstallerExtension($folder);
 			}
 		}
 	}
