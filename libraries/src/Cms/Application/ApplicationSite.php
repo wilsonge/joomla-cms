@@ -13,7 +13,7 @@ defined('JPATH_PLATFORM') or die;
 
 use Joomla\DI\Container;
 use Joomla\Registry\Registry;
-use Joomla\Cms\Application\ApplicationCms;
+use Joomla\Cms\Plugin\PluginHelper;
 use JInput;
 use JFactory;
 use JRoute;
@@ -23,8 +23,9 @@ use JLanguageHelper;
 use JComponentHelper;
 use stdClass;
 use JLanguage;
-use JPluginHelper;
 use JFilterInput;
+use Exception;
+use InvalidArgumentException;
 
 /**
  * Joomla! Site Application class
@@ -208,7 +209,7 @@ final class ApplicationSite extends ApplicationCms
 		$document->setBuffer($contents, 'component');
 
 		// Trigger the onAfterDispatch event.
-		JPluginHelper::importPlugin('system');
+		PluginHelper::importPlugin('system');
 		$this->triggerEvent('onAfterDispatch');
 	}
 
@@ -607,9 +608,9 @@ final class ApplicationSite extends ApplicationCms
 		 *
 		 * @TODO - Remove the hardcoded dependency to the languagefilter plugin
 		 */
-		if (JPluginHelper::isEnabled('system', 'languagefilter'))
+		if (PluginHelper::isEnabled('system', 'languagefilter'))
 		{
-			$plugin = JPluginHelper::getPlugin('system', 'languagefilter');
+			$plugin = PluginHelper::getPlugin('system', 'languagefilter');
 
 			$pluginParams = new Registry($plugin->params);
 
