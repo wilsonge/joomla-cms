@@ -11,8 +11,6 @@ namespace Joomla\Cms\Menu;
 
 defined('JPATH_PLATFORM') or die;
 
-use Joomla\Cms\Menu\Menu;
-
 /**
  * JMenu class.
  *

@@ -11,13 +11,14 @@ namespace Joomla\Cms\Menu;
 
 defined('JPATH_PLATFORM') or die;
 
-use Joomla\Cms\Menu\Menu;
+use Joomla\Cms\Application\ApplicationCms;
+use Joomla\Cms\Language\LanguageMultilang;
 use JError;
-use JLanguageMultilang;
 use JFactory;
 use JLanguage;
 use JDatabaseDriver;
 use JText;
+use RuntimeException;
 
 /**
  * JMenu class
@@ -29,7 +30,7 @@ class MenuSite extends Menu
 	/**
 	 * Application object
 	 *
-	 * @var    JApplicationCms
+	 * @var    ApplicationCms
 	 * @since  3.5
 	 */
 	protected $app;
@@ -60,7 +61,7 @@ class MenuSite extends Menu
 	public function __construct($options = array())
 	{
 		// Extract the internal dependencies before calling the parent constructor since it calls $this->load()
-		$this->app      = isset($options['app']) && $options['app'] instanceof JApplicationCms ? $options['app'] : JFactory::getApplication();
+		$this->app      = isset($options['app']) && $options['app'] instanceof ApplicationCms ? $options['app'] : JFactory::getApplication();
 		$this->db       = isset($options['db']) && $options['db'] instanceof JDatabaseDriver ? $options['db'] : JFactory::getDbo();
 		$this->language = isset($options['language']) && $options['language'] instanceof JLanguage ? $options['language'] : JFactory::getLanguage();
 
@@ -147,7 +148,7 @@ class MenuSite extends Menu
 			// Filter by language if not set
 			if (($key = array_search('language', $attributes)) === false)
 			{
-				if (JLanguageMultilang::isEnabled())
+				if (LanguageMultilang::isEnabled())
 				{
 					$attributes[] = 'language';
 					$values[]     = array(JFactory::getLanguage()->getTag(), '*');
