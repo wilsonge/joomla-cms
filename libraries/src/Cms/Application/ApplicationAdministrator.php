@@ -16,12 +16,12 @@ use Joomla\Registry\Registry;
 use JInput;
 use JUri;
 use JAdministratorHelper;
-use JFactory;
+use Joomla\Cms\Factory;
 use JText;
-use JPluginHelper;
+use Joomla\Cms\Plugin\PluginHelper;
 use JLanguage;
-use JRouter;
-use JComponentHelper;
+use Joomla\Cms\Router\Router;
+use Joomla\Cms\Component\ComponentHelper;
 use JSession;
 use JFilterInput;
 
@@ -83,10 +83,10 @@ class ApplicationAdministrator extends ApplicationCms
 		$this->loadDocument();
 
 		// Set up the params
-		$document = JFactory::getDocument();
+		$document = Factory::getDocument();
 
-		// Register the document object with JFactory
-		JFactory::$document = $document;
+		// Register the document object with Factory
+		Factory::$document = $document;
 
 		switch ($document->getType())
 		{
@@ -110,11 +110,11 @@ class ApplicationAdministrator extends ApplicationCms
 		$document->setDescription($this->get('MetaDesc'));
 		$document->setGenerator('Joomla! - Open Source Content Management');
 
-		$contents = JComponentHelper::renderComponent($component);
+		$contents = ComponentHelper::renderComponent($component);
 		$document->setBuffer($contents, 'component');
 
 		// Trigger the onAfterDispatch event.
-		JPluginHelper::importPlugin('system');
+		PluginHelper::importPlugin('system');
 		$this->triggerEvent('onAfterDispatch');
 	}
 
@@ -171,12 +171,12 @@ class ApplicationAdministrator extends ApplicationCms
 	}
 
 	/**
-	 * Return a reference to the JRouter object.
+	 * Return a reference to the Router object.
 	 *
 	 * @param   string  $name     The name of the application.
 	 * @param   array   $options  An optional associative array of configuration settings.
 	 *
-	 * @return  JRouter
+	 * @return  Router
 	 *
 	 * @since	3.2
 	 */
@@ -207,10 +207,10 @@ class ApplicationAdministrator extends ApplicationCms
 			return $this->template->template;
 		}
 
-		$admin_style = JFactory::getUser()->getParam('admin_style');
+		$admin_style = Factory::getUser()->getParam('admin_style');
 
 		// Load the template name from the database
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true)
 			->select('template, s.params')
 			->from('#__template_styles as s')
@@ -263,12 +263,12 @@ class ApplicationAdministrator extends ApplicationCms
 	 */
 	protected function initialiseApp($options = array())
 	{
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 
 		// If the user is a guest we populate it with the guest user group.
 		if ($user->guest)
 		{
-			$guestUsergroup = JComponentHelper::getParams('com_users')->get('guest_usergroup', 1);
+			$guestUsergroup = ComponentHelper::getParams('com_users')->get('guest_usergroup', 1);
 			$user->groups = array($guestUsergroup);
 		}
 
@@ -284,7 +284,7 @@ class ApplicationAdministrator extends ApplicationCms
 			}
 			else
 			{
-				$params = JComponentHelper::getParams('com_languages');
+				$params = ComponentHelper::getParams('com_languages');
 				$options['language'] = $params->get('administrator', $this->get('language', 'en-GB'));
 			}
 		}
@@ -366,10 +366,10 @@ class ApplicationAdministrator extends ApplicationCms
 	 */
 	public static function purgeMessages()
 	{
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		$userid = $user->get('id');
 
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true)
 			->select('*')
 			->from($db->quoteName('#__messages_cfg'))
@@ -393,7 +393,7 @@ class ApplicationAdministrator extends ApplicationCms
 		if ($purge > 0)
 		{
 			// Purge old messages at day set in message configuration
-			$past = JFactory::getDate(time() - $purge * 86400);
+			$past = Factory::getDate(time() - $purge * 86400);
 			$pastStamp = $past->toSql();
 
 			$query->clear()
@@ -430,11 +430,11 @@ class ApplicationAdministrator extends ApplicationCms
 		$this->set('themeFile', $file . '.php');
 
 		// Safety check for when configuration.php root_user is in use.
-		$config = JFactory::getConfig();
+		$config = Factory::getConfig();
 		$rootUser = $config->get('root_user');
 
 		if (property_exists('JConfig', 'root_user')
-			&& (JFactory::getUser()->get('username') == $rootUser || JFactory::getUser()->id === (string) $rootUser))
+			&& (Factory::getUser()->get('username') == $rootUser || Factory::getUser()->id === (string) $rootUser))
 		{
 			$this->enqueueMessage(
 				JText::sprintf(
@@ -472,7 +472,7 @@ class ApplicationAdministrator extends ApplicationCms
 		}
 
 		// Trigger the onAfterRoute event.
-		JPluginHelper::importPlugin('system');
+		PluginHelper::importPlugin('system');
 		$this->triggerEvent('onAfterRoute');
 	}
 }

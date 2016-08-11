@@ -18,21 +18,24 @@ use Joomla\Registry\Registry;
 use Joomla\Session\SessionEvent;
 use JApplicationWeb;
 use JUser;
-use JFactory;
+use Joomla\Cms\Factory;
 use JInput;
 use JText;
 use JDocument;
 use JRoute;
-use JPluginHelper;
+use Joomla\Cms\Plugin\PluginHelper;
 use JUri;
 use JError;
 use JAuthentication;
 use JLanguage;
 use stdClass;
-use JRouter;
+use Joomla\Cms\Router\Router;
 use JProfiler;
-use JMenu;
-use JPathway;
+use Joomla\Cms\Menu\Menu;
+use Joomla\Cms\Pathway\Pathway;
+use Exception;
+use RuntimeException;
+use JException;
 
 /**
  * Joomla! CMS Application class
@@ -172,7 +175,7 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 		}
 
 		// TODO: At some point we need to get away from having session data always in the db.
-		$db   = JFactory::getDbo();
+		$db   = Factory::getDbo();
 		$time = time();
 
 		// Get the session handler from the configuration.
@@ -224,9 +227,9 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 	 */
 	public function checkSession()
 	{
-		$db = JFactory::getDbo();
-		$session = JFactory::getSession();
-		$user = JFactory::getUser();
+		$db = Factory::getDbo();
+		$session = Factory::getSession();
+		$user = Factory::getUser();
 
 		$query = $db->getQuery(true)
 			->select($db->quoteName('session_id'))
@@ -376,7 +379,7 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 	 */
 	protected function checkUserRequireReset($option, $view, $layout, $tasks)
 	{
-		if (JFactory::getUser()->get('requireReset', 0))
+		if (Factory::getUser()->get('requireReset', 0))
 		{
 			$redirect = false;
 
@@ -501,12 +504,12 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 	}
 
 	/**
-	 * Returns the application JMenu object.
+	 * Returns the application Menu object.
 	 *
 	 * @param   string  $name     The name of the application/client.
 	 * @param   array   $options  An optional associative array of configuration settings.
 	 *
-	 * @return  JMenu|null
+	 * @return  Menu|null
 	 *
 	 * @since   3.2
 	 */
@@ -517,7 +520,7 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 			$name = $this->getName();
 		}
 
-		// Inject this application object into the JMenu tree if one isn't already specified
+		// Inject this application object into the Menu tree if one isn't already specified
 		if (!isset($options['app']))
 		{
 			$options['app'] = $this;
@@ -525,7 +528,7 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 
 		try
 		{
-			$menu = JMenu::getInstance($name, $options);
+			$menu = Menu::getInstance($name, $options);
 		}
 		catch (Exception $e)
 		{
@@ -547,7 +550,7 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 		// For empty queue, if messages exists in the session, enqueue them.
 		if (!count($this->_messageQueue))
 		{
-			$session = JFactory::getSession();
+			$session = Factory::getSession();
 			$sessionQueue = $session->get('application.queue');
 
 			if (count($sessionQueue))
@@ -573,12 +576,12 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 	}
 
 	/**
-	 * Returns the application JPathway object.
+	 * Returns the application Pathway object.
 	 *
 	 * @param   string  $name     The name of the application.
 	 * @param   array   $options  An optional associative array of configuration settings.
 	 *
-	 * @return  JPathway|null
+	 * @return  Pathway|null
 	 *
 	 * @since   3.2
 	 */
@@ -591,7 +594,7 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 
 		try
 		{
-			$pathway = JPathway::getInstance($name, $options);
+			$pathway = Pathway::getInstance($name, $options);
 		}
 		catch (Exception $e)
 		{
@@ -602,12 +605,12 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 	}
 
 	/**
-	 * Returns the application JRouter object.
+	 * Returns the application Router object.
 	 *
 	 * @param   string  $name     The name of the application.
 	 * @param   array   $options  An optional associative array of configuration settings.
 	 *
-	 * @return  JRouter|null
+	 * @return  Router|null
 	 *
 	 * @since   3.2
 	 */
@@ -615,13 +618,13 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 	{
 		if (!isset($name))
 		{
-			$app = JFactory::getApplication();
+			$app = Factory::getApplication();
 			$name = $app->getName();
 		}
 
 		try
 		{
-			$router = JRouter::getInstance($name, $options);
+			$router = Router::getInstance($name, $options);
 		}
 		catch (Exception $e)
 		{
@@ -667,7 +670,7 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 	 */
 	public function getUserState($key, $default = null)
 	{
-		$session = JFactory::getSession();
+		$session = Factory::getSession();
 		$registry = $session->get('registry');
 
 		if (!is_null($registry))
@@ -718,7 +721,7 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 	protected function initialiseApp($options = array())
 	{
 		// Set the configuration in the API.
-		$this->config = JFactory::getConfig();
+		$this->config = Factory::getConfig();
 
 		// Check that we were given a language in the array (since by default may be blank).
 		if (isset($options['language']))
@@ -732,18 +735,18 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 		// Load the language to the API
 		$this->loadLanguage($lang);
 
-		// Register the language object with JFactory
-		JFactory::$language = $this->getLanguage();
+		// Register the language object with Factory
+		Factory::$language = $this->getLanguage();
 
 		// Set user specific editor.
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		$editor = $user->getParam('editor', $this->get('editor'));
 
-		if (!JPluginHelper::isEnabled('editors', $editor))
+		if (!PluginHelper::isEnabled('editors', $editor))
 		{
 			$editor = $this->get('editor');
 
-			if (!JPluginHelper::isEnabled('editors', $editor))
+			if (!PluginHelper::isEnabled('editors', $editor))
 			{
 				$editor = 'none';
 			}
@@ -752,10 +755,10 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 		$this->set('editor', $editor);
 
 		// Load the behaviour plugins
-		JPluginHelper::importPlugin('behaviour');
+		PluginHelper::importPlugin('behaviour');
 
 		// Trigger the onAfterInitialise event.
-		JPluginHelper::importPlugin('system');
+		PluginHelper::importPlugin('system');
 		$this->triggerEvent('onAfterInitialise');
 	}
 
@@ -811,7 +814,7 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 		$response = $authenticate->authenticate($credentials, $options);
 
 		// Import the user plugin group.
-		JPluginHelper::importPlugin('user');
+		PluginHelper::importPlugin('user');
 
 		if ($response->status === JAuthentication::STATUS_SUCCESS)
 		{
@@ -861,7 +864,7 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 			 * Any errors raised should be done in the plugin as this provides the ability
 			 * to provide much more information about why the routine may have failed.
 			 */
-			$user = JFactory::getUser();
+			$user = Factory::getUser();
 
 			if ($response->type == 'Cookie')
 			{
@@ -918,7 +921,7 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 	public function logout($userid = null, $options = array())
 	{
 		// Get a user object from the JApplication.
-		$user = JFactory::getUser($userid);
+		$user = Factory::getUser($userid);
 
 		// Build the credentials array.
 		$parameters['username'] = $user->get('username');
@@ -931,7 +934,7 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 		}
 
 		// Import the user plugin group.
-		JPluginHelper::importPlugin('user');
+		PluginHelper::importPlugin('user');
 
 		// OK, the credentials are built. Lets fire the onLogout event.
 		$results = $this->triggerEvent('onUserLogout', array($parameters, $options));
@@ -1013,7 +1016,7 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 		// Persist messages if they exist.
 		if (count($this->_messageQueue))
 		{
-			$session = JFactory::getSession();
+			$session = Factory::getSession();
 			$session->set('application.queue', $this->_messageQueue);
 		}
 
@@ -1051,12 +1054,12 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 		$this->document->parse($this->docOptions);
 
 		// Trigger the onBeforeRender event.
-		JPluginHelper::importPlugin('system');
+		PluginHelper::importPlugin('system');
 		$this->triggerEvent('onBeforeRender');
 
 		$caching = false;
 
-		if ($this->isSite() && $this->get('caching') && $this->get('caching', 2) == 2 && !JFactory::getUser()->get('id'))
+		if ($this->isSite() && $this->get('caching') && $this->get('caching', 2) == 2 && !Factory::getUser()->get('id'))
 		{
 			$caching = true;
 		}
@@ -1100,7 +1103,7 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 		}
 
 		// Trigger the onAfterRoute event.
-		JPluginHelper::importPlugin('system');
+		PluginHelper::importPlugin('system');
 		$this->triggerEvent('onAfterRoute');
 	}
 
@@ -1116,7 +1119,7 @@ class ApplicationCms extends JApplicationWeb implements ContainerAwareInterface
 	 */
 	public function setUserState($key, $value)
 	{
-		$session = JFactory::getSession();
+		$session = Factory::getSession();
 		$registry = $session->get('registry');
 
 		if (!is_null($registry))

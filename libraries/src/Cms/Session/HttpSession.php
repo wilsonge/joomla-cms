@@ -13,7 +13,7 @@ defined('JPATH_PLATFORM') or die;
 
 use Joomla\Session\Session;
 use Joomla\Cms\Application\ApplicationHelper;
-use JFactory;
+use Joomla\Cms\Factory;
 use JText;
 use JRoute;
 use JLog;
@@ -38,7 +38,7 @@ class HttpSession extends Session
 	 */
 	public static function checkToken($method = 'post')
 	{
-		$app   = JFactory::getApplication();
+		$app   = Factory::getApplication();
 		$token = static::getFormToken();
 
 		if (!$app->input->$method->get($token, '', 'alnum'))
@@ -69,9 +69,9 @@ class HttpSession extends Session
 	 */
 	public static function getFormToken($forceNew = false)
 	{
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 
-		return ApplicationHelper::getHash($user->get('id', 0) . JFactory::getApplication()->getSession()->getToken($forceNew));
+		return ApplicationHelper::getHash($user->get('id', 0) . Factory::getApplication()->getSession()->getToken($forceNew));
 	}
 
 	/**
@@ -90,7 +90,7 @@ class HttpSession extends Session
 			'deprecated'
 		);
 
-		return JFactory::getApplication()->getSession();
+		return Factory::getApplication()->getSession();
 	}
 
 	/**

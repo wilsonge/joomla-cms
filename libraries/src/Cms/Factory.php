@@ -6,22 +6,49 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms;
+
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\DI\Container;
 use Joomla\Registry\Registry;
+use Joomla\Cms\Application\ApplicationCms;
+use Joomla\Cms\Version\Version;
+use Joomla\Cms\Editor\Editor;
+use Joomla\Cms\Session\HttpSession;
+use JLanguage;
+use JLog;
+use JText;
+use JConfig;
+use JCache;
+use JUser;
+use Exception;
+use JDatabaseDriver;
+use JStream;
+use JMail;
+use JMailHelper;
+use JUri;
+use JDate;
+use JDocument;
+use JAccess;
+use JCacheController;
+use BadMethodCallException;
+use JSimplepieFactory;
+use JClientHelper;
+use RuntimeException;
+use DateTimeZone;
 
 /**
  * Joomla Platform Factory class.
  *
  * @since  11.1
  */
-abstract class JFactory
+abstract class Factory
 {
 	/**
 	 * Global application object
 	 *
-	 * @var    JApplicationCms
+	 * @var    ApplicationCms
 	 * @since  11.1
 	 */
 	public static $application = null;
@@ -118,7 +145,7 @@ abstract class JFactory
 	 * @param   string     $prefix     Application prefix
 	 * @param   Container  $container  An optional dependency injection container to inject into the application.
 	 *
-	 * @return  JApplicationCms object
+	 * @return  ApplicationCms object
 	 *
 	 * @see     JApplication
 	 * @since   11.1
@@ -135,7 +162,7 @@ abstract class JFactory
 
 			$container = $container ?: self::getContainer();
 
-			self::$application = JApplicationCms::getInstance($id, $prefix, $container);
+			self::$application = ApplicationCms::getInstance($id, $prefix, $container);
 		}
 
 		return self::$application;
@@ -480,7 +507,7 @@ abstract class JFactory
 	 *
 	 * @param   string  $editor  The editor to load, depends on the editor plugins that are installed
 	 *
-	 * @return  JEditor instance of JEditor
+	 * @return  Editor instance of JEditor
 	 *
 	 * @since   11.1
 	 * @throws  BadMethodCallException
@@ -502,7 +529,7 @@ abstract class JFactory
 			$editor = $conf->get('editor');
 		}
 
-		return JEditor::getInstance($editor);
+		return Editor::getInstance($editor);
 	}
 
 	/**
@@ -811,7 +838,7 @@ abstract class JFactory
 		$input = self::getApplication()->input;
 		$type = $input->get('format', 'html', 'word');
 
-		$version = new JVersion;
+		$version = new Version;
 
 		$attributes = array(
 			'charset'      => 'utf-8',
@@ -844,7 +871,7 @@ abstract class JFactory
 
 		// Setup the context; Joomla! UA and overwrite
 		$context = array();
-		$version = new JVersion;
+		$version = new Version;
 
 		// Set the UA for HTTP and overwrite for FTP
 		$context['http']['user_agent'] = $version->getUserAgent($ua, $uamask);

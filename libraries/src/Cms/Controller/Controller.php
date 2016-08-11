@@ -7,14 +7,21 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Controller;
+
 defined('JPATH_PLATFORM') or die;
+
+use Serializable;
+use LogicException;
+use RuntimeException;
+use JApplicationBase;
 
 /**
  * Joomla Platform Controller Interface
  *
  * @since  12.1
  */
-interface JController extends Serializable
+interface Controller extends Serializable
 {
 	/**
 	 * Execute the controller.

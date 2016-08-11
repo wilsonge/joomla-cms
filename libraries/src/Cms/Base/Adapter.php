@@ -7,7 +7,14 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Base;
+
 defined('JPATH_PLATFORM') or die;
+
+use Joomla\Cms\Factory;
+use JObject;
+use JDatabaseDriver;
+use DirectoryIterator;
 
 /**
  * Adapter Class
@@ -16,7 +23,7 @@ defined('JPATH_PLATFORM') or die;
  *
  * @since  11.1
  */
-class JAdapter extends JObject
+class Adapter extends JObject
 {
 	/**
 	 * Associative array of adapters
@@ -70,7 +77,7 @@ class JAdapter extends JObject
 		$this->_classprefix = $classprefix ? $classprefix : 'J';
 		$this->_adapterfolder = $adapterfolder ? $adapterfolder : 'adapters';
 
-		$this->_db = JFactory::getDbo();
+		$this->_db = Factory::getDbo();
 	}
 
 	/**
@@ -153,9 +160,9 @@ class JAdapter extends JObject
 		}
 
 		// Check for a possible service from the container otherwise manually instantiate the class
-		if (JFactory::getContainer()->exists($class))
+		if (Factory::getContainer()->exists($class))
 		{
-			$this->_adapters[$name] = JFactory::getContainer()->get($class);
+			$this->_adapters[$name] = Factory::getContainer()->get($class);
 		}
 		else
 		{

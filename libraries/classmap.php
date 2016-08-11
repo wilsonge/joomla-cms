@@ -128,3 +128,8 @@ JLoader::registerAlias('JInstallerAdapterModule',                    '\\Joomla\\
 JLoader::registerAlias('JInstallerAdapterPlugin',                    '\\Joomla\\Cms\\Installer\\Adapter\\InstallerAdapterPlugin');
 JLoader::registerAlias('JInstallerAdapterPackage',                    '\\Joomla\\Cms\\Installer\\Adapter\\InstallerAdapterPackage');
 JLoader::registerAlias('JInstallerAdapterTemplate',                    '\\Joomla\\Cms\\Installer\\Adapter\\InstallerAdapterTemplate');
+JLoader::registerAlias('JFactory',                                      '\\Joomla\\Cms\\Factory');
+JLoader::registerAlias('JAdapter',                                      '\\Joomla\\Cms\\Base\\Adapter');
+JLoader::registerAlias('JAdapterInstance',                              '\\Joomla\\Cms\\Base\\AdapterInstance');
+JLoader::registerAlias('JController',                                   '\\Joomla\\Cms\\Controller\\Controller');
+JLoader::registerAlias('JControllerBase',                               '\\Joomla\\Cms\\Controller\\ControllerBase');

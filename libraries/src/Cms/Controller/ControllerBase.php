@@ -7,14 +7,21 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Cms\Controller;
+
 defined('JPATH_PLATFORM') or die;
+
+use Joomla\Cms\Factory;
+use JApplicationBase;
+use JInput;
+use UnexpectedValueException;
 
 /**
  * Joomla Platform Base Controller Class
  *
  * @since  12.1
  */
-abstract class JControllerBase implements JController
+abstract class ControllerBase implements Controller
 {
 	/**
 	 * The application object.
@@ -88,7 +95,7 @@ abstract class JControllerBase implements JController
 	 *
 	 * @param   string  $input  The serialized controller.
 	 *
-	 * @return  JController  Supports chaining.
+	 * @return  Controller  Supports chaining.
 	 *
 	 * @since   12.1
 	 * @throws  UnexpectedValueException if input is not the right class.
@@ -118,7 +125,7 @@ abstract class JControllerBase implements JController
 	 */
 	protected function loadApplication()
 	{
-		return JFactory::getApplication();
+		return Factory::getApplication();
 	}
 
 	/**
