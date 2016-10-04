@@ -47,21 +47,21 @@ class NewsfeedsViewNewsfeed extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
-		$app  = JFactory::getApplication();
-		$user = JFactory::getUser();
+		$app        = JFactory::getApplication();
+		$this->user = JFactory::getUser();
 
 		// Get view related request variables.
-		$print = $app->input->getBool('print');
+		$this->print = $app->input->getBool('print');
 
 		// Get model data.
-		$state = $this->get('State');
-		$item  = $this->get('Item');
+		$this->state = $this->get('State');
+		$this->item  = $this->get('Item');
 
-		if ($item)
+		if ($this->item)
 		{
 			// Get Category Model data
 			$categoryModel = JModelLegacy::getInstance('Category', 'NewsfeedsModel', array('ignore_request' => true));
-			$categoryModel->setState('category.id', $item->catid);
+			$categoryModel->setState('category.id', $this->item->catid);
 			$categoryModel->setState('list.ordering', 'a.name');
 			$categoryModel->setState('list.direction', 'asc');
 
@@ -79,14 +79,14 @@ class NewsfeedsViewNewsfeed extends JViewLegacy
 		}
 
 		// Add router helpers.
-		$item->slug = $item->alias ? ($item->id . ':' . $item->alias) : $item->id;
-		$item->catslug = $item->category_alias ? ($item->catid . ':' . $item->category_alias) : $item->catid;
-		$item->parent_slug = $item->category_alias ? ($item->parent_id . ':' . $item->parent_alias) : $item->parent_id;
+		$this->item->slug = $this->item->alias ? ($this->item->id . ':' . $this->item->alias) : $this->item->id;
+		$this->item->catslug = $this->item->category_alias ? ($this->item->catid . ':' . $this->item->category_alias) : $this->item->catid;
+		$this->item->parent_slug = $this->item->category_alias ? ($this->item->parent_id . ':' . $this->item->parent_alias) : $this->item->parent_id;
 
 		// Merge newsfeed params. If this is single-newsfeed view, menu params override newsfeed params
 		// Otherwise, newsfeed params override menu item params
-		$params = $state->get('params');
-		$newsfeed_params = clone $item->params;
+		$params = $this->state->get('params');
+		$newsfeed_params = clone $this->item->params;
 		$active = $app->getMenu()->getActive();
 		$temp = clone $params;
 
@@ -96,12 +96,12 @@ class NewsfeedsViewNewsfeed extends JViewLegacy
 			$currentLink = $active->link;
 
 			// If the current view is the active item and an newsfeed view for this feed, then the menu item params take priority
-			if (strpos($currentLink, 'view=newsfeed') && (strpos($currentLink, '&id=' . (string) $item->id)))
+			if (strpos($currentLink, 'view=newsfeed') && (strpos($currentLink, '&id=' . (string) $this->item->id)))
 			{
-				// $item->params are the newsfeed params, $temp are the menu item params
+				// $this->item->params are the newsfeed params, $temp are the menu item params
 				// Merge so that the menu item params take priority
 				$newsfeed_params->merge($temp);
-				$item->params = $newsfeed_params;
+				$this->item->params = $newsfeed_params;
 
 				// Load layout from active query (in case it is an alternative menu item)
 				if (isset($active->query['layout']))
@@ -114,10 +114,10 @@ class NewsfeedsViewNewsfeed extends JViewLegacy
 				// Current view is not a single newsfeed, so the newsfeed params take priority here
 				// Merge the menu item params with the newsfeed params so that the newsfeed params take priority
 				$temp->merge($newsfeed_params);
-				$item->params = $temp;
+				$this->item->params = $temp;
 
 				// Check for alternative layouts (since we are not in a single-newsfeed menu item)
-				if ($layout = $item->params->get('newsfeed_layout'))
+				if ($layout = $this->item->params->get('newsfeed_layout'))
 				{
 					$this->setLayout($layout);
 				}
@@ -127,19 +127,19 @@ class NewsfeedsViewNewsfeed extends JViewLegacy
 		{
 			// Merge so that newsfeed params take priority
 			$temp->merge($newsfeed_params);
-			$item->params = $temp;
+			$this->item->params = $temp;
 
 			// Check for alternative layouts (since we are not in a single-newsfeed menu item)
-			if ($layout = $item->params->get('newsfeed_layout'))
+			if ($layout = $this->item->params->get('newsfeed_layout'))
 			{
 				$this->setLayout($layout);
 			}
 		}
 
 		// Check the access to the newsfeed
-		$levels = $user->getAuthorisedViewLevels();
+		$levels = $this->user->getAuthorisedViewLevels();
 
-		if (!in_array($item->access, $levels) or ((in_array($item->access, $levels) and (!in_array($item->category_access, $levels)))))
+		if (!in_array($this->item->access, $levels) or ((in_array($this->item->access, $levels) and (!in_array($this->item->category_access, $levels)))))
 		{
 			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
 			$app->setHeader('status', 403, true);
@@ -148,34 +148,35 @@ class NewsfeedsViewNewsfeed extends JViewLegacy
 		}
 
 		// Get the current menu item
-		$params = $app->getParams();
+		$this->params = $app->getParams();
 
 		// Get the newsfeed
-		$newsfeed = $item;
+		$this->newsfeed = $this->item;
 
 		$temp = new Registry;
-		$temp->loadString($item->params);
+		$temp->loadString($this->item->params);
 		$params->merge($temp);
 
 		try
 		{
 			$feed = new JFeedFactory;
-			$this->rssDoc = $feed->getFeed($newsfeed->link);
+			$this->rssDoc = $feed->getFeed($this->newsfeed->link);
 		}
 		catch (InvalidArgumentException $e)
 		{
-			$msg = JText::_('COM_NEWSFEEDS_ERRORS_FEED_NOT_RETRIEVED');
+			$this->msg = JText::_('COM_NEWSFEEDS_ERRORS_FEED_NOT_RETRIEVED');
 		}
 		catch (RunTimeException $e)
 		{
-			$msg = JText::_('COM_NEWSFEEDS_ERRORS_FEED_NOT_RETRIEVED');
-		}
-		if (empty($this->rssDoc))
-		{
-			$msg = JText::_('COM_NEWSFEEDS_ERRORS_FEED_NOT_RETRIEVED');
+			$this->msg = JText::_('COM_NEWSFEEDS_ERRORS_FEED_NOT_RETRIEVED');
 		}
 
-		$feed_display_order = $params->get('feed_display_order', 'des');
+		if (empty($this->rssDoc))
+		{
+			$this->msg = JText::_('COM_NEWSFEEDS_ERRORS_FEED_NOT_RETRIEVED');
+		}
+
+		$feed_display_order = $this->params->get('feed_display_order', 'des');
 
 		if ($feed_display_order == 'asc')
 		{
@@ -183,23 +184,10 @@ class NewsfeedsViewNewsfeed extends JViewLegacy
 		}
 
 		// Escape strings for HTML output
-		$this->pageclass_sfx = htmlspecialchars($params->get('pageclass_sfx'));
+		$this->pageclass_sfx = htmlspecialchars($this->params->get('pageclass_sfx'));
 
-		$this->params = $params;
-		$this->newsfeed = $newsfeed;
-		$this->state = $state;
-		$this->item = $item;
-		$this->user = $user;
-
-		if (!empty($msg))
-		{
-			$this->msg = $msg;
-		}
-
-		$this->print = $print;
-
-		$item->tags = new JHelperTags;
-		$item->tags->getItemTags('com_newsfeeds.newsfeed', $item->id);
+		$this->item->tags = new JHelperTags;
+		$this->item->tags->getItemTags('com_newsfeeds.newsfeed', $this->item->id);
 
 		// Increment the hit counter of the newsfeed.
 		$model = $this->getModel();
