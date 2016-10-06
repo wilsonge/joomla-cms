@@ -26,6 +26,16 @@ $blockPosition = $displayData['params']->get('info_block_position', 0);
 
 			<?php if ($displayData['params']->get('show_author') && !empty($displayData['item']->author )) : ?>
 				<?php echo JLayoutHelper::render('joomla.content.info_block.author', $displayData); ?>
+			<?php else: ?>
+				<meta itemprop="name" content="<?php echo ($displayData['item']->created_by_alias ? $displayData['item']->created_by_alias : $displayData['item']->author); ?>">
+				<dd itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization">
+					<div itemprop="logo" itemscope="" itemtype="https://schema.org/ImageObject">
+						<meta itemprop="url" content="<?php echo JUri::base()?>images/branding/logo.jpg">
+						<meta itemprop="width" content="314">
+						<meta itemprop="height" content="85">
+					</div>
+					<meta itemprop="name" content="<?php echo JFactory::getApplication()->get('sitename'); ?>">
+				</dd>
 			<?php endif; ?>
 
 			<?php if ($displayData['params']->get('show_parent_category') && !empty($displayData['item']->parent_slug)) : ?>
@@ -34,6 +44,8 @@ $blockPosition = $displayData['params']->get('info_block_position', 0);
 
 			<?php if ($displayData['params']->get('show_category')) : ?>
 				<?php echo JLayoutHelper::render('joomla.content.info_block.category', $displayData); ?>
+			<?php else: ?>
+				<meta itemprop="genre" content="<?php echo $title; ?>">
 			<?php endif; ?>
 
 			<?php if ($displayData['params']->get('show_publish_date')) : ?>
