@@ -70,6 +70,11 @@ class ContactModelContact extends JModelAdmin
 	 */
 	protected function batchCopy($value, $pks, $contexts)
 	{
+		if (!$this->table)
+		{
+			$this->table = $this->getTable();
+		}
+
 		$categoryId = (int) $value;
 
 		$newIds = array();
@@ -163,9 +168,14 @@ class ContactModelContact extends JModelAdmin
 	 */
 	protected function batchUser($value, $pks, $contexts)
 	{
+		if (!$this->table)
+		{
+			$this->table = $this->getTable();
+		}
+
 		foreach ($pks as $pk)
 		{
-			if ($this->user->authorise('core.edit', $contexts[$pk]))
+			if (JFactory::getUser()->authorise('core.edit', $contexts[$pk]))
 			{
 				$this->table->reset();
 				$this->table->load($pk);

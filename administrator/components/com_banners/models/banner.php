@@ -65,8 +65,10 @@ class BannersModelBanner extends JModelAdmin
 		// Set the variables
 		$user = JFactory::getUser();
 
-		/** @var BannersTableBanner $table */
-		$table = $this->getTable();
+		if (!$this->table)
+		{
+			$this->table = $this->getTable();
+		}
 
 		foreach ($pks as $pk)
 		{
@@ -77,13 +79,13 @@ class BannersModelBanner extends JModelAdmin
 				return false;
 			}
 
-			$table->reset();
-			$table->load($pk);
-			$table->cid = (int) $value;
+			$this->table->reset();
+			$this->table->load($pk);
+			$this->table->cid = (int) $value;
 
-			if (!$table->store())
+			if (!$this->table->store())
 			{
-				$this->setError($table->getError());
+				$this->setError($this->table->getError());
 
 				return false;
 			}
@@ -108,11 +110,13 @@ class BannersModelBanner extends JModelAdmin
 	 */
 	protected function batchCopy($value, $pks, $contexts)
 	{
-		$categoryId = (int) $value;
+		if (!$this->table)
+		{
+			$this->table = $this->getTable();
+		}
 
-		/** @var BannersTableBanner $table */
-		$table  = $this->getTable();
-		$newIds = array();
+		$categoryId = (int) $value;
+		$newIds     = array();
 
 		// Check that the category exists
 		if ($categoryId)
@@ -156,12 +160,12 @@ class BannersModelBanner extends JModelAdmin
 			// Pop the first ID off the stack
 			$pk = array_shift($pks);
 
-			$table->reset();
+			$this->table->reset();
 
 			// Check that the row actually exists
-			if (!$table->load($pk))
+			if (!$this->table->load($pk))
 			{
-				if ($error = $table->getError())
+				if ($error = $this->table->getError())
 				{
 					// Fatal error
 					$this->setError($error);
@@ -175,40 +179,40 @@ class BannersModelBanner extends JModelAdmin
 			}
 
 			// Alter the title & alias
-			$data         = $this->generateNewTitle($categoryId, $table->alias, $table->name);
-			$table->name  = $data['0'];
-			$table->alias = $data['1'];
+			$data         = $this->generateNewTitle($categoryId, $this->table->alias, $this->table->name);
+			$this->table->name  = $data['0'];
+			$this->table->alias = $data['1'];
 
 			// Reset the ID because we are making a copy
-			$table->id = 0;
+			$this->table->id = 0;
 
 			// New category ID
-			$table->catid = $categoryId;
+			$this->table->catid = $categoryId;
 
 			// Unpublish because we are making a copy
-			$table->state = 0;
+			$this->table->state = 0;
 
 			// TODO: Deal with ordering?
 			// $table->ordering = 1;
 
 			// Check the row.
-			if (!$table->check())
+			if (!$this->table->check())
 			{
-				$this->setError($table->getError());
+				$this->setError($this->table->getError());
 
 				return false;
 			}
 
 			// Store the row.
-			if (!$table->store())
+			if (!$this->table->store())
 			{
-				$this->setError($table->getError());
+				$this->setError($this->table->getError());
 
 				return false;
 			}
 
 			// Get the new item ID
-			$newId = $table->get('id');
+			$newId = $this->table->get('id');
 
 			// Add the new ID to the array
 			$newIds[$pk] = $newId;

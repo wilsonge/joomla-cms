@@ -58,6 +58,11 @@ class ContentModelArticle extends JModelAdmin
 	 */
 	protected function batchCopy($value, $pks, $contexts)
 	{
+		if (!$this->table)
+		{
+			$this->table = $this->getTable();
+		}
+
 		$categoryId = (int) $value;
 
 		$newIds = array();

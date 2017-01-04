@@ -819,9 +819,13 @@ class FieldsModelField extends JModelAdmin
 	 */
 	protected function batchCopy($value, $pks, $contexts)
 	{
-		// Set the variables
+		// Set some needed variables.
+		if (!$this->table)
+		{
+			$this->table = $this->getTable();
+		}
+
 		$user      = JFactory::getUser();
-		$table     = $this->getTable();
 		$newIds    = array();
 		$component = $this->state->get('filter.component');
 		$value     = (int) $value;
@@ -830,26 +834,26 @@ class FieldsModelField extends JModelAdmin
 		{
 			if ($user->authorise('core.create', $component . '.fieldgroup.' . $value))
 			{
-				$table->reset();
-				$table->load($pk);
+				$this->table->reset();
+				$this->table->load($pk);
 
-				$table->group_id = $value;
+				$this->table->group_id = $value;
 
 				// Reset the ID because we are making a copy
-				$table->id = 0;
+				$this->table->id = 0;
 
 				// Unpublish the new field
-				$table->state = 0;
+				$this->table->state = 0;
 
-				if (!$table->store())
+				if (!$this->table->store())
 				{
-					$this->setError($table->getError());
+					$this->setError($this->table->getError());
 
 					return false;
 				}
 
 				// Get the new item ID
-				$newId = $table->get('id');
+				$newId = $this->table->get('id');
 
 				// Add the new ID to the array
 				$newIds[$pk] = $newId;
@@ -881,9 +885,13 @@ class FieldsModelField extends JModelAdmin
 	 */
 	protected function batchMove($value, $pks, $contexts)
 	{
-		// Set the variables
+		// Set some needed variables.
+		if (!$this->table)
+		{
+			$this->table = $this->getTable();
+		}
+
 		$user      = JFactory::getUser();
-		$table     = $this->getTable();
 		$context   = explode('.', JFactory::getApplication()->getUserState('com_fields.fields.context'));
 		$value     = (int) $value;
 
@@ -891,14 +899,14 @@ class FieldsModelField extends JModelAdmin
 		{
 			if ($user->authorise('core.edit', $context[0] . '.fieldgroup.' . $value))
 			{
-				$table->reset();
-				$table->load($pk);
+				$this->table->reset();
+				$this->table->load($pk);
 
-				$table->group_id = $value;
+				$this->table->group_id = $value;
 
-				if (!$table->store())
+				if (!$this->table->store())
 				{
-					$this->setError($table->getError());
+					$this->setError($this->table->getError());
 
 					return false;
 				}

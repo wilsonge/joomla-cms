@@ -45,6 +45,14 @@ class CategoriesModelCategory extends JModelAdmin
 	protected $associationsContext = 'com_categories.item';
 
 	/**
+	 * A JTable object used across all the batch commands. Redeclared for typehinting
+	 *
+	 * @var     JTableNested
+	 * @since   __DEPLOY_VERSION__
+	 */
+	protected $table;
+
+	/**
 	 * Override parent constructor.
 	 *
 	 * @param   array  $config  An optional associative array of configuration settings.
@@ -783,8 +791,10 @@ class CategoriesModelCategory extends JModelAdmin
 	 */
 	protected function batchCopy($value, $pks, $contexts)
 	{
-		$type = new JUcmType;
-		$this->type = $type->getTypeByAlias($this->typeAlias);
+		if (!$this->table)
+		{
+			$this->table = $this->getTable();
+		}
 
 		// $value comes as {parent_id}.{extension}
 		$parts = explode('.', $value);
@@ -817,11 +827,11 @@ class CategoriesModelCategory extends JModelAdmin
 			// Check that user has create permission for parent category
 			if ($parentId == $this->table->getRootId())
 			{
-				$canCreate = $this->user->authorise('core.create', $extension);
+				$canCreate = JFactory::getUser()->authorise('core.create', $extension);
 			}
 			else
 			{
-				$canCreate = $this->user->authorise('core.create', $extension . '.category.' . $parentId);
+				$canCreate = JFactory::getUser()->authorise('core.create', $extension . '.category.' . $parentId);
 			}
 
 			if (!$canCreate)
@@ -843,7 +853,7 @@ class CategoriesModelCategory extends JModelAdmin
 				return false;
 			}
 			// Make sure we can create in root
-			elseif (!$this->user->authorise('core.create', $extension))
+			elseif (!JFactory::getUser()->authorise('core.create', $extension))
 			{
 				$this->setError(JText::_('COM_CATEGORIES_BATCH_CANNOT_CREATE'));
 
@@ -995,10 +1005,12 @@ class CategoriesModelCategory extends JModelAdmin
 	 */
 	protected function batchMove($value, $pks, $contexts)
 	{
-		$parentId = (int) $value;
-		$type = new JUcmType;
-		$this->type = $type->getTypeByAlias($this->typeAlias);
+		if (!$this->table)
+		{
+			$this->table = $this->getTable();
+		}
 
+		$parentId = (int) $value;
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
 		$extension = JFactory::getApplication()->input->get('extension', '', 'word');
@@ -1026,11 +1038,11 @@ class CategoriesModelCategory extends JModelAdmin
 			// Check that user has create permission for parent category.
 			if ($parentId == $this->table->getRootId())
 			{
-				$canCreate = $this->user->authorise('core.create', $extension);
+				$canCreate = JFactory::getUser()->authorise('core.create', $extension);
 			}
 			else
 			{
-				$canCreate = $this->user->authorise('core.create', $extension . '.category.' . $parentId);
+				$canCreate = JFactory::getUser()->authorise('core.create', $extension . '.category.' . $parentId);
 			}
 
 			if (!$canCreate)
@@ -1045,7 +1057,7 @@ class CategoriesModelCategory extends JModelAdmin
 			// Note that the entire batch operation fails if any category lacks edit permission
 			foreach ($pks as $pk)
 			{
-				if (!$this->user->authorise('core.edit', $extension . '.category.' . $pk))
+				if (!JFactory::getUser()->authorise('core.edit', $extension . '.category.' . $pk))
 				{
 					// Error since user cannot edit this category
 					$this->setError(JText::_('COM_CATEGORIES_BATCH_CANNOT_EDIT'));

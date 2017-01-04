@@ -82,6 +82,14 @@ class MenusModelItem extends JModelAdmin
 	);
 
 	/**
+	 * A JTable object used across all the batch commands. Redeclared for typehinting
+	 *
+	 * @var     JTableNested
+	 * @since   __DEPLOY_VERSION__
+	 */
+	protected $table;
+
+	/**
 	 * Method to test whether a record can be deleted.
 	 *
 	 * @param   object  $record  A record object.
@@ -147,7 +155,11 @@ class MenusModelItem extends JModelAdmin
 		$menuType = $parts[0];
 		$parentId = ArrayHelper::getValue($parts, 1, 0, 'int');
 
-		$table = $this->getTable();
+		if (!$this->table)
+		{
+			$this->table = $this->getTable();
+		}
+
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
 		$newIds = array();
@@ -155,9 +167,9 @@ class MenusModelItem extends JModelAdmin
 		// Check that the parent exists
 		if ($parentId)
 		{
-			if (!$table->load($parentId))
+			if (!$this->table->load($parentId))
 			{
-				if ($error = $table->getError())
+				if ($error = $this->table->getError())
 				{
 					// Fatal error
 					$this->setError($error);
@@ -176,7 +188,7 @@ class MenusModelItem extends JModelAdmin
 		// If the parent is 0, set it to the ID of the root item in the tree
 		if (empty($parentId))
 		{
-			if (!$parentId = $table->getRootId())
+			if (!$parentId = $this->table->getRootId())
 			{
 				$this->setError($db->getErrorMsg());
 
@@ -221,12 +233,12 @@ class MenusModelItem extends JModelAdmin
 			// Pop the first id off the stack
 			$pk = array_shift($pks);
 
-			$table->reset();
+			$this->table->reset();
 
 			// Check that the row actually exists
-			if (!$table->load($pk))
+			if (!$this->table->load($pk))
 			{
-				if ($error = $table->getError())
+				if ($error = $this->table->getError())
 				{
 					// Fatal error
 					$this->setError($error);
@@ -245,8 +257,8 @@ class MenusModelItem extends JModelAdmin
 			$query->clear()
 				->select('id')
 				->from($db->quoteName('#__menu'))
-				->where('lft > ' . (int) $table->lft)
-				->where('rgt < ' . (int) $table->rgt);
+				->where('lft > ' . (int) $this->table->lft)
+				->where('rgt < ' . (int) $this->table->rgt);
 			$db->setQuery($query);
 			$childIds = $db->loadColumn();
 
@@ -260,70 +272,70 @@ class MenusModelItem extends JModelAdmin
 			}
 
 			// Make a copy of the old ID and Parent ID
-			$oldId = $table->id;
-			$oldParentId = $table->parent_id;
+			$oldId = $this->table->id;
+			$oldParentId = $this->table->parent_id;
 
 			// Reset the id because we are making a copy.
-			$table->id = 0;
+			$this->table->id = 0;
 
 			// If we a copying children, the Old ID will turn up in the parents list
 			// otherwise it's a new top level item
-			$table->parent_id = isset($parents[$oldParentId]) ? $parents[$oldParentId] : $parentId;
-			$table->menutype = $menuType;
+			$this->table->parent_id = isset($parents[$oldParentId]) ? $parents[$oldParentId] : $parentId;
+			$this->table->menutype = $menuType;
 
 			// Set the new location in the tree for the node.
-			$table->setLocation($table->parent_id, 'last-child');
+			$this->table->setLocation($this->table->parent_id, 'last-child');
 
 			// TODO: Deal with ordering?
 			// $table->ordering = 1;
-			$table->level = null;
-			$table->lft   = null;
-			$table->rgt   = null;
-			$table->home  = 0;
+			$this->table->level = null;
+			$this->table->lft   = null;
+			$this->table->rgt   = null;
+			$this->table->home  = 0;
 
 			// Alter the title & alias
-			list($title, $alias) = $this->generateNewTitle($table->parent_id, $table->alias, $table->title);
-			$table->title = $title;
-			$table->alias = $alias;
+			list($title, $alias) = $this->generateNewTitle($this->table->parent_id, $this->table->alias, $this->table->title);
+			$this->table->title = $title;
+			$this->table->alias = $alias;
 
 			// Check the row.
-			if (!$table->check())
+			if (!$this->table->check())
 			{
-				$this->setError($table->getError());
+				$this->setError($this->table->getError());
 
 				return false;
 			}
 			// Store the row.
-			if (!$table->store())
+			if (!$this->table->store())
 			{
-				$this->setError($table->getError());
+				$this->setError($this->table->getError());
 
 				return false;
 			}
 
 			// Get the new item ID
-			$newId = $table->get('id');
+			$newId = $this->table->get('id');
 
 			// Add the new ID to the array
 			$newIds[$pk] = $newId;
 
 			// Now we log the old 'parent' to the new 'parent'
-			$parents[$oldId] = $table->id;
+			$parents[$oldId] = $this->table->id;
 			$count--;
 		}
 
 		// Rebuild the hierarchy.
-		if (!$table->rebuild())
+		if (!$this->table->rebuild())
 		{
-			$this->setError($table->getError());
+			$this->setError($this->table->getError());
 
 			return false;
 		}
 
 		// Rebuild the tree path.
-		if (!$table->rebuildPath($table->id))
+		if (!$this->table->rebuildPath($this->table->id))
 		{
-			$this->setError($table->getError());
+			$this->setError($this->table->getError());
 
 			return false;
 		}
@@ -352,16 +364,20 @@ class MenusModelItem extends JModelAdmin
 		$menuType = $parts[0];
 		$parentId = ArrayHelper::getValue($parts, 1, 0, 'int');
 
-		$table = $this->getTable();
+		if (!$this->table)
+		{
+			$this->table = $this->getTable();
+		}
+
 		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
 
 		// Check that the parent exists.
 		if ($parentId)
 		{
-			if (!$table->load($parentId))
+			if (!$this->table->load($parentId))
 			{
-				if ($error = $table->getError())
+				if ($error = $this->table->getError())
 				{
 					// Fatal error
 					$this->setError($error);
@@ -403,9 +419,9 @@ class MenusModelItem extends JModelAdmin
 		foreach ($pks as $pk)
 		{
 			// Check that the row actually exists
-			if (!$table->load($pk))
+			if (!$this->table->load($pk))
 			{
-				if ($error = $table->getError())
+				if ($error = $this->table->getError())
 				{
 					// Fatal error
 					$this->setError($error);
@@ -421,13 +437,13 @@ class MenusModelItem extends JModelAdmin
 			}
 
 			// Set the new location in the tree for the node.
-			$table->setLocation($parentId, 'last-child');
+			$this->table->setLocation($parentId, 'last-child');
 
 			// Set the new Parent Id
-			$table->parent_id = $parentId;
+			$this->table->parent_id = $parentId;
 
 			// Check if we are moving to a different menu
-			if ($menuType != $table->menutype)
+			if ($menuType != $this->table->menutype)
 			{
 				// Add the child node ids to the children array.
 				$query->clear()
@@ -439,25 +455,25 @@ class MenusModelItem extends JModelAdmin
 			}
 
 			// Check the row.
-			if (!$table->check())
+			if (!$this->table->check())
 			{
-				$this->setError($table->getError());
+				$this->setError($this->table->getError());
 
 				return false;
 			}
 
 			// Store the row.
-			if (!$table->store())
+			if (!$this->table->store())
 			{
-				$this->setError($table->getError());
+				$this->setError($this->table->getError());
 
 				return false;
 			}
 
 			// Rebuild the tree path.
-			if (!$table->rebuildPath())
+			if (!$this->table->rebuildPath())
 			{
-				$this->setError($table->getError());
+				$this->setError($this->table->getError());
 
 				return false;
 			}
