@@ -383,14 +383,12 @@ abstract class JModelAdmin extends JModelForm
 			// Reset the ID because we are making a copy
 			$this->table->id = 0;
 
+			$publishedField = $this->table->getColumnAlias('published');
+
 			// Unpublish because we are making a copy
-			if (isset($this->table->published))
+			if (property_exists($this->table, $publishedField))
 			{
-				$this->table->published = 0;
-			}
-			elseif (isset($this->table->state))
-			{
-				$this->table->state = 0;
+				$this->table->$publishedField = 0;
 			}
 
 			// New category ID
