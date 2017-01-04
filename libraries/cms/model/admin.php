@@ -381,7 +381,20 @@ abstract class JModelAdmin extends JModelForm
 			$this->generateTitle($categoryId, $this->table);
 
 			// Reset the ID because we are making a copy
-			$this->table->id = 0;
+			$primaryKeyName = $this->table->getKeyName(true);
+
+			if (empty($primaryKeyName))
+			{
+				throw new DomainException(sprintf('There is no primary key registered with %s', get_class($this->table)), 500);
+			}
+
+			// TODO: Handle multiple primary keys here (may not be integers so significantly more complex)
+			if (count($primaryKeyName) != 1)
+			{
+				throw new DomainException('Batch Copy does not support having multiple primary keys', 500);
+			}
+
+			$this->table->$primaryKeyName = 0;
 
 			$publishedField = $this->table->getColumnAlias('published');
 
@@ -414,7 +427,7 @@ abstract class JModelAdmin extends JModelForm
 			}
 
 			// Get the new item ID
-			$newId = $this->table->get('id');
+			$newId = $this->table->$primaryKeyName;
 
 			// Add the new ID to the array
 			$newIds[$pk] = $newId;
