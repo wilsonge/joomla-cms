@@ -97,6 +97,14 @@ abstract class JModelAdmin extends JModelForm
 	protected $associationsContext = null;
 
 	/**
+	 * A JTable object used across all the batch commands
+	 *
+	 * @var     JTable
+	 * @since   __DEPLOY_VERSION__
+	 */
+	protected $table;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param   array  $config  An optional associative array of configuration settings.
@@ -208,17 +216,9 @@ abstract class JModelAdmin extends JModelForm
 		$done = false;
 
 		// Set some needed variables.
-		$this->user = JFactory::getUser();
-		$this->table = $this->getTable();
-		$this->tableClassName = get_class($this->table);
-		$this->contentType = new JUcmType;
-		$this->type = $this->contentType->getTypeByTable($this->tableClassName);
-		$this->batchSet = true;
-
-		if ($this->type == false)
+		if (!$this->table)
 		{
-			$type = new JUcmType;
-			$this->type = $type->getTypeByAlias($this->typeAlias);
+			$this->table = $this->getTable();
 		}
 
 		if ($this->batch_copymove && !empty($commands[$this->batch_copymove]))
@@ -289,19 +289,15 @@ abstract class JModelAdmin extends JModelForm
 	 */
 	protected function batchAccess($value, $pks, $contexts)
 	{
-		if (empty($this->batchSet))
+		// Set some needed variables.
+		if (!$this->table)
 		{
-			// Set some needed variables.
-			$this->user = JFactory::getUser();
 			$this->table = $this->getTable();
-			$this->tableClassName = get_class($this->table);
-			$this->contentType = new JUcmType;
-			$this->type = $this->contentType->getTypeByTable($this->tableClassName);
 		}
 
 		foreach ($pks as $pk)
 		{
-			if ($this->user->authorise('core.edit', $contexts[$pk]))
+			if (JFactory::getUser()->authorise('core.edit', $contexts[$pk]))
 			{
 				$this->table->reset();
 				$this->table->load($pk);
@@ -341,14 +337,10 @@ abstract class JModelAdmin extends JModelForm
 	 */
 	protected function batchCopy($value, $pks, $contexts)
 	{
-		if (empty($this->batchSet))
+		// Set some needed variables.
+		if (!$this->table)
 		{
-			// Set some needed variables.
-			$this->user = JFactory::getUser();
 			$this->table = $this->getTable();
-			$this->tableClassName = get_class($this->table);
-			$this->contentType = new JUcmType;
-			$this->type = $this->contentType->getTypeByTable($this->tableClassName);
 		}
 
 		$categoryId = $value;
@@ -449,19 +441,15 @@ abstract class JModelAdmin extends JModelForm
 	 */
 	protected function batchLanguage($value, $pks, $contexts)
 	{
-		if (empty($this->batchSet))
+		// Set some needed variables.
+		if (!$this->table)
 		{
-			// Set some needed variables.
-			$this->user = JFactory::getUser();
 			$this->table = $this->getTable();
-			$this->tableClassName = get_class($this->table);
-			$this->contentType = new JUcmType;
-			$this->type = $this->contentType->getTypeByTable($this->tableClassName);
 		}
 
 		foreach ($pks as $pk)
 		{
-			if ($this->user->authorise('core.edit', $contexts[$pk]))
+			if (JFactory::getUser()->authorise('core.edit', $contexts[$pk]))
 			{
 				$this->table->reset();
 				$this->table->load($pk);
@@ -501,14 +489,10 @@ abstract class JModelAdmin extends JModelForm
 	 */
 	protected function batchMove($value, $pks, $contexts)
 	{
-		if (empty($this->batchSet))
+		// Set some needed variables.
+		if (!$this->table)
 		{
-			// Set some needed variables.
-			$this->user = JFactory::getUser();
 			$this->table = $this->getTable();
-			$this->tableClassName = get_class($this->table);
-			$this->contentType = new JUcmType;
-			$this->type = $this->contentType->getTypeByTable($this->tableClassName);
 		}
 
 		$categoryId = (int) $value;
@@ -521,7 +505,7 @@ abstract class JModelAdmin extends JModelForm
 		// Parent exists so we proceed
 		foreach ($pks as $pk)
 		{
-			if (!$this->user->authorise('core.edit', $contexts[$pk]))
+			if (!JFactory::getUser()->authorise('core.edit', $contexts[$pk]))
 			{
 				$this->setError(JText::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'));
 
@@ -585,16 +569,18 @@ abstract class JModelAdmin extends JModelForm
 	 */
 	protected function batchTag($value, $pks, $contexts)
 	{
-		// Set the variables
-		$user = JFactory::getUser();
-		$table = $this->getTable();
+		// Set some needed variables.
+		if (!$this->table)
+		{
+			$this->table = $this->getTable();
+		}
 
 		foreach ($pks as $pk)
 		{
-			if ($user->authorise('core.edit', $contexts[$pk]))
+			if (JFactory::getUser()->authorise('core.edit', $contexts[$pk]))
 			{
-				$table->reset();
-				$table->load($pk);
+				$this->table->reset();
+				$this->table->load($pk);
 				$tags = array($value);
 
 				$setTagsEvent = Joomla\Cms\Event\AbstractEvent::create(
@@ -608,7 +594,7 @@ abstract class JModelAdmin extends JModelForm
 
 				try
 				{
-					$table->getDispatcher()->dispatch($setTagsEvent);
+					$this->table->getDispatcher()->dispatch($setTagsEvent);
 				}
 				catch (RuntimeException $e)
 				{
@@ -1390,7 +1376,7 @@ abstract class JModelAdmin extends JModelForm
 		// Check that the user has create permission for the component
 		$extension = JFactory::getApplication()->input->get('option', '');
 
-		if (!$this->user->authorise('core.create', $extension . '.category.' . $categoryId))
+		if (!JFactory::getUser()->authorise('core.create', $extension . '.category.' . $categoryId))
 		{
 			$this->setError(JText::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_CREATE'));
 
