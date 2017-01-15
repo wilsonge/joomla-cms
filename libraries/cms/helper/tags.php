@@ -57,8 +57,7 @@ class JHelperTags extends JHelper
 	public function addTagMapping($ucmId, JTableInterface $table, $tags = array())
 	{
 		$db = $table->getDbo();
-		$key = $table->getKeyName();
-		$item = $table->$key;
+		$item = $table->getId();
 		$ucm = new JUcmType($this->typeAlias, $db);
 		$typeId = $ucm->getTypeId();
 
@@ -72,7 +71,7 @@ class JHelperTags extends JHelper
 		$tags = array_unique($tags);
 
 		$query = $db->getQuery(true);
-		$query->insert('#__contentitem_tag_map');
+		$query->insert($db->quoteName('#__contentitem_tag_map'));
 		$query->columns(
 			array(
 				$db->quoteName('type_alias'),
@@ -149,7 +148,7 @@ class JHelperTags extends JHelper
 				}
 				catch (RuntimeException $e)
 				{
-					return false;
+					return array();
 				}
 
 				// Rebuild the items path
@@ -205,6 +204,8 @@ class JHelperTags extends JHelper
 		{
 			// We will use the tags table to store them
 			JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tags/tables');
+
+			/** @var TagsTableTag $tagTable */
 			$tagTable  = JTable::getInstance('Tag', 'TagsTable');
 			$newTags   = array();
 			$canCreate = JFactory::getUser()->authorise('core.create', 'com_tags');
@@ -264,7 +265,6 @@ class JHelperTags extends JHelper
 			}
 
 			// At this point $tags is an array of all tag ids
-			$this->tags = $newTags;
 			$result = $newTags;
 		}
 
@@ -283,7 +283,7 @@ class JHelperTags extends JHelper
 	 */
 	public function deleteTagData(JTableInterface $table, $contentItemId)
 	{
-		$result = $this->unTagItem($contentItemId, $table);
+		$result = $this->unTagItem($table);
 
 		/**
 		 * @var JTableCorecontent $ucmContentTable
@@ -365,7 +365,7 @@ class JHelperTags extends JHelper
 	{
 		if (empty($ids))
 		{
-			return;
+			return '';
 		}
 
 		/**
@@ -398,9 +398,9 @@ class JHelperTags extends JHelper
 
 		// Add the tags to the content data.
 		$tagsList = $db->loadColumn();
-		$this->tags = implode(',', $tagsList);
+		$tagsAsString = implode(',', $tagsList);
 
-		return $this->tags;
+		return $tagsAsString;
 	}
 
 	/**
@@ -592,7 +592,7 @@ class JHelperTags extends JHelper
 	 * @param   integer  $id             An optional ID
 	 * @param   array    &$tagTreeArray  Array containing the tag tree
 	 *
-	 * @return  mixed
+	 * @return  array  The modified tag tree array
 	 *
 	 * @since   3.1
 	 */
@@ -600,6 +600,8 @@ class JHelperTags extends JHelper
 	{
 		// Get a level row instance.
 		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tags/tables');
+
+		/** @var TagsTableTag $table */
 		$table = JTable::getInstance('Tag', 'TagsTable');
 
 		if ($table->isLeaf($id))
@@ -621,6 +623,8 @@ class JHelperTags extends JHelper
 
 			return $tagTreeArray;
 		}
+
+		return $tagTreeArray;
 	}
 
 	/**
@@ -746,7 +750,7 @@ class JHelperTags extends JHelper
 	 * @param   JTableInterface  $table    JTable being processed
 	 * @param   array            $newTags  Array of new tags
 	 *
-	 * @return  null
+	 * @return  void
 	 *
 	 * @since   3.1
 	 */
@@ -899,10 +903,9 @@ class JHelperTags extends JHelper
 	 */
 	public function tagItem($ucmId, JTableInterface $table, $tags = array(), $replace = true)
 	{
-		$key = $table->get('_tbl_key');
-		$oldTags = $this->getTagIds((int) $table->$key, $this->typeAlias);
+		$oldTags = $this->getTagIds($table->getId(), $this->typeAlias);
 		$oldTags = explode(',', $oldTags);
-		$result = $this->unTagItem($ucmId, $table);
+		$result = $this->unTagItem($table);
 
 		if ($replace)
 		{
@@ -936,7 +939,6 @@ class JHelperTags extends JHelper
 	/**
 	 * Method to untag an item
 	 *
-	 * @param   integer          $contentId  ID of the content item being untagged
 	 * @param   JTableInterface  $table      JTable object being untagged
 	 * @param   array            $tags       Array of tags to be untagged. Use an empty array to untag all existing tags.
 	 *
@@ -944,10 +946,9 @@ class JHelperTags extends JHelper
 	 *
 	 * @since   3.1
 	 */
-	public function unTagItem($contentId, JTableInterface $table, $tags = array())
+	public function unTagItem(JTableInterface $table, $tags = array())
 	{
-		$key = $table->getKeyName();
-		$id = $table->$key;
+		$id = $table->getId();
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true)
 			->delete('#__contentitem_tag_map')
