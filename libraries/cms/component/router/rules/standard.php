@@ -284,10 +284,9 @@ class JComponentRouterRulesStandard implements JComponentRouterRulesInterface
 				if (count($views[$view]->children))
 				{
 					$found = true;
+					unset($query[$views[$view]->parent_key]);
 				}
 			}
-
-			unset($query[$views[$view]->parent_key]);
 		}
 
 		if ($found)

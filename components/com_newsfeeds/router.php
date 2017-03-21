@@ -141,25 +141,27 @@ class NewsfeedsRouter extends JComponentRouterView
 	 */
 	public function getCategoryId($segment, $query)
 	{
-		if (isset($query['id']))
+		if (!isset($query['id']))
 		{
-			$category = JCategories::getInstance($this->getName())->get($query['id']);
+			$query['id'] = 'root';
+		}
 
-			foreach ($category->getChildren() as $child)
+		$category = JCategories::getInstance($this->getName())->get($query['id']);
+
+		foreach ($category->getChildren() as $child)
+		{
+			if ($this->noIDs)
 			{
-				if ($this->noIDs)
+				if ($child->alias == $segment)
 				{
-					if ($child->alias == $segment)
-					{
-						return $child->id;
-					}
+					return $child->id;
 				}
-				else
+			}
+			else
+			{
+				if ($child->id == (int) $segment)
 				{
-					if ($child->id == (int) $segment)
-					{
-						return $child->id;
-					}
+					return $child->id;
 				}
 			}
 		}
