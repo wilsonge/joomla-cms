@@ -49,6 +49,8 @@ class ContentRouter extends JComponentRouterView
 		{
 			$this->attachRule(new JComponentRouterRulesStandard($this));
 			$this->attachRule(new JComponentRouterRulesNomenu($this));
+			JLoader::register('ContentRouterRulesLegacyParser', __DIR__ . '/helpers/legacyparsingcompatibility.php');
+			$this->attachRule(new ContentRouterRulesLegacyParser($this));
 		}
 		else
 		{
