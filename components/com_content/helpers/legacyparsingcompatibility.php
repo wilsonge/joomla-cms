@@ -95,6 +95,11 @@ class ContentRouterRulesLegacyParser implements JComponentRouterRulesInterface
 			$vars['id'] = $cat_id;
 		}
 
+		/**
+		 * We don't validate intermediate segments. So at this point we assume we're done
+		 * and remove all segments from the array. Note this means that lots of incorrect URLs
+		 * will still parse. But that's the price of some stupid settings in the legacy router
+		 */
 		$segments = array();
 	}
 }
