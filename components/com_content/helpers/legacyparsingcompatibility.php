@@ -74,6 +74,12 @@ class ContentRouterRulesLegacyParser implements JComponentRouterRulesInterface
 	 */
 	public function parse(&$segments, &$vars)
 	{
+		// If we have already found a match with an existing rule at this point bail here
+		if (empty($segments))
+		{
+			return;
+		}
+
 		/*
 		 * If there was more than one segment, then we can determine where the URL points to
 		 * because the first segment will have the target category id prepended to it.  If the
