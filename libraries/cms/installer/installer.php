@@ -640,7 +640,7 @@ class JInstaller extends JAdapter
 	 *
 	 * Asks each adapter to find extensions
 	 *
-	 * @return  JInstallerExtension[]
+	 * @return  JTableExtension[]
 	 *
 	 * @since   3.1
 	 */

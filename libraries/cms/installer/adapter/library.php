@@ -394,11 +394,6 @@ class JInstallerAdapterLibrary extends JInstallerAdapter
 		// Because libraries may not have their own folders we cannot use the standard method of finding an installation manifest
 		if (file_exists($manifestFile))
 		{
-			$manifest = new JInstallerManifestLibrary($manifestFile);
-
-			// Set the library root path
-			$this->parent->setPath('extension_root', JPATH_PLATFORM . '/' . $manifest->libraryname);
-
 			$xml = simplexml_load_file($manifestFile);
 
 			// If we cannot load the XML file return null
@@ -408,6 +403,9 @@ class JInstallerAdapterLibrary extends JInstallerAdapter
 
 				return false;
 			}
+
+			// Set the library root path
+			$this->parent->setPath('extension_root', JPATH_PLATFORM . '/' . (string) $xml->libraryname);
 
 			// Check for a valid XML root tag.
 			if ($xml->getName() != 'extension')

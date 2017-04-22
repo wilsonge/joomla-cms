@@ -531,7 +531,6 @@ class JInstallerAdapterPackage extends JInstallerAdapter
 	public function uninstall($id)
 	{
 		$row = null;
-		$retval = true;
 
 		$row = JTable::getInstance('extension');
 		$row->load($id);
@@ -555,10 +554,6 @@ class JInstallerAdapterPackage extends JInstallerAdapter
 		}
 
 		$manifestFile = JPATH_MANIFESTS . '/packages/' . $row->get('element') . '.xml';
-		$manifest = new JInstallerManifestPackage($manifestFile);
-
-		// Set the package root path
-		$this->parent->setPath('extension_root', JPATH_MANIFESTS . '/packages/' . $manifest->packagename);
 
 		// Because packages may not have their own folders we cannot use the standard method of finding an installation manifest
 		if (!file_exists($manifestFile))
@@ -579,6 +574,9 @@ class JInstallerAdapterPackage extends JInstallerAdapter
 			return false;
 		}
 
+		// Set the package root path
+		$this->parent->setPath('extension_root', JPATH_MANIFESTS . '/packages/' . $xml->packagename);
+
 		// Check for a valid XML root tag.
 		if ($xml->getName() != 'extension')
 		{
@@ -588,7 +586,7 @@ class JInstallerAdapterPackage extends JInstallerAdapter
 		}
 
 		// If there is an manifest class file, let's load it
-		$manifestScript = (string) $manifest->scriptfile;
+		$manifestScript = (string) $xml->scriptfile;
 
 		if ($manifestScript)
 		{
@@ -672,7 +670,7 @@ class JInstallerAdapterPackage extends JInstallerAdapter
 		}
 
 		// Return the result up the line
-		return $retval;
+		return true;
 	}
 
 	/**
