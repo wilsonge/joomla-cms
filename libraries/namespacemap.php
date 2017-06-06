@@ -83,16 +83,37 @@ class JNamespacePsr4Map
 		foreach ($extensions as $extension)
 		{
 			$element       = $extension->element;
+			$extensionType = $extension->type;
+			$clientId      = $extension->client_id;
 			$baseNamespace = str_replace("\\", "\\\\", $extension->namespace);
 
-			if (file_exists(JPATH_ADMINISTRATOR . '/components/' . $element))
+			if ($extensionType === 'component')
 			{
-				$elements[$baseNamespace . '\\\\Administrator'] = array('/administrator/components/' . $element);
-			}
+				if (file_exists(JPATH_ADMINISTRATOR . '/components/' . $element))
+				{
+					// TODO: Somehow we need to remove the /administrator/ section here in favour of whatever is in
+					//       /includes.defines.php
+					$elements[$baseNamespace . '\\\\Administrator'] = array('/administrator/components/' . $element);
+				}
 
-			if (file_exists(JPATH_ROOT . '/components/' . $element))
+				if (file_exists(JPATH_ROOT . '/components/' . $element))
+				{
+					$elements[$baseNamespace . '\\\\Site'] = array('/components/' . $element);
+				}
+			}
+			elseif ($extensionType === 'module' && $clientId === '0')
 			{
-				$elements[$baseNamespace . '\\\\Site'] = array('/components/' . $element);
+				if (file_exists(JPATH_ROOT . '/modules/' . $element))
+				{
+					$elements[$baseNamespace . '\\\\Site'] = array('/modules/' . $element);
+				}
+			}
+			elseif (strtolower($extensionType) === 'module' && $clientId === '1')
+			{
+				if (file_exists(JPATH_ROOT . '/administrator/modules/' . $element))
+				{
+					$elements[$baseNamespace . '\\\\Administrator'] = array('/administrator/modules/' . $element);
+				}
 			}
 		}
 
@@ -146,7 +167,7 @@ class JNamespacePsr4Map
 
 		$query = $db->getQuery(true);
 
-		$query->select($db->quoteName(array('extension_id', 'element', 'namespace')))
+		$query->select($db->quoteName(array('extension_id', 'element', 'namespace', 'type', 'client_id')))
 			->from($db->quoteName('#__extensions'))
 			->where($db->quoteName('namespace') . ' IS NOT NULL AND ' . $db->quoteName('namespace') . ' != ""');
 

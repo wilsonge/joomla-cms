@@ -32,4 +32,30 @@ trait ExtensionNamespaceMapper
 		$extensionPsr4Loader = new \JNamespacePsr4Map;
 		$extensionPsr4Loader->ensureMapFileExists();
 	}
+
+	/**
+	 * Loads the psr4 namespace file and registers all extensions namespaces.
+	 *
+	 * @return  void
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function registerExtensions()
+	{
+		$map = require JPATH_LIBRARIES . '/autoload_psr4.php';
+
+		foreach ($map as $namespace => $paths) {
+			foreach ($paths as $key => $path)
+			{
+				$reset = false;
+
+				if ($key === 0)
+				{
+					$reset = true;
+				}
+
+				JLoader::registerNamespace($namespace, $path, $reset, false, 'psr4');
+			}
+		}
+	}
 }

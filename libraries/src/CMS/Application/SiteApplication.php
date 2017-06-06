@@ -212,6 +212,9 @@ final class SiteApplication extends CMSApplication
 	 */
 	protected function doExecute()
 	{
+		// Load all the Joomla extensions into the autoloader
+		$this->registerExtensions();
+
 		// Initialise the application
 		$this->initialiseApp();
 

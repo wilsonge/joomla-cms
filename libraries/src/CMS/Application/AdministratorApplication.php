@@ -119,6 +119,9 @@ class AdministratorApplication extends CMSApplication
 	 */
 	protected function doExecute()
 	{
+		// Load all the Joomla extensions into the autoloader
+		$this->registerExtensions();
+
 		// Get the language from the (login) form or user state
 		$login_lang = ($this->input->get('option') == 'com_login') ? $this->input->get('lang') : '';
 		$options    = array('language' => $login_lang ?: $this->getUserState('application.lang'));
