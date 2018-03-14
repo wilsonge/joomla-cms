@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Factory
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Table\Extension;
 use Joomla\Registry\Registry;
@@ -144,6 +145,10 @@ class PlgSystemWam extends CMSPlugin
 				}
 
 				$newParams = new Registry($newParams);
+				
+				// Support of Template-level manifest params
+				$siteTemplate = Factory::getApplication()->getTemplate('site');
+				$newParams->merge($siteTemplate->params);
 
 				// This is stored as a string(!?) so do a weak comparison here
 				if ($publishedStatus == 1)
