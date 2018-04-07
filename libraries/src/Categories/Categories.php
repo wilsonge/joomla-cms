@@ -10,8 +10,10 @@ namespace Joomla\CMS\Categories;
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Categories\Exceptions\CategoryNotFoundException;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Multilanguage;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Categories Class.
@@ -139,7 +141,23 @@ class Categories
 
 		$parts = explode('.', $extension, 2);
 
-		$categories = Factory::getApplication()->bootComponent($parts[0])->getCategories($options, count($parts) > 1 ? $parts[1] : '');
+		// If we don't have Category factory, then the component doesn't support categories
+		// OR if we do support categories, but can't find the category name bail. Else set the category
+		try
+		{
+			/** @var CategoriesFactory $categoryFactory */
+			$categoryFactory = Factory::getApplication()->bootComponent($parts[0])->get(CategoriesFactory::class);
+			$categories = $categoryFactory->getCategory(count($parts) > 1 ? $parts[1] : null);
+			$categories->setOptions($options);
+		}
+		catch(NotFoundExceptionInterface $e)
+		{
+			return false;
+		}
+		catch (CategoryNotFoundException $e)
+		{
+			return false;
+		}
 
 		self::$instances[$hash] = $categories;
 

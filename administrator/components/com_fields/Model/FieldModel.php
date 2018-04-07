@@ -10,6 +10,8 @@ namespace Joomla\Component\Fields\Administrator\Model;
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Categories\CategoriesFactory;
+use Joomla\CMS\Categories\Exceptions\CategoryNotFoundException;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\AdminModel;
@@ -18,6 +20,7 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Field Model
@@ -967,7 +970,20 @@ class FieldModel extends AdminModel
 		}
 
 		// Setting the context for the category field
-		$cat = $this->bootComponent($component)->getCategories();
+		try
+		{
+			/** @var CategoriesFactory $categoryFactory */
+			$categoryFactory = $this->bootComponent($component)->get(CategoriesFactory::class);
+			$cat = $categoryFactory->getCategory();
+		}
+		catch(NotFoundExceptionInterface $e)
+		{
+			$cat = null;
+		}
+		catch (CategoryNotFoundException $e)
+		{
+			$cat = null;
+		}
 
 		if ($cat && $cat->get('root')->hasChildren())
 		{
