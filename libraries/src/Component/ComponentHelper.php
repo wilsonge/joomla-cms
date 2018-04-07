@@ -13,6 +13,7 @@ defined('JPATH_PLATFORM') or die;
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Component\Exception\MissingComponentException;
 use Joomla\Registry\Registry;
+use Joomla\CMS\Dispatcher\DispatcherFactoryInterface;
 
 /**
  * Component helper class
@@ -345,7 +346,7 @@ class ComponentHelper
 		}
 
 		ob_start();
-		$app->bootComponent($option)->getDispatcher($app)->dispatch();
+		$app->bootComponent($option)->get(DispatcherFactoryInterface::class)->createDispatcher($app)->dispatch();
 		$contents = ob_get_clean();
 
 		// Revert the scope

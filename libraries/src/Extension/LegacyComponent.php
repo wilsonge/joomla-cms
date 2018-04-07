@@ -1,151 +1,42 @@
 <?php
 /**
- * Joomla! Content Management System
+ * @package     Joomla.Administrator
+ * @subpackage  com_content
  *
- * @copyright  Copyright (C) 2005 - 2017 Open Source Matters, Inc. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   Copyright (C) 2005 - 2017 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Joomla\CMS\Extension;
 
-defined('JPATH_PLATFORM') or die;
+defined('_JEXEC') or die;
 
-use Joomla\CMS\Application\CMSApplicationInterface;
-use Joomla\CMS\Association\AssociationExtensionInterface;
-use Joomla\CMS\Categories\Categories;
-use Joomla\CMS\Dispatcher\DispatcherInterface;
-use Joomla\CMS\Dispatcher\LegacyDispatcher;
-use Joomla\CMS\MVC\Factory\LegacyFactory;
-use Joomla\CMS\MVC\Factory\MVCFactory;
-use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\Dispatcher\LegacyDispatcherFactory;
+use Joomla\CMS\Dispatcher\DispatcherFactoryInterface;
+use Joomla\CMS\MVC\Factory\MVCFactoryFactory;
+use Joomla\CMS\MVC\Factory\MVCFactoryFactoryInterface;
+use Joomla\DI\Container;
+use Joomla\DI\ServiceProviderInterface;
 
 /**
- * Access to component specific services.
+ * The legacy service provider.
  *
  * @since  __DEPLOY_VERSION__
  */
-class LegacyComponent implements ComponentInterface
+class LegacyComponent implements ServiceProviderInterface
 {
 	/**
-	 * @var string
+	 * Registers the service provider with a DI container.
 	 *
-	 * @since  __DEPLOY_VERSION__
-	 */
-	private $component;
-
-	/**
-	 * LegacyComponentContainer constructor.
+	 * @param   Container  $container  The DI container.
 	 *
-	 * @param   string  $component  The component
-	 *
-	 * @since  __DEPLOY_VERSION__
-	 */
-	public function __construct(string $component)
-	{
-		$this->component = str_replace('com_', '', $component);
-	}
-
-	/**
-	 * Returns the dispatcher for the given application.
-	 *
-	 * @param   CMSApplicationInterface  $application  The application
-	 *
-	 * @return  DispatcherInterface
+	 * @return  void
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function getDispatcher(CMSApplicationInterface $application): DispatcherInterface
+	public function register(Container $container)
 	{
-		return new LegacyDispatcher($application);
-	}
-
-	/**
-	 * Returns an MVCFactory.
-	 *
-	 * @param   CMSApplicationInterface  $application  The application
-	 *
-	 * @return  MVCFactoryInterface
-	 *
-	 * @since  __DEPLOY_VERSION__
-	 */
-	public function createMVCFactory(CMSApplicationInterface $application): MVCFactoryInterface
-	{
-		// Will be removed when all extensions are converted to service providers
-		if (file_exists(JPATH_ADMINISTRATOR . '/components/com_' . $this->component . '/dispatcher.php'))
-		{
-			return new MVCFactory('\\Joomla\\Component\\' . ucfirst($this->component), $application);
-		}
-
-		return new LegacyFactory;
-	}
-
-	/**
-	 * Returns the category service. If the service is not available
-	 * null is returned.
-	 *
-	 * @param   array   $options  The options
-	 * @param   string  $section  The section
-	 *
-	 * @return  Categories|null
-	 *
-	 * @see Categories::setOptions()
-	 *
-	 * @since  __DEPLOY_VERSION__
-	 */
-	public function getCategories(array $options = [], $section = '')
-	{
-		$classname = ucfirst($this->component) . ucfirst($section) . 'Categories';
-
-		if (!class_exists($classname))
-		{
-			$path = JPATH_SITE . '/components/com_' . $this->component . '/helpers/category.php';
-
-			if (!is_file($path))
-			{
-				return null;
-			}
-
-			include_once $path;
-		}
-
-		if (!class_exists($classname))
-		{
-			return null;
-		}
-
-		return new $classname($options);
-	}
-
-	/**
-	 * Returns the associations helper.
-	 *
-	 * @return  AssociationExtensionInterface|null
-	 *
-	 * @since  __DEPLOY_VERSION__
-	 */
-	public function getAssociationsExtension()
-	{
-		$className = ucfirst($this->component) . 'AssociationsHelper';
-
-		if (class_exists($className))
-		{
-			return new $className;
-		}
-
-		// Check if associations helper exists
-		if (!file_exists(JPATH_ADMINISTRATOR . '/components/com_' . $this->component . '/helpers/associations.php'))
-		{
-			return null;
-		}
-
-		require_once JPATH_ADMINISTRATOR . '/components/com_' . $this->component . '/helpers/associations.php';
-
-		if (!class_exists($className))
-		{
-			return null;
-		}
-
-		// Return an instance of the helper class
-		return new $className;
+		$container->set(MVCFactoryFactoryInterface::class, function() { return new MVCFactoryFactory(''); });
+		$container->set(DispatcherFactoryInterface::class, function() { return new LegacyDispatcherFactory; });
 	}
 }

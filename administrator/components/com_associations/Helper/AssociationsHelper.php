@@ -10,11 +10,13 @@ namespace Joomla\Component\Associations\Administrator\Helper;
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Association\AssociationExtensionInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Language\LanguageHelper;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Associations component helper.
@@ -343,7 +345,15 @@ class AssociationsHelper extends ContentHelper
 		$result->def('helper', null);
 
 		// Get the associations class
-		$helper = Factory::getApplication()->bootComponent($extensionName)->getAssociationsExtension();
+		try
+		{
+			/** @var AssociationExtensionInterface $helper */
+			$helper = Factory::getApplication()->bootComponent($extensionName)->get(AssociationExtensionInterface::class);
+		}
+		catch (NotFoundExceptionInterface $e)
+		{
+			$helper = null;
+		}
 
 		if (!$helper)
 		{

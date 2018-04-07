@@ -12,9 +12,10 @@ defined('JPATH_PLATFORM') or die;
 
 use Joomla\CMS\Event\AbstractEvent;
 use Joomla\DI\Container;
+use Joomla\Event\DispatcherInterface;
 use Joomla\DI\Exception\ContainerNotFoundException;
 use Joomla\DI\ServiceProviderInterface;
-use Joomla\Event\DispatcherInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Trait for classes which can load extensions
@@ -28,18 +29,18 @@ trait ExtensionManagerTrait
 	 *
 	 * @var array
 	 */
-	private $extensions = [ComponentInterface::class => []];
+	private $extensions = [];
 
 	/**
 	 * Boots the component with the given name.
 	 *
 	 * @param   string  $component  The component to boot.
 	 *
-	 * @return  ComponentInterface
+	 * @return  ContainerInterface
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function bootComponent($component): ComponentInterface
+	public function bootComponent($component): ContainerInterface
 	{
 		// Normalize the component name
 		$component = strtolower(str_replace('com_', '', $component));
@@ -47,26 +48,25 @@ trait ExtensionManagerTrait
 		// Path to to look for services
 		$path = JPATH_ADMINISTRATOR . '/components/com_' . $component;
 
-		return $this->loadExtension(ComponentInterface::class, $component, $path);
+		return $this->loadExtension($component, $path);
 	}
 
 	/**
 	 * Loads the extension.
 	 *
-	 * @param   string  $type           The extension type
 	 * @param   string  $extensionName  The extension name
 	 * @param   string  $extensionPath  The path of the extension
 	 *
-	 * @return  ComponentInterface
+	 * @return  ContainerInterface
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	private function loadExtension($type, $extensionName, $extensionPath)
+	private function loadExtension($extensionName, $extensionPath)
 	{
 		// Check if the extension is already loaded
-		if (!empty($this->extensions[$type][$extensionName]))
+		if (!empty($this->extensions[$extensionName]))
 		{
-			return $this->extensions[$type][$extensionName];
+			return $this->extensions[$extensionName];
 		}
 
 		// The container to get the services from
@@ -78,7 +78,6 @@ trait ExtensionManagerTrait
 				'onBeforeExtensionBoot',
 				[
 					'subject'       => $this,
-					'type'          => $type,
 					'extensionName' => $extensionName,
 					'container'     => $container
 				]
@@ -99,11 +98,9 @@ trait ExtensionManagerTrait
 				$provider->register($container);
 			}
 		}
-
-		// Fallback to legacy
-		if (!$container->has($type) && $type == ComponentInterface::class)
+		else
 		{
-			$container->set($type, new LegacyComponent('com_' . $extensionName));
+			(new LegacyComponent)->register($container);
 		}
 
 		$container->get(DispatcherInterface::class)->dispatch(
@@ -112,17 +109,16 @@ trait ExtensionManagerTrait
 				'onAfterExtensionBoot',
 				[
 					'subject'       => $this,
-					'type'          => $type,
 					'extensionName' => $extensionName,
 					'container'     => $container
 				]
 			)
 		);
 
-		// Cache the extension
-		$this->extensions[$type][$extensionName] = $container->get($type);
+		// Cache the container
+		$this->extensions[$extensionName] = $container;
 
-		return $this->extensions[$type][$extensionName];
+		return $this->extensions[$extensionName];
 	}
 
 	/**

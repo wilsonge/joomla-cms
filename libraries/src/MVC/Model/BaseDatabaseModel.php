@@ -10,15 +10,16 @@ namespace Joomla\CMS\MVC\Model;
 
 defined('JPATH_PLATFORM') or die;
 
-use Joomla\CMS\Extension\ComponentInterface;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Factory\LegacyFactory;
+use Joomla\CMS\MVC\Factory\MVCFactoryFactoryInterface;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Utilities\ArrayHelper;
+use Psr\Container\ContainerInterface;
 
 /**
  * Base class for a database aware Joomla Model
@@ -313,7 +314,7 @@ abstract class BaseDatabaseModel extends CMSObject
 
 		if (!$factory)
 		{
-			$factory = Factory::getApplication()->bootComponent($this->option)->createMVCFactory(Factory::getApplication());
+			$mvcFactoryFactory = $this->bootComponent($this->option)->get(MVCFactoryFactoryInterface::class)->createFactory(Factory::getApplication());
 		}
 
 		$this->factory = $factory;
@@ -656,11 +657,11 @@ abstract class BaseDatabaseModel extends CMSObject
 	 *
 	 * @param   string  $component  The component name, eg. com_content.
 	 *
-	 * @return  ComponentInterface  The service container
+	 * @return  ContainerInterface  The service container
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	protected function bootComponent($component): ComponentInterface
+	protected function bootComponent($component): ContainerInterface
 	{
 		return Factory::getApplication()->bootComponent($component);
 	}

@@ -14,7 +14,6 @@ use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Categories\Categories;
 use Joomla\CMS\Dispatcher\DispatcherFactory;
 use Joomla\CMS\Dispatcher\DispatcherFactoryInterface;
-use Joomla\CMS\Extension\Service\Provider\Component;
 use Joomla\CMS\HTML\Registry;
 use Joomla\CMS\MVC\Factory\MVCFactoryFactory;
 use Joomla\CMS\MVC\Factory\MVCFactoryFactoryInterface;
@@ -64,6 +63,5 @@ return new class implements ServiceProviderInterface
 			DispatcherFactoryInterface::class,
 			new DispatcherFactory('\\Joomla\\Component\\Content', $container->get(MVCFactoryFactoryInterface::class))
 		);
-		$container->registerServiceProvider(new Component);
 	}
 };
