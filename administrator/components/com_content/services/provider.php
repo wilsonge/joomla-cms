@@ -9,31 +9,58 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Association\AssociationExtensionInterface;
+use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Application\SiteApplication;
+use Joomla\CMS\Association\AssociationExtensionInterface;
 use Joomla\CMS\Categories\Categories;
 use Joomla\CMS\Dispatcher\DispatcherFactory;
-use Joomla\CMS\Dispatcher\DispatcherFactoryInterface;
-use Joomla\CMS\Extension\Service\Provider\Component;
+use Joomla\CMS\Dispatcher\DispatcherInterface;
+use Joomla\CMS\Extension\Service\AssociationsAwareInterface;
+use Joomla\CMS\Extension\Service\CategoryAwareInterface;
+use Joomla\CMS\Extension\Service\ComponentInterface;
 use Joomla\CMS\HTML\Registry;
 use Joomla\CMS\MVC\Factory\MVCFactoryFactory;
 use Joomla\CMS\MVC\Factory\MVCFactoryFactoryInterface;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Component\Content\Administrator\Helper\AssociationsHelper;
 use Joomla\Component\Content\Administrator\Service\HTML\AdministratorService;
 use Joomla\Component\Content\Administrator\Service\HTML\Icon;
 use Joomla\Component\Content\Site\Service\Category;
 use Joomla\DI\Container;
-use Joomla\DI\ServiceProviderInterface;
 
 /**
  * The content service provider.
  *
  * @since  __DEPLOY_VERSION__
  */
-return new class implements ServiceProviderInterface
+return new class(\JFactory::getContainer()) implements ComponentInterface, CategoryAwareInterface, AssociationsAwareInterface
 {
 	/**
-	 * Registers the service provider with a DI container.
+	 * The global container
+	 *
+	 * @var    MVCFactoryFactoryInterface
+	 * @since  __DEPLOY_VERSION__
+	 */
+	private $mvcFactoryFactory;
+
+	/**
+	 * The namespace
+	 *
+	 * @var    Container
+	 * @since  __DEPLOY_VERSION__
+	 */
+	private $namespace = '\\Joomla\\Component\\Content';
+
+	/**
+	 * The global container
+	 *
+	 * @var    Container
+	 * @since  __DEPLOY_VERSION__
+	 */
+	private $container;
+
+	/**
+	 * The constructor.
 	 *
 	 * @param   Container  $container  The DI container.
 	 *
@@ -41,8 +68,10 @@ return new class implements ServiceProviderInterface
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function register(Container $container)
+	public function __construct(Container $container)
 	{
+		$this->container = $container;
+
 		/**
 		 * @var Registry $registry
 		 */
@@ -53,17 +82,76 @@ return new class implements ServiceProviderInterface
 		// The layout joomla.content.icons does need a general icon service
 		$registry->register('icon', $registry->getService('contenticon'));
 
-		$container->set(Categories::class, ['' => new Category]);
-		$container->set(AssociationExtensionInterface::class, new AssociationsHelper);
-
-		$factory = new MVCFactoryFactory('\\Joomla\\Component\\Content');
+		$factory = new MVCFactoryFactory($this->namespace);
 		$factory->setFormFactory($container->get(\Joomla\CMS\Form\FormFactoryInterface::class));
-		$container->set(MVCFactoryFactoryInterface::class, $factory);
+		$this->mvcFactoryFactory = $factory;
+	}
 
-		$container->set(
-			DispatcherFactoryInterface::class,
-			new DispatcherFactory('\\Joomla\\Component\\Content', $container->get(MVCFactoryFactoryInterface::class))
-		);
-		$container->registerServiceProvider(new Component);
+	/**
+	 * Returns the dispatcher for the given application.
+	 *
+	 * @param   CMSApplicationInterface  $application  The application
+	 *
+	 * @return  DispatcherInterface
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getDispatcher(CMSApplicationInterface $application): DispatcherInterface
+	{
+		return (new DispatcherFactory($this->namespace, $this->mvcFactoryFactory))->createDispatcher($this->container->get('app'));
+	}
+
+	/**
+	 * Returns an MVCFactory.
+	 *
+	 * @param   CMSApplicationInterface  $application  The application
+	 *
+	 * @return  MVCFactoryInterface
+	 *
+	 * @since  __DEPLOY_VERSION__
+	 */
+	public function createMVCFactory(CMSApplicationInterface $application): MVCFactoryInterface
+	{
+		return $this->mvcFactoryFactory->createFactory($this->container->get('app'));
+	}
+
+	/**
+	 * Returns the category service. If the service is not available
+	 * null is returned.
+	 *
+	 * @param   array   $options  The options
+	 * @param   string  $section  The section
+	 *
+	 * @return  Categories
+	 *
+	 * @see Categories::setOptions()
+	 *
+	 * @since  __DEPLOY_VERSION__
+	 */
+	public function getCategories(array $options = [], $section = ''): Categories
+	{
+		$categoriesAvailable = ['' => new Category];
+
+		if (!array_key_exists($section, $categoriesAvailable))
+		{
+			return null;
+		}
+
+		$categories = clone $categoriesAvailable[$section];
+		$categories->setOptions($options);
+
+		return $categories;
+	}
+
+	/**
+	 * Returns the associations helper.
+	 *
+	 * @return  AssociationExtensionInterface|null
+	 *
+	 * @since  __DEPLOY_VERSION__
+	 */
+	public function getAssociationsExtension(): AssociationExtensionInterface
+	{
+		return (new AssociationsHelper);
 	}
 };

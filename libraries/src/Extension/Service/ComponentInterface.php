@@ -6,13 +6,11 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace Joomla\CMS\Extension;
+namespace Joomla\CMS\Extension\Service;
 
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\CMS\Application\CMSApplicationInterface;
-use Joomla\CMS\Association\AssociationExtensionInterface;
-use Joomla\CMS\Categories\Categories;
 use Joomla\CMS\Dispatcher\DispatcherInterface;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 
@@ -44,28 +42,4 @@ interface ComponentInterface
 	 * @since  __DEPLOY_VERSION__
 	 */
 	public function createMVCFactory(CMSApplicationInterface $application): MVCFactoryInterface;
-
-	/**
-	 * Returns the category service. If the service is not available
-	 * null is returned.
-	 *
-	 * @param   array   $options  The options
-	 * @param   string  $section  The section
-	 *
-	 * @return  Categories|null
-	 *
-	 * @see Categories::setOptions()
-	 *
-	 * @since  __DEPLOY_VERSION__
-	 */
-	public function getCategories(array $options = [], $section = '');
-
-	/**
-	 * Returns the associations extension helper class.
-	 *
-	 * @return  AssociationExtensionInterface|null
-	 *
-	 * @since  __DEPLOY_VERSION__
-	 */
-	public function getAssociationsExtension();
 }
