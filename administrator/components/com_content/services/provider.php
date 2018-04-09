@@ -14,6 +14,8 @@ use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Association\AssociationExtensionInterface;
 use Joomla\CMS\Categories\Categories;
 use Joomla\CMS\Categories\Exception\MissingCategoryException;
+use Joomla\DI\ContainerAwareInterface;
+use Joomla\DI\ContainerAwareTrait;
 use Joomla\CMS\Dispatcher\DispatcherFactory;
 use Joomla\CMS\Dispatcher\DispatcherInterface;
 use Joomla\CMS\Extension\Service\AssociationsAwareInterface;
@@ -21,7 +23,6 @@ use Joomla\CMS\Extension\Service\CategoryAwareInterface;
 use Joomla\CMS\Extension\Service\ComponentInterface;
 use Joomla\CMS\HTML\Registry;
 use Joomla\CMS\MVC\Factory\MVCFactoryFactory;
-use Joomla\CMS\MVC\Factory\MVCFactoryFactoryInterface;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Component\Content\Administrator\Helper\AssociationsHelper;
 use Joomla\Component\Content\Administrator\Service\HTML\AdministratorService;
@@ -34,23 +35,17 @@ use Joomla\DI\Container;
  *
  * @since  __DEPLOY_VERSION__
  */
-return new class(\JFactory::getContainer()) implements ComponentInterface, CategoryAwareInterface, AssociationsAwareInterface
+return new class() implements ContainerAwareInterface, ComponentInterface, CategoryAwareInterface, AssociationsAwareInterface
 {
-	/**
-	 * The global container
-	 *
-	 * @var    MVCFactoryFactoryInterface
-	 * @since  __DEPLOY_VERSION__
-	 */
-	private $mvcFactoryFactory;
+	use ContainerAwareTrait;
 
 	/**
 	 * The namespace
 	 *
-	 * @var    Container
+	 * @var    string
 	 * @since  __DEPLOY_VERSION__
 	 */
-	private $namespace = '\\Joomla\\Component\\Content';
+	private $namespace;
 
 	/**
 	 * The global container
@@ -63,29 +58,13 @@ return new class(\JFactory::getContainer()) implements ComponentInterface, Categ
 	/**
 	 * The constructor.
 	 *
-	 * @param   Container  $container  The DI container.
-	 *
 	 * @return  void
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function __construct(Container $container)
+	public function __construct()
 	{
-		$this->container = $container;
-
-		/**
-		 * @var Registry $registry
-		 */
-		$registry = $container->get(Registry::class);
-		$registry->register('contentadministrator', new AdministratorService);
-		$registry->register('contenticon', new Icon($container->get(SiteApplication::class)));
-
-		// The layout joomla.content.icons does need a general icon service
-		$registry->register('icon', $registry->getService('contenticon'));
-
-		$factory = new MVCFactoryFactory($this->namespace);
-		$factory->setFormFactory($container->get(\Joomla\CMS\Form\FormFactoryInterface::class));
-		$this->mvcFactoryFactory = $factory;
+		$this->namespace = \Joomla\CMS\Component\ComponentHelper::getComponent('com_content');
 	}
 
 	/**
@@ -99,7 +78,7 @@ return new class(\JFactory::getContainer()) implements ComponentInterface, Categ
 	 */
 	public function getDispatcher(CMSApplicationInterface $application): DispatcherInterface
 	{
-		return (new DispatcherFactory($this->namespace, $this->mvcFactoryFactory))->createDispatcher($this->container->get('app'));
+		return (new DispatcherFactory($this->namespace, $this->createMVCFactory($application)))->createDispatcher($application);
 	}
 
 	/**
@@ -113,7 +92,10 @@ return new class(\JFactory::getContainer()) implements ComponentInterface, Categ
 	 */
 	public function createMVCFactory(CMSApplicationInterface $application): MVCFactoryInterface
 	{
-		return $this->mvcFactoryFactory->createFactory($this->container->get('app'));
+		$factory = new MVCFactoryFactory($this->namespace);
+		$factory->setFormFactory($this->container->get(\Joomla\CMS\Form\FormFactoryInterface::class));
+
+		return $factory->createFactory($this->container->get('app'));
 	}
 
 	/**
@@ -154,5 +136,18 @@ return new class(\JFactory::getContainer()) implements ComponentInterface, Categ
 	public function getAssociationsExtension(): AssociationExtensionInterface
 	{
 		return (new AssociationsHelper);
+	}
+
+	public function register()
+	{
+		/**
+		 * @var Registry $registry
+		 */
+		$registry = $this->container->get(Registry::class);
+		$registry->register('contentadministrator', new AdministratorService);
+		$registry->register('contenticon', new Icon($this->container->get(SiteApplication::class)));
+
+		// The layout joomla.content.icons does need a general icon service
+		$registry->register('icon', $registry->getService('contenticon'));
 	}
 };

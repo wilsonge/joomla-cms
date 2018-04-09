@@ -42,4 +42,13 @@ interface ComponentInterface
 	 * @since  __DEPLOY_VERSION__
 	 */
 	public function createMVCFactory(CMSApplicationInterface $application): MVCFactoryInterface;
+
+	/**
+	 * Allows registration of any extra classes as required. For example registering classes into HtmlRegistry.
+	 *
+	 * @return  void
+	 *
+	 * @since  __DEPLOY_VERSION__
+	 */
+	public function register();
 }

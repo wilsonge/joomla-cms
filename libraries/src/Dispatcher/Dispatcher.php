@@ -14,7 +14,7 @@ use Joomla\CMS\Access\Exception\NotAllowed;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\MVC\Controller\BaseController;
-use Joomla\CMS\MVC\Factory\MVCFactoryFactoryInterface;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Input\Input;
 
 /**
@@ -54,26 +54,26 @@ abstract class Dispatcher implements DispatcherInterface
 	/**
 	 * The MVC factory
 	 *
-	 * @var  MVCFactoryFactoryInterface
+	 * @var  MVCFactoryInterface
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	private $mvcFactoryFactory;
+	private $mvcFactory;
 
 	/**
 	 * Constructor for Dispatcher
 	 *
 	 * @param   CMSApplication              $app                The application instance
 	 * @param   Input                       $input              The input instance
-	 * @param   MVCFactoryFactoryInterface  $mvcFactoryFactory  The MVC factory instance
+	 * @param   MVCFactoryInterface  $mvcFactoryFactory  The MVC factory instance
 	 *
 	 * @since   4.0.0
 	 */
-	public function __construct(CMSApplication $app, Input $input, MVCFactoryFactoryInterface $mvcFactoryFactory)
+	public function __construct(CMSApplication $app, Input $input, MVCFactoryInterface $mvcFactoryFactory)
 	{
-		$this->app               = $app;
-		$this->input             = $input;
-		$this->mvcFactoryFactory = $mvcFactoryFactory;
+		$this->app        = $app;
+		$this->input      = $input;
+		$this->mvcFactory = $mvcFactoryFactory;
 
 		// If option is not provided, detect it from dispatcher class name, ie ContentDispatcher
 		if (empty($this->option))
@@ -191,7 +191,7 @@ abstract class Dispatcher implements DispatcherInterface
 		$client = $client ?: ucfirst($this->app->getName());
 
 		// Get the controller instance
-		$controller = $this->mvcFactoryFactory->createFactory($this->app)->createController(
+		$controller = $this->mvcFactory->createController(
 			$name,
 			$client,
 			$config,
