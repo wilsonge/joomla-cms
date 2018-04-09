@@ -13,6 +13,7 @@ use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Association\AssociationExtensionInterface;
 use Joomla\CMS\Categories\Categories;
+use Joomla\CMS\Categories\Exception\MissingCategoryException;
 use Joomla\CMS\Dispatcher\DispatcherFactory;
 use Joomla\CMS\Dispatcher\DispatcherInterface;
 use Joomla\CMS\Extension\Service\AssociationsAwareInterface;
@@ -127,20 +128,20 @@ return new class(\JFactory::getContainer()) implements ComponentInterface, Categ
 	 * @see Categories::setOptions()
 	 *
 	 * @since  __DEPLOY_VERSION__
+	 * @throws MissingCategoryException
 	 */
 	public function getCategories(array $options = [], $section = ''): Categories
 	{
-		$categoriesAvailable = ['' => new Category];
-
-		if (!array_key_exists($section, $categoriesAvailable))
+		// This component doesn't support exceptions so throw as invalid if not found
+		if (!empty($section))
 		{
-			return null;
+			throw new MissingCategoryException;
 		}
 
-		$categories = clone $categoriesAvailable[$section];
-		$categories->setOptions($options);
+		$category = new Category;
+		$category->setOptions($options);
 
-		return $categories;
+		return $category;
 	}
 
 	/**

@@ -31,6 +31,7 @@ interface CategoryAwareInterface
 	 * @see Categories::setOptions()
 	 *
 	 * @since  __DEPLOY_VERSION__
+	 * @throws \Joomla\CMS\Component\Exception\MissingCategoryException
 	 */
 	public function getCategories(array $options = [], $section = ''): Categories;
 }
