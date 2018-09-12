@@ -1,22 +1,29 @@
 // Alerts
 
-@mixin alert-variant($background, $border, $body-color) {
+$colors: map-merge((
+  alert-body-color: $gray-200,
+  alert-success-hr-border-color: darken(color('success'), 5%),
+  alert-success-link-color: darken(color('success'), 10%)
+), colors);
+
+
+@mixin alert-variant($background, $border, $body-color, $hr-border-color, $alert-link-color) {
   background-color: $background;
   border-color: $border;
   border-left: 10px solid $background;
   color: $body-color;
 
   hr {
-    border-top-color: darken($background, 5%);
+    border-top-color: $hr-border-color;
   }
 
   .alert-link {
-    color: darken($background, 10%);
+    color: $alert-link-color;
   }
 }
 
 .alert-success {
-  @include alert-variant(theme-color("success"), theme-color("success"), $gray-200);
+  @include alert-variant(var(--success), var(--success), var(--alert-body-color), var(--alert-success-hr-border-color), var(--alert-success-link-color));
 }
 
 .alert-info {
