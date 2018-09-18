@@ -50,7 +50,6 @@
 		<field 
 			name="catid"
 			type="categoryedit"
-			class="advancedSelect"
 			label="JCATEGORY"
 			addfieldprefix="Joomla\Component\Categories\Administrator\Field"
 			required="true"

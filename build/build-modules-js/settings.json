@@ -287,6 +287,24 @@
           "dist/css-vars-ponyfill.min.js": "js/css-vars-ponyfill.min.js",
           "dist/css-vars-ponyfill.min.js.map": "js/css-vars-ponyfill.min.js.map"
         }
+      },
+      "choices.js": {
+        "name": "choices",
+        "licenseFilename": "LICENSE",
+        "js": {
+          "assets/scripts/dist/choices.js": "js/choices.js",
+          "assets/scripts/dist/choices.js.map": "js/choices.js.map",
+          "assets/scripts/dist/choices.min.js": "js/choices.min.js",
+          "assets/scripts/dist/choices.min.js.map": "js/choices.min.js.map"
+        },
+        "css": {
+          "assets/styles/css/choices.css": "css/choices.css"
+        },
+        "filesExtra": {
+          "assets/icons/cross.svg": "images/cross.svg",
+          "assets/icons/cross-inverse.svg": "images/cross-inverse.svg",
+          "assets/styles/scss": "scss"
+        }
       }
     },
     "errorPages": {

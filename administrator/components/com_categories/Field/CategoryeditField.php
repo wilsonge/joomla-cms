@@ -356,12 +356,23 @@ class CategoryeditField extends \JFormFieldList
 
 		if ($this->allowAdd)
 		{
-			$customGroupText = Text::_('JGLOBAL_CUSTOM_CATEGORY');
-
-			$class[] = 'chzn-custom-value';
-			$attr .= ' data-custom_group_text="' . $customGroupText . '" '
-					. 'data-no_results_text="' . Text::_('JGLOBAL_ADD_CUSTOM_CATEGORY') . '" '
-					. 'data-placeholder="' . Text::_('JGLOBAL_TYPE_OR_SELECT_CATEGORY') . '" ';
+			Text::script('JGLOBAL_CUSTOM_CATEGORY');
+			Factory::getDocument()->addScriptOptions(
+				'js-category-edit',
+				[
+					'elementId'      => $this->id,
+					'addItems'       => true,
+					'duplicateItems' => false,
+					'flip'           => true,
+					'shouldSort'     => false,
+					'searchEnabled'  => true,
+				]
+			);
+			// Include scripts
+			HtmlHelper::_('behavior.core');
+			HtmlHelper::_('stylesheet', 'vendor/choices/choices.min.css', array('version' => 'auto', 'relative' => true));
+			HtmlHelper::_('script', 'vendor/choices/choices.min.js', array('version' => 'auto', 'relative' => true));
+			HtmlHelper::_('script', 'com_categories/category-new.min.js', array('version' => 'auto', 'relative' => true));
 		}
 
 		if ($class)
