@@ -65,15 +65,16 @@
 
       arr.forEach((xtdButton) => {
         const tmp = {};
+        tmp.type = 'menuitem';
         tmp.text = xtdButton.name;
         tmp.icon = xtdButton.icon;
 
         if (xtdButton.href) {
-          tmp.onclick = () => {
+          tmp.onAction = () => {
             document.getElementById(`${xtdButton.id}Modal`).open();
           };
         } else {
-          tmp.onclick = () => {
+          tmp.onAction = () => {
             // eslint-disable-next-line no-new-func
             new Function(xtdButton.click)();
           };
@@ -84,11 +85,10 @@
 
       if (buttonValues.length) {
         options.setup = (editor) => {
-          editor.addButton('jxtdbuttons', {
-            type: 'menubutton',
+          editor.ui.registry.addMenuButton('jxtdbuttons', {
             text: Joomla.JText._('PLG_TINY_CORE_BUTTONS'),
             icon: 'none icon-joomla',
-            menu: buttonValues,
+            fetch: callback => callback(buttonValues),
           });
         };
       }
