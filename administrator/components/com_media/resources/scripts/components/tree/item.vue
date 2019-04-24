@@ -1,11 +1,13 @@
 <template>
-    <li class="media-tree-item" :class="{active: isActive}" role="treeitem" :aria-level="level" :aria-setsize="size" :aria-posinset="counter" :tabindex="getTabindex">
-        <a @click.stop.prevent="onItemClick()">
+    <li class="media-tree-item" :class="{active: isActive}" role="treeitem" :aria-level="level" :aria-setsize="size"
+        :aria-posinset="counter" :tabindex="getTabindex" @keyup.down="keyDown" @keyup.up="keyUp" @keyup.enter="onItemClick"
+        @keyup.right="keyRight" ref="element">
+        <a @click.stop.prevent="onItemClick">
             <span class="item-icon"><span :class="iconClass"></span></span>
             <span class="item-name">{{ item.name }}</span>
         </a>
         <transition name="slide-fade">
-            <media-tree v-if="hasChildren" v-show="isOpen" :aria-expanded="isOpen ? 'true' : 'false'" :root="item.path" :level=(level+1)></media-tree>
+            <media-tree v-if="hasChildren" v-show="isOpen" :aria-expanded="isOpen ? 'true' : 'false'" :root="item.path" :level=(level+1) ref="childTree"></media-tree>
         </transition>
     </li>
 </template>
@@ -15,22 +17,27 @@
 
     export default {
         name: 'media-tree-item',
+        data: function() {
+            return {
+                tabIndex: null,
+            }
+        },
         props: {
             'item': {
                 type: Object,
-                required: true
+                required: true,
             },
             'level': {
                 type: Number,
-                required: true
+                required: true,
             },
             'counter': {
                 type: Number,
-                required: true
+                required: true,
             },
             'size': {
                 type: Number,
-                required: true
+                required: true,
             }
         },
         mixins: [navigable],
@@ -59,14 +66,45 @@
                 }
             },
             getTabindex() {
-                return this.isActive ? 0 : -1;
+                if (this.tabIndex === null)
+                {
+                    return this.isActive ? 0 : -1;
+                }
+
+                return this.tabIndex;
             }
         },
         methods: {
             /* Handle the on item click event */
-            onItemClick () {
+            onItemClick() {
                 this.navigateTo(this.item.path);
-            }
+            },
+            /* Handle Key Down event */
+            keyDown() {
+                this.$emit('treeDown', this.counter);
+            },
+            keyUp() {
+                this.$emit('treeUp', this.counter);
+            },
+            keyRight() {
+                if (this.hasChildren) {
+                    this.removeFocus();
+
+                    // TODO: Active Focus is lost. RIP.
+                    this.$refs.childTree.$refs['treeItem'].forEach((item) => {
+                        if (item.counter === 0) {
+                            item.focus();
+                        }
+                    });
+                }
+            },
+            focus() {
+                this.tabIndex = 0;
+                this.$refs.element.focus();
+            },
+            removeFocus() {
+                this.tabIndex = -1;
+            },
         }
     }
 </script>
