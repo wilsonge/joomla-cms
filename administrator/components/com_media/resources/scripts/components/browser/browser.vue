@@ -80,9 +80,10 @@
             /* Unselect all browser items */
             unselectAllBrowserItems(event) {
                 const clickedDelete = (event.target.id !== undefined && event.target.id === 'mediaDelete') ? true : false;
+                const clickedToggle = (event.target.id !== undefined && event.target.id === 'toggle-all-items');
                 const notClickedBrowserItems = (this.$refs.browserItems && !this.$refs.browserItems.contains(event.target)) || event.target === this.$refs.browserItems;
                 const notClickedInfobar = this.$refs.infobar !== undefined && !this.$refs.infobar.$el.contains(event.target);
-                const clickedOutside = notClickedBrowserItems && notClickedInfobar && !clickedDelete;
+                const clickedOutside = notClickedBrowserItems && notClickedInfobar && !clickedDelete && !clickedToggle;
                 if (clickedOutside) {
                     this.$store.commit(types.UNSELECT_ALL_BROWSER_ITEMS);
                 }
