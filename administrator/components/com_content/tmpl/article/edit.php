@@ -7,6 +7,8 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
+/** @var \Joomla\Component\Content\Administrator\View\Article\HtmlView $this */
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
@@ -22,7 +24,7 @@ HTMLHelper::_('behavior.keepalive');
 
 $this->configFieldsets  = array('editorConfig');
 $this->hiddenFieldsets  = array('basic-limited');
-$this->ignore_fieldsets = array('jmetadata', 'item_associations');
+$this->ignore_fieldsets = array('jmetadata', 'item_associations', 'basic', 'category');
 $this->useCoreUI = true;
 
 // Create shortcut to parameters.
@@ -82,6 +84,18 @@ $tmpl    = $isModal || $input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=c
 				</div>
 			</div>
 
+			<?php echo HTMLHelper::_('uitab.endTab'); ?>
+		<?php endif; ?>
+
+		<?php if ($params->get('show_article_options', 1)) : ?>
+			<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'options', Text::_('COM_CONTENT_ATTRIBS_FIELDSET_LABEL')); ?>
+				<?php $fieldsetsInOptions = ['basic', 'category', 'author', 'date', 'other', 'global']; ?>
+				<?php foreach ($fieldsetsInOptions as $fieldset) : ?>
+					<fieldset id="fieldset-<?php echo $fieldset; ?>" class="options-fieldset">
+						<legend><?php echo Text::_($this->form->getFieldsets()[$fieldset]->label); ?></legend>
+						<?php echo $this->form->renderFieldset($fieldset); ?>
+					</fieldset>
+				<?php endforeach; ?>
 			<?php echo HTMLHelper::_('uitab.endTab'); ?>
 		<?php endif; ?>
 
