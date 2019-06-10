@@ -199,6 +199,7 @@
 
     setValue(value) {
       this.querySelector(this.input).value = value;
+      this.dispatchEvent(new Event('change', { bubbles: true }));
       this.updatePreview();
     }
 
