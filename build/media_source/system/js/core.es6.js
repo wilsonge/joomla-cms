@@ -249,7 +249,7 @@ window.Joomla.Modal = window.Joomla.Modal || {
    *
    * @type {{}}
    *
-   * @deprecated 5.0
+   * @deprecated 5.0 Use Joomla.Text
    */
   Joomla.JText = Joomla.Text;
 
