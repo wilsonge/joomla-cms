@@ -481,12 +481,24 @@ class ArticlesModel extends ListModel
 		switch ($dateFiltering)
 		{
 			case 'range':
-				$startDateRange = $db->quote($this->getState('filter.start_date_range'));
-				$endDateRange   = $db->quote($this->getState('filter.end_date_range'));
-				$query->where(
-					'(' . $dateField . ' >= ' . $startDateRange . ' AND ' . $dateField .
-					' <= ' . $endDateRange . ')'
-				);
+				$startDateRange = $db->quote($this->getState('filter.start_date_range', ''));
+				$endDateRange   = $db->quote($this->getState('filter.end_date_range', ''));
+
+				if (!empty($startDateRange) && !empty($endDateRange))
+				{
+					$query->where(
+						'(' . $dateField . ' >= ' . $startDateRange . ' AND ' . $dateField .
+						' <= ' . $endDateRange . ')'
+					);
+				}
+				elseif (empty($endDateRange))
+				{
+					$query->where($dateField . ' >= ' . $startDateRange);
+				}
+				elseif (empty($startDateRange))
+				{
+					$query->where($dateField . ' <= ' . $endDateRange);
+				}
 				break;
 
 			case 'relative':
