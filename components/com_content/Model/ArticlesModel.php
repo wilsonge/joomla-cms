@@ -487,8 +487,7 @@ class ArticlesModel extends ListModel
 				if (!empty($startDateRange) && !empty($endDateRange))
 				{
 					$query->where(
-						'(' . $dateField . ' >= ' . $startDateRange . ' AND ' . $dateField .
-						' <= ' . $endDateRange . ')'
+						'(' . $dateField . ' BETWEEN ' . $startDateRange . ' AND ' . $endDateRange . ')'
 					);
 				}
 				elseif (empty($endDateRange))
