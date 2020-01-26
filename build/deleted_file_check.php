@@ -4,13 +4,13 @@
  *
  * This script requires one parameter:
  *
- * --from - The git commit reference to use as the starting point for the comparison.
+ * --from - The folder with the Joomla files to use as the starting point for the comparison.
  *
  * This script has one additional optional parameter:
  *
- * --to - The git commit reference to use as the ending point for the comparison.
+ * --to - The folder with the Joomla files to use as the ending point for the comparison.
  *
- * The reference parameters may be any valid identifier (i.e. a branch, tag, or commit SHA)
+ * The reference parameters must be a folder containing an unpacked installation package of the CMS
  *
  * @package    Joomla.Build
  *
@@ -27,8 +27,8 @@ function usage($command)
 {
 	echo PHP_EOL;
 	echo 'Usage: php ' . $command . ' [options]' . PHP_EOL;
-	echo PHP_TAB . '--from <ref>:' . PHP_TAB . 'Starting commit reference (branch/tag)' . PHP_EOL;
-	echo PHP_TAB . '--to <ref>:' . PHP_TAB . 'Ending commit reference (branch/tag) [optional]' . PHP_EOL;
+	echo PHP_TAB . '--from <ref>:' . PHP_TAB . 'Starting folder' . PHP_EOL;
+	echo PHP_TAB . '--to <ref>:' . PHP_TAB . 'Ending folder [optional]' . PHP_EOL;
 	echo PHP_EOL;
 }
 
@@ -38,7 +38,7 @@ function usage($command)
 
 $options = getopt('', array('from:', 'to::'));
 
-// We need the from reference, otherwise we're doomed to fail
+// We need the from folder, otherwise we're doomed to fail
 if (empty($options['from']))
 {
 	echo PHP_EOL;
@@ -49,7 +49,7 @@ if (empty($options['from']))
 	exit(1);
 }
 
-// Missing the to reference?  No problem, grab the current HEAD
+// Missing the to folder?  No problem, grab the current HEAD
 if (empty($options['to']))
 {
 	echo PHP_EOL;
