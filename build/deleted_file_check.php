@@ -4,13 +4,13 @@
  *
  * This script requires one parameter:
  *
- * --from - The folder with the Joomla files to use as the starting point for the comparison.
+ * --from - The directory with the Joomla files to use as the starting point for the comparison.
  *
  * This script has one additional optional parameter:
  *
- * --to - The folder with the Joomla files to use as the ending point for the comparison.
+ * --to - The directory with the Joomla files to use as the ending point for the comparison.
  *
- * The reference parameters must be a folder containing an unpacked installation package of the CMS
+ * The reference parameters must be a directory containing an unpacked installation package of the CMS
  *
  * @package    Joomla.Build
  *
@@ -27,8 +27,8 @@ function usage($command)
 {
 	echo PHP_EOL;
 	echo 'Usage: php ' . $command . ' [options]' . PHP_EOL;
-	echo PHP_TAB . '--from <ref>:' . PHP_TAB . 'Starting folder' . PHP_EOL;
-	echo PHP_TAB . '--to <ref>:' . PHP_TAB . 'Ending folder [optional]' . PHP_EOL;
+	echo PHP_TAB . '--from <ref>:' . PHP_TAB . 'Starting directory' . PHP_EOL;
+	echo PHP_TAB . '--to <ref>:' . PHP_TAB . 'Ending directory [optional]' . PHP_EOL;
 	echo PHP_EOL;
 }
 
