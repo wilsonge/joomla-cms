@@ -38,7 +38,7 @@ function usage($command)
 
 $options = getopt('', array('from:', 'to::'));
 
-// We need the from folder, otherwise we're doomed to fail
+// We need the from directory, otherwise we're doomed to fail
 if (empty($options['from']))
 {
 	echo PHP_EOL;
@@ -49,7 +49,7 @@ if (empty($options['from']))
 	exit(1);
 }
 
-// Missing the to folder?  No problem, grab the current HEAD
+// Missing the to directory?  No problem, grab the current HEAD
 if (empty($options['to']))
 {
 	echo PHP_EOL;
