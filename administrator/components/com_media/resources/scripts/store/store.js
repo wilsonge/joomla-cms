@@ -16,5 +16,5 @@ export default new Vuex.Store({
     actions,
     mutations,
     plugins: [createPersistedState(persistedStateOptions)],
-    strict: (process.env.NODE_ENV !== 'production'),
+    strict: (__buildEnv__ !== 'production'),
 })
