@@ -161,7 +161,7 @@ class PostgresqlChangeItem extends ChangeItem
 					}
 					else
 					{
-						$datatype = strtolower($type);
+						$datatype = $type;
 					}
 
 					$result = 'SELECT column_name, data_type '
