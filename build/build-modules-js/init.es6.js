@@ -213,11 +213,13 @@ const copyFiles = (options) => {
         FsExtra.mkdirSync(Path.join(itemvendorPath, 'skins'));
         FsExtra.mkdirSync(Path.join(itemvendorPath, 'themes'));
         FsExtra.mkdirSync(Path.join(itemvendorPath, 'templates'));
+        FsExtra.mkdirSync(Path.join(itemvendorPath, 'icons'));
       }
 
       copyAll('plugins', 'tinymce', 'plugins');
       copyAll('skins', 'tinymce', 'skins');
       copyAll('themes', 'tinymce', 'themes');
+      copyAll('icons', 'tinymce', 'icons');
 
       copyArrayFiles('', ['tinymce.js', 'tinymce.min.js', 'changelog.txt', 'license.txt'], 'tinymce', '');
 
