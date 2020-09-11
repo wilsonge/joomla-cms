@@ -29,6 +29,16 @@ $wa->useScript('form.validate')
 	->useScript('com_templates.admin-template-compare')
 	->useScript('com_templates.admin-template-toggle-switch');
 
+// TODO: Add these script options in using a class
+$this->document->addScriptOptions('extension_id', $input->getInt('id'));
+$this->document->addScriptOptions('file_name', $this->file);
+Text::script('COM_TEMPLATES_PAGEBUILDER_BASIC_CATEGORY');
+Text::script('COM_TEMPLATES_PAGEBUILDER_JOOMLA_CATEGORY');
+Text::script('COM_TEMPLATES_PAGEBUILDER_BLOCK_BASIC_TEXT');
+Text::script('COM_TEMPLATES_PAGEBUILDER_BLOCK_BASIC_VIDEO');
+Text::script('COM_TEMPLATES_PAGEBUILDER_BLOCK_JOOMLA_COMPONENT');
+$wa->usePreset('com_templates.pagebuilder');
+
 // No access if not global SuperUser
 if (!Factory::getUser()->authorise('core.admin'))
 {
@@ -112,9 +122,13 @@ if ($this->type == 'font')
 						<h2><?php echo Text::_('COM_TEMPLATES_FILE_OVERRIDE_PANE'); ?></h2>
 					<?php endif; ?>
 					<form action="<?php echo Route::_('index.php?option=com_templates&view=template&id=' . $input->getInt('id') . '&file=' . $this->file); ?>" method="post" name="adminForm" id="adminForm">
-						<div class="editor-border">
-							<?php echo $this->form->getInput('source'); ?>
-						</div>
+            <?php if ($this->form->getField('filename')->value === '/test.php') : ?>
+              <div id="gjs"></div>
+            <?php else : ?>
+              <div class="editor-border">
+	              <?php echo $this->form->getInput('source'); ?>
+              </div>
+            <?php endif; ?>
 						<input type="hidden" name="task" value="" />
 						<?php echo HTMLHelper::_('form.token'); ?>
 						<?php echo $this->form->getInput('extension_id'); ?>
