@@ -1038,6 +1038,27 @@ class TemplateModel extends FormModel
 			$app->enqueueMessage(Text::sprintf('COM_TEMPLATES_COMPILE_LESS', $fileName));
 		}
 
+		// Choose this as representative we're in the page builder
+		if (isset($data['gjs-components']))
+		{
+			// We don't need the source
+			unset($data['source']);
+
+			// Rename the filename to the right mapping in the db.
+			$fileName = $data['filename'];
+			unset($data['filename']);
+			$data['file_name'] = $fileName;
+
+			$pagebuilderTable = $this->getTable('PagebuilderData');
+
+			if (!$pagebuilderTable->save($data))
+			{
+				$app->enqueueMessage($pagebuilderTable->getError());
+
+				return false;
+			}
+		}
+
 		return true;
 	}
 

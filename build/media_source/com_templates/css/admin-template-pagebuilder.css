@@ -1,0 +1,4 @@
+/* Force back the font weight so font-awesome 5 icons can actually render... */
+.gjs-block.fas {
+  font-weight: 900;
+}

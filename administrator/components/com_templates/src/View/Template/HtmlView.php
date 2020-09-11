@@ -138,6 +138,15 @@ class HtmlView extends BaseHtmlView
 	protected $pluginState;
 
 	/**
+	 * Is this a page builder layout?
+	 *
+	 * @var  boolean
+	 *
+	 * @since  __DEPLOY_VERSION__
+	 */
+	protected $isPageBuilderLayout = false;
+
+	/**
 	 * Execute and display a template script.
 	 *
 	 * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
@@ -170,6 +179,7 @@ class HtmlView extends BaseHtmlView
 			$this->form->setFieldAttribute('source', 'syntax', $ext);
 			$this->source = $this->get('Source');
 			$this->type   = 'file';
+			$this->isPageBuilderLayout = ($this->form->getField('filename')->value === '/test.php');
 		}
 		elseif (in_array($ext, $imageTypes))
 		{

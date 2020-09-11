@@ -358,6 +358,41 @@
         "dependencies": [],
         "licenseFilename": "LICENSE.md"
       },
+      "grapesjs": {
+        "name": "grapesjs",
+        "css": {
+          "dist/css/grapes.min.css": "css/grapes.min.css"
+        },
+        "js": {
+          "dist/grapes.min.js": "js/grapes.min.js",
+          "dist/grapes.min.js.map": "js/grapes.min.js.map"
+        },
+        "provideAssets": [
+          {
+            "name": "grapes",
+            "type": "style",
+            "uri": "grapes.min.css"
+          },
+          {
+            "name": "grapes",
+            "type": "script",
+            "uri": "grapes.min.js",
+            "attributes": {
+              "defer": true
+            }
+          },
+          {
+            "name": "grapes",
+            "type": "preset",
+            "dependencies": [
+              "grapes#style",
+              "grapes#script"
+            ]
+          }
+        ],
+        "dependencies": [],
+        "licenseFilename": "LICENSE"
+      },
       "roboto-fontface": {
         "name": "roboto-fontface",
         "filesExtra": {

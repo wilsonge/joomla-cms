@@ -102,6 +102,47 @@
       "attributes": {
         "type": "module"
       }
+    },
+    {
+      "name": "com_templates.pagebuilder",
+      "type": "script",
+      "uri": "com_templates/admin-template-pagebuilder.min.js",
+      "dependencies": [
+        "core",
+        "grapes",
+        "com_templates.grapesjs-joomla-plugin"
+      ],
+      "attributes": {
+        "defer": true
+      }
+    },
+    {
+      "name": "com_templates.grapesjs-joomla-plugin",
+      "type": "script",
+      "uri": "com_templates/grapesjs-joomla-plugin.min.js",
+      "dependencies": [
+        "core",
+        "grapes"
+      ],
+      "attributes": {
+        "defer": true
+      }
+    },
+    {
+      "name": "com_templates.pagebuilder",
+      "type": "style",
+      "uri": "com_templates/admin-template-pagebuilder.min.css",
+      "dependencies": [
+        "grapes"
+      ]
+    },
+    {
+      "name": "com_templates.pagebuilder",
+      "type": "preset",
+      "dependencies": [
+        "com_templates.pagebuilder#style",
+        "com_templates.pagebuilder#script"
+      ]
     }
   ]
 }
