@@ -67,6 +67,7 @@
     "dragula": "^3.7.3",
     "es-module-shims": "^1.8.3",
     "focus-visible": "^5.2.0",
+    "grapesjs": "^0.21.13",
     "hotkeys-js": "^3.13.7",
     "joomla-ui-custom-elements": "^0.2.0",
     "jquery": "^3.7.1",

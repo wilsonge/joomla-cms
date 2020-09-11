@@ -35,6 +35,16 @@ $wa->useScript('form.validate')
     ->useScript('com_templates.admin-templates')
     ->useStyle('com_templates.admin-templates');
 
+// TODO: Add these script options in using a class
+$this->document->addScriptOptions('extension_id', $input->getInt('id'));
+$this->document->addScriptOptions('file_name', $this->file);
+Text::script('COM_TEMPLATES_PAGEBUILDER_BASIC_CATEGORY');
+Text::script('COM_TEMPLATES_PAGEBUILDER_JOOMLA_CATEGORY');
+Text::script('COM_TEMPLATES_PAGEBUILDER_BLOCK_BASIC_TEXT');
+Text::script('COM_TEMPLATES_PAGEBUILDER_BLOCK_BASIC_VIDEO');
+Text::script('COM_TEMPLATES_PAGEBUILDER_BLOCK_JOOMLA_COMPONENT');
+$wa->usePreset('com_templates.pagebuilder');
+
 // No access if not global SuperUser
 if (!$this->getCurrentUser()->authorise('core.admin')) {
     Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'danger');
@@ -46,14 +56,14 @@ if ($this->type == 'image') {
 
 if ($this->type == 'font') {
     $wa->addInlineStyle("
-		@font-face {
-			font-family: previewFont;
-			src: url('" . $this->font['address'] . "')
-		}
-		.font-preview {
-			font-family: previewFont !important;
-		}
-	");
+        @font-face {
+            font-family: previewFont;
+            src: url('" . $this->font['address'] . "')
+        }
+        .font-preview {
+            font-family: previewFont !important;
+        }
+    ");
 }
 ?>
 <div class="main-card">
@@ -76,7 +86,7 @@ if ($this->type == 'font') {
         <?php endif; ?>
     </div>
     <div class="row mt-2">
-        <div id="treeholder" class="col-md-3 tree-holder">
+        <div id="treeholder" class="<?php echo $this->isPageBuilderLayout ? 'col-md-1' : 'col-md-3'; ?> tree-holder">
             <div class="mt-2 mb-2">
                 <ul class="directory-tree treeselect">
                     <li class="folder-select">
@@ -100,7 +110,7 @@ if ($this->type == 'font') {
                 <?php endif; ?>
             </div>
         </div>
-        <div class="col-md-9">
+        <div class="<?php echo $this->isPageBuilderLayout ? 'col-md-11' : 'col-md-9'; ?>">
             <fieldset class="options-form">
                 <?php if ($this->type == 'home') : ?>
                     <legend><?php echo Text::_('COM_TEMPLATES_HOME_HEADING'); ?></legend>
@@ -123,9 +133,13 @@ if ($this->type == 'font') {
                             <?php endif; ?>
                             <form action="<?php echo Route::_('index.php?option=com_templates&view=template&id=' . $input->getInt('id') . '&file=' . $this->file . '&isMedia=' . $input->get('isMedia', 0)); ?>" method="post" name="adminForm" id="adminForm">
                                 <input type="hidden" name="isMedia" value="<?php echo $input->get('isMedia', 0); ?>">
-                                <div class="editor-border">
-                                    <?php echo $this->form->getInput('source'); ?>
-                                </div>
+                                <?php if ($this->isPageBuilderLayout) : ?>
+                                    <div id="gjs"></div>
+                                <?php else : ?>
+                                    <div class="editor-border">
+                                        <?php echo $this->form->getInput('source'); ?>
+                                    </div>
+                                <?php endif; ?>
                                 <input type="hidden" name="task" value="" />
                                 <?php echo HTMLHelper::_('form.token'); ?>
                                 <?php echo $this->form->getInput('extension_id'); ?>

@@ -928,7 +928,7 @@ class TemplateModel extends FormModel
             $isMedia  = $input->getInt('isMedia', 0);
 
             $fileName = $isMedia ? Path::clean(JPATH_ROOT . '/media/templates/' . ((int) $this->template->client_id === 0 ? 'site' : 'administrator') . '/' . $this->template->element . $fileName)
-            : Path::clean(JPATH_ROOT . ((int) $this->template->client_id === 0 ? '' : '/administrator') . '/templates/' . $this->template->element . $fileName);
+                : Path::clean(JPATH_ROOT . ((int) $this->template->client_id === 0 ? '' : '/administrator') . '/templates/' . $this->template->element . $fileName);
 
             try {
                 $filePath = Path::check($fileName);
@@ -1028,6 +1028,7 @@ class TemplateModel extends FormModel
         if ($ext == 'less') {
             $app->enqueueMessage(Text::sprintf('COM_TEMPLATES_COMPILE_LESS', $fileName));
         }
+
 
         return true;
     }
@@ -2151,6 +2152,25 @@ class TemplateModel extends FormModel
                 $db->execute();
             } catch (\Exception $e) {
                 $app->enqueueMessage(Text::_('COM_TEMPLATES_ERROR_COULD_NOT_READ'), 'error');
+
+                return false;
+            }
+        }
+
+        // Choose this as representative we're in the page builder
+        if (isset($data['gjs-components'])) {
+            // We don't need the source
+            unset($data['source']);
+
+            // Rename the filename to the right mapping in the db.
+            $fileName = $data['filename'];
+            unset($data['filename']);
+            $data['file_name'] = $fileName;
+
+            $pagebuilderTable = $this->getTable('PagebuilderData');
+
+            if (!$pagebuilderTable->save($data)) {
+                $app->enqueueMessage($pagebuilderTable->getError());
 
                 return false;
             }
