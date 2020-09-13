@@ -110,7 +110,8 @@
       "dependencies": [
         "core",
         "grapes",
-        "com_templates.grapesjs-joomla-plugin"
+        "com_templates.grapesjs-joomla-plugin",
+        "grapesjs-plugin-header"
       ],
       "attributes": {
         "defer": true

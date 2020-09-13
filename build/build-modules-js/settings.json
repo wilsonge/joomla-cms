@@ -393,6 +393,24 @@
         "dependencies": [],
         "licenseFilename": "LICENSE"
       },
+      "grapesjs-plugin-header": {
+        "name": "grapesjs-plugin-header",
+        "js": {
+          "dist/grapesjs-plugin-header.min.js": "js/grapesjs-plugin-header.min.js"
+        },
+        "provideAssets": [
+          {
+            "name": "grapesjs-plugin-header",
+            "type": "script",
+            "uri": "grapesjs-plugin-header.min.js",
+            "dependencies": ["grapes"],
+            "attributes": {
+              "defer": true
+            }
+          }
+        ],
+        "licenseFilename": "LICENSE"
+      },
       "roboto-fontface": {
         "name": "roboto-fontface",
         "filesExtra": {
