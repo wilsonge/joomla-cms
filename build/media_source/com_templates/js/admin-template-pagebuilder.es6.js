@@ -11,7 +11,13 @@ Joomla = window.Joomla || {};
       container: '#gjs',
       cssIcons: null,
       // Load our Joomla Custom blocks
-      plugins: ['joomla-plugin'],
+      plugins: ['joomla-plugin', 'grapesjs-plugin-header'],
+      pluginsOpts: {
+        'grapesjs-plugin-header': {
+          // TODO: Override all the setting labels
+          category: Joomla.Text._('COM_TEMPLATES_PAGEBUILDER_BASIC_CATEGORY'),
+        },
+      },
       storageManager: {
         type: 'remote',
         stepsBeforeSave: 1,
