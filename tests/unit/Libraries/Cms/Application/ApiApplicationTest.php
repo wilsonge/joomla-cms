@@ -11,6 +11,14 @@ namespace Joomla\Tests\Unit\Libraries\Cms\Application;
 \defined('JPATH_PLATFORM') or die;
 
 use Joomla\CMS\Application\ApiApplication;
+use Joomla\CMS\Application\Exception\NotAcceptable;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\ApiRouter;
+use Joomla\DI\Container;
+use Joomla\Event\DispatcherInterface;
+use Joomla\Event\Event;
+use Joomla\Session\SessionInterface;
+use Joomla\Test\TestHelper;
 use Joomla\Tests\Unit\UnitTestCase;
 
 /**
@@ -35,6 +43,14 @@ class ApiApplicationTest extends UnitTestCase
 	 * @since  3.2
 	 */
 	const TEST_USER_AGENT = 'Mozilla/5.0';
+
+	/**
+	 * Value for test user agent.
+	 *
+	 * @var    string
+	 * @since  3.2
+	 */
+	const TEST_ACCEPT_HEADER = 'application/vnd.api+json';
 
 	/**
 	 * Value for test user agent.
@@ -73,6 +89,7 @@ class ApiApplicationTest extends UnitTestCase
 		$this->backupServer = $_SERVER;
 
 		$_SERVER['HTTP_HOST'] = self::TEST_HTTP_HOST;
+		$_SERVER['HTTP_ACCEPT'] = self::TEST_ACCEPT_HEADER;
 		$_SERVER['HTTP_USER_AGENT'] = self::TEST_USER_AGENT;
 		$_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
 		$_SERVER['SCRIPT_NAME'] = '/index.php';
@@ -113,5 +130,124 @@ class ApiApplicationTest extends UnitTestCase
 			$this->apiApplication->isClient('api'),
 			'The isClient method the application should be api'
 		);
+	}
+
+	/**
+	 * Tests that the name is correctly loaded by the constructor
+	 *
+	 * @since   4.0.0
+	 */
+	public function testAddFormat()
+	{
+		$this->apiApplication->addFormatMap('application/graphql', 'graphql');
+
+		$this->assertArrayHasKey(
+			'application/graphql',
+			TestHelper::getValue($this->apiApplication, 'formatMapper'),
+			'The name of the application should be api'
+		);
+	}
+
+	/**
+	 * Tests the router. As a general rule in the CMS we don't test protected methods but as this covers
+	 * all our content negotation and route matching special exceptions are being made.
+	 *
+	 * @since   4.0.0
+	 */
+	public function testRouteWithSuccessfulMatch()
+	{
+		// Various mocks required to set up the application
+		$container = new Container;
+		$mockEventDispatcher = $this->getMockBuilder(DispatcherInterface::class)->getMock();
+		$dummyEvent = new Event('onBeforeApiRoute', [&$mockRouter, $this]);
+
+		// Ensure we get a dummy event back for the onBeforeApiRoute
+		// TODO: This is a bodge - we should be detecting for specific events!
+		$mockEventDispatcher->method('dispatch')
+			// ->with(['onBeforeApiRoute', $dummyEvent])
+			->willReturn($dummyEvent);
+		$mockSession = $this->getMockBuilder(SessionInterface::class)->getMock();
+
+		$app = new ApiApplication(null, null, null, $container);
+		$app->setDispatcher($mockEventDispatcher);
+		$app->setSession($mockSession);
+		Factory::$application = $app;
+
+		$expectedComponent = 'com_foo';
+
+		// Mock our API router
+		$mockRouter = $this->getMockBuilder(ApiRouter::class)
+			->setConstructorArgs([$app])
+			->getMock();
+		$mockRouter->method('parseApiRoute')
+			->willReturn([
+				'controller' => 'foobar',
+				'task'       => 'foobar',
+				'vars'       => [
+					'format' => ['application/vnd.api+json'],
+					'component' => $expectedComponent,
+					'public' => true,
+				],
+				]
+			);
+
+		$container->set('ApiRouter', $mockRouter)
+			->set(DispatcherInterface::class, $mockEventDispatcher);
+
+		TestHelper::invoke($app, 'route');
+
+		$this->assertEquals($expectedComponent, $app->input->get('option'));
+	}
+
+	/**
+	 * Tests the router. As a general rule in the CMS we don't test protected methods but as this covers
+	 * all our content negotation and route matching special exceptions are being made.
+	 *
+	 * @since   4.0.0
+	 */
+	public function testBadContentNegotation()
+	{
+		$this->expectException(NotAcceptable::class);
+		$this->expectExceptionCode(406);
+
+		// Various mocks required to set up the application
+		$container = new Container();
+		$mockEventDispatcher = $this->getMockBuilder(DispatcherInterface::class)->getMock();
+		$dummyEvent = new Event('onBeforeApiRoute', [&$mockRouter, $this]);
+
+		// Ensure we get a dummy event back for the onBeforeApiRoute
+		// TODO: This is a bodge - we should be detecting for specific events!
+		$mockEventDispatcher->method('dispatch')
+			// ->with(['onBeforeApiRoute', $dummyEvent])
+			->willReturn($dummyEvent);
+		$mockSession = $this->getMockBuilder(SessionInterface::class)->getMock();
+
+		$app = new ApiApplication(null, null, null, $container);
+		$app->setDispatcher($mockEventDispatcher);
+		$app->setSession($mockSession);
+		Factory::$application = $app;
+
+		$expectedComponent = 'com_foo';
+
+		$mockRouter = $this->getMockBuilder(ApiRouter::class)
+			->setConstructorArgs([$app])
+			->getMock();
+
+		$mockRouter->method('parseApiRoute')
+			->willReturn([
+				'controller' => 'foobar',
+				'task'       => 'foobar',
+				'vars'       => [
+					'format' => ['application/graphql'],
+					'component' => $expectedComponent,
+					'public' => true,
+				],
+				]
+			);
+
+		$container->set('ApiRouter', $mockRouter)
+			->set(DispatcherInterface::class, $mockEventDispatcher);
+
+		TestHelper::invoke($app, 'route');
 	}
 }
