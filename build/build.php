@@ -201,7 +201,7 @@ system($systemGit . ' archive ' . $remote . ' | tar -x -C ' . $fullpath);
 
 // Install PHP and NPM dependencies and compile required media assets, skip Composer autoloader until post-cleanup
 chdir($fullpath);
-system('php /usr/local/bin/composer.phar install --no-dev --no-autoloader --ignore-platform-reqs', $composerReturnCode);
+system('composer install --no-dev --no-autoloader --ignore-platform-reqs', $composerReturnCode);
 
 if ($composerReturnCode !== 0)
 {
@@ -230,7 +230,7 @@ if ($gzipReturnCode !== 0)
 clean_checkout($fullpath);
 
 // Regenerate the Composer autoloader without deleted files
-system('php /usr/local/bin/composer.phar dump-autoload --no-dev --optimize --no-scripts');
+system('composer dump-autoload --no-dev --optimize --no-scripts');
 
 // Clean the Composer manifests now
 clean_composer($fullpath);
@@ -530,7 +530,6 @@ if (!$excludeZstd)
 // Create full update file without the default logs directory, installation folder, or sample images.
 echo "Build full update package.\n";
 system('rm -r administrator/logs');
-system('rm -r installation');
 system('rm -r images/banners');
 system('rm -r images/headers');
 system('rm -r images/sampledata');
