@@ -5,28 +5,28 @@ use PhpOption\Option;
 class JConfig {
 	public $offline;
 	public $offline_message;
-	public $display_offline_message = 1;
-	public $offline_image = '';
+	public $display_offline_message;
+	public $offline_image;
 	public $sitename;
-	public $editor = 'tinymce';
-	public $captcha = '0';
-	public $list_limit = 20;
-	public $access = 1;
-	public $debug = false;
-	public $debug_lang = false;
-	public $debug_lang_const = true;
+	public $editor;
+	public $captcha;
+	public $list_limit;
+	public $access;
+	public $debug;
+	public $debug_lang;
+	public $debug_lang_const;
 	public $dbtype;
 	public $host;
 	public $user;
 	public $password;
 	public $db;
 	public $dbprefix;
-	public $dbencryption = 0;
-	public $dbsslverifyservercert = false;
-	public $dbsslkey = '';
-	public $dbsslcert = '';
-	public $dbsslca = '';
-	public $dbsslcipher = '';
+	public $dbencryption;
+	public $dbsslverifyservercert;
+	public $dbsslkey;
+	public $dbsslcert;
+	public $dbsslca;
+	public $dbsslcipher;
 	public $force_ssl = 0;
 	public $live_site = '';
 	public $secret;
@@ -40,8 +40,8 @@ class JConfig {
 	public $ftp_root = '';
 	public $ftp_enable = 0;
 	public $offset = 'UTC';
-	public $mailonline = true;
-	public $mailer = 'mail';
+	public $mailonline;
+	public $mailer;
 	public $mailfrom;
 	public $fromname;
 	public $sendmail;
@@ -51,27 +51,27 @@ class JConfig {
 	public $smtphost = 'localhost';
 	public $smtpsecure = 'none';
 	public $smtpport = 25;
-	public $caching = 0;
-	public $cache_handler = 'file';
-	public $cachetime = 15;
-	public $cache_platformprefix = false;
+	public $caching;
+	public $cache_handler;
+	public $cachetime;
+	public $cache_platformprefix;
 	public $MetaDesc = '';
 	public $MetaTitle = true;
 	public $MetaAuthor = true;
 	public $MetaVersion = false;
 	public $robots = '';
-	public $sef = true;
-	public $sef_rewrite = false;
-	public $sef_suffix = false;
-	public $unicodeslugs = false;
+	public $sef;
+	public $sef_rewrite;
+	public $sef_suffix;
+	public $unicodeslugs;
 	public $feed_limit = 10;
 	public $feed_email = 'none';
 	public $log_path;
 	public $tmp_path;
-	public $lifetime = 15;
-	public $session_handler = 'database';
-	public $shared_session = false;
-	public $session_metadata = true;
+	public $lifetime;
+	public $session_handler;
+	public $shared_session;
+	public $session_metadata;
 
 	/**
 	 * The environment repository instance.
@@ -85,6 +85,8 @@ class JConfig {
 		$defaultSiteName = 'Joomla Site';
 		$this->offline = static::get('SITE_OFFLINE', false);
 		$this->offline_message = static::get('SITE_OFFLINE_MESSAGE', 'This site is down for maintenance.<br>Please check back again soon.');
+		$this->display_offline_message = static::get('SITE_OFFLINE_MESSAGE_DISPLAYED', 1);
+		$this->offline_message = static::get('SITE_OFFLINE_IMAGE', '');
 
 		$this->sitename = static::get('SITENAME', $defaultSiteName);
 
@@ -94,16 +96,49 @@ class JConfig {
 		$this->password = static::get('DATABASE_PASSWORD');
 		$this->db = static::get('DATABASE_DB');
 		$this->dbprefix = static::get('DATABASE_PREFIX');
+		$this->dbencryption = static::get('DATABASE_ENCRYPTION', 0);
+		$this->dbsslverifyservercert = static::get('DATABASE_SSL_VERIFY_CERT', false);
+		$this->dbsslkey = static::get('DATABASE_SSL_KEY', '');
+		$this->dbsslcert = static::get('DATABASE_SSL_CERT', '');
+		$this->dbsslca = static::get('DATABASE_SSL_CA', '');
+		$this->dbsslcipher = static::get('DATABASE_SSL_CIPHER', '');
+
+		$this->caching = static::get('CACHING_STATUS', 0);
+		$this->cache_handler = static::get('CACHING_HANDLER', 'file');
+		$this->cache_time = static::get('CACHING_TIME', 15);
+		$this->cache_platformprefix = static::get('CACHING_PREFIX', false);
 
 		$this->log_path = static::get('LOG_PATH', JPATH_ADMINISTRATOR . '/logs');
 		$this->tmp_path = static::get('TMP_PATH', JPATH_ROOT . '/tmp');
 
+		$this->mailer = static::get('MAIL_SEND_MAIL', 'mail');
+		$this->mailonline = static::get('MAIL_ONLINE', true);
 		$this->mailfrom = static::get('MAIL_SENDER', '/usr/sbin/sendmail');
 		$this->mailfrom = static::get('MAIL_FROM');
 		$this->fromname = static::get('MAIL_FROM_NAME', static::get('SITENAME', $defaultSiteName));
 
+		$this->sef = static::get('SEF_ENABLED', true);
+		$this->sef_rewrite = static::get('SEF_REWRITE_ENABLED', false);
+		$this->sef_suffix = static::get('SEF_SUFFIX_ENABLED', false);
+		$this->unicodeslugs = static::get('SEF_UNICODE_SLUGS', false);
+
 		// The default secret in installation/configuration.dist.php
 		$this->secret = static::get('SITE_SECRET', 'FBVtggIk5lAzEU9H');
+
+		$this->session_handler = static::get('SESSION_HANDLER', 'database');
+		$this->shared_session = static::get('SESSION_SHARED', false);
+		$this->session_metadata = static::get('SESSION_METADATA', true);
+		$this->lifetime = static::get('SESSION_LIFETIME', 15);
+
+		$this->editor = static::get('EDITOR_EXTENSION', 'tinymce');
+		$this->captcha = static::get('CAPTCHA', 0);
+
+		$this->access = static::get('ACCESS_LEVEL_DEFAULT', 1);
+		$this->list_limit = static::get('LIST_DEFAULT_ITEMS', 20);
+
+		$this->debug = static::get('APP_DEBUG', false);
+		$this->debug_lang = static::get('APP_DEBUG_LANGUAGE', false);
+		$this->debug_lang_const = static::get('APP_DEBUG_LANGUAGE_CONSTANT', true);
 	}
 
 	/**
