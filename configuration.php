@@ -27,45 +27,45 @@ class JConfig {
 	public $dbsslcert;
 	public $dbsslca;
 	public $dbsslcipher;
-	public $force_ssl = 0;
-	public $live_site = '';
+	public $force_ssl;
+	public $live_site;
 	public $secret;
-	public $gzip = false;
-	public $error_reporting = 'default';
-	public $helpurl = 'https://help.joomla.org/proxy?keyref=Help{major}{minor}:{keyref}&lang={langcode}';
-	public $ftp_host = '';
-	public $ftp_port = '';
-	public $ftp_user = '';
-	public $ftp_pass = '';
-	public $ftp_root = '';
-	public $ftp_enable = 0;
-	public $offset = 'UTC';
+	public $gzip;
+	public $error_reporting;
+	public $helpurl;
+	public $ftp_host;
+	public $ftp_port;
+	public $ftp_user;
+	public $ftp_pass;
+	public $ftp_root;
+	public $ftp_enable;
+	public $offset;
 	public $mailonline;
 	public $mailer;
 	public $mailfrom;
 	public $fromname;
 	public $sendmail;
-	public $smtpauth = false;
-	public $smtpuser = '';
-	public $smtppass = '';
-	public $smtphost = 'localhost';
-	public $smtpsecure = 'none';
-	public $smtpport = 25;
+	public $smtpauth;
+	public $smtpuser;
+	public $smtppass;
+	public $smtphost;
+	public $smtpsecure;
+	public $smtpport;
 	public $caching;
 	public $cache_handler;
 	public $cachetime;
 	public $cache_platformprefix;
-	public $MetaDesc = '';
-	public $MetaTitle = true;
-	public $MetaAuthor = true;
-	public $MetaVersion = false;
-	public $robots = '';
+	public $MetaDesc;
+	public $MetaTitle;
+	public $MetaAuthor;
+	public $MetaVersion;
+	public $robots;
 	public $sef;
 	public $sef_rewrite;
 	public $sef_suffix;
 	public $unicodeslugs;
-	public $feed_limit = 10;
-	public $feed_email = 'none';
+	public $feed_limit;
+	public $feed_email;
 	public $log_path;
 	public $tmp_path;
 	public $lifetime;
@@ -88,7 +88,15 @@ class JConfig {
 		$this->display_offline_message = static::get('SITE_OFFLINE_MESSAGE_DISPLAYED', 1);
 		$this->offline_message = static::get('SITE_OFFLINE_IMAGE', '');
 
-		$this->sitename = static::get('SITENAME', $defaultSiteName);
+		$this->sitename = static::get('SITE_NAME', $defaultSiteName);
+		$this->MetaDesc = static::get('SITE_META_DESCRIPTION', '');
+		$this->MetaTitle = static::get('SITE_META_TITLE', true);
+		$this->MetaAuthor = static::get('SITE_META_AUTHOR', true);
+		$this->MetaVersion = static::get('SITE_META_VERSION', false);
+		$this->robots = static::get('SITE_ROBOTS', '');
+		$this->live_site = static::get('SITE_URL_OVERRIDE', '');
+		$this->force_ssl = static::get('SITE_SSL_ENFORCED', 0);
+		$this->offset = static::get('SITE_TIMEZONE', 'UTC');
 
 		$this->dbtype = static::get('DATABASE_TYPE');
 		$this->host = static::get('DATABASE_HOST');
@@ -121,6 +129,7 @@ class JConfig {
 		$this->sef_rewrite = static::get('SEF_REWRITE_ENABLED', false);
 		$this->sef_suffix = static::get('SEF_SUFFIX_ENABLED', false);
 		$this->unicodeslugs = static::get('SEF_UNICODE_SLUGS', false);
+		$this->gzip = static::get('SEF_GZIP_ENABLED', false);
 
 		// The default secret in installation/configuration.dist.php
 		$this->secret = static::get('SITE_SECRET', 'FBVtggIk5lAzEU9H');
@@ -135,10 +144,29 @@ class JConfig {
 
 		$this->access = static::get('ACCESS_LEVEL_DEFAULT', 1);
 		$this->list_limit = static::get('LIST_DEFAULT_ITEMS', 20);
+		$this->helpurl = static::get('JOOMLA_HELP_URL_OVERRIDE', 'https://help.joomla.org/proxy?keyref=Help{major}{minor}:{keyref}&lang={langcode}');
 
 		$this->debug = static::get('APP_DEBUG', false);
 		$this->debug_lang = static::get('APP_DEBUG_LANGUAGE', false);
 		$this->debug_lang_const = static::get('APP_DEBUG_LANGUAGE_CONSTANT', true);
+		$this->error_reporting = static::get('APP_DEBUG_PHP_ERROR_REPORTING', 'default');
+
+		$this->feed_email = static::get('FEED_EMAIL', 'none');
+		$this->feed_limit = static::get('FEED_LIMIT', 10);
+
+		$this->smtphost = static::get('SMTP_HOST', 'localhost');
+		$this->smtpsecure = static::get('SMTP_SECURE', 'none');
+		$this->smtpport = static::get('SMTP_PORT', 25);
+		$this->smtpauth = static::get('SMTP_AUTH', false);
+		$this->smtpuser = static::get('SMTP_USERNAME', '');
+		$this->smtppass = static::get('SMTP_PASSWORD', '');
+
+		$this->ftp_enable = static::get('FTP_ENABLED', 0);
+		$this->ftp_host = static::get('FTP_HOST', '');
+		$this->ftp_port = static::get('FTP_PORT', '');
+		$this->ftp_user = static::get('FTP_USERNAME', '');
+		$this->ftp_pass = static::get('FTP_PASSWORD', '');
+		$this->ftp_root = static::get('FTP_ROOT', '');
 	}
 
 	/**
