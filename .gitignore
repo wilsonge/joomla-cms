@@ -15,7 +15,7 @@
 /installation/cache
 /installation/sessions
 /tmp
-/configuration.php
+/.env
 /.htaccess
 /web.config
 /.php_cs

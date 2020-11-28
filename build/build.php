@@ -201,7 +201,7 @@ system($systemGit . ' archive ' . $remote . ' | tar -x -C ' . $fullpath);
 
 // Install PHP and NPM dependencies and compile required media assets, skip Composer autoloader until post-cleanup
 chdir($fullpath);
-system('composer install --no-dev --no-autoloader --ignore-platform-reqs', $composerReturnCode);
+system('php /usr/local/bin/composer.phar install --no-dev --no-autoloader --ignore-platform-reqs', $composerReturnCode);
 
 if ($composerReturnCode !== 0)
 {
@@ -230,7 +230,7 @@ if ($gzipReturnCode !== 0)
 clean_checkout($fullpath);
 
 // Regenerate the Composer autoloader without deleted files
-system('composer dump-autoload --no-dev --optimize --no-scripts');
+system('php /usr/local/bin/composer.phar dump-autoload --no-dev --optimize --no-scripts');
 
 // Clean the Composer manifests now
 clean_composer($fullpath);
@@ -283,7 +283,9 @@ $filesArray = array(
 	"LICENSE.txt\n" => true,
 	"README.txt\n" => true,
 	"robots.txt.dist\n" => true,
-	"web.config.txt\n" => true
+	"web.config.txt\n" => true,
+	// Add configuration as there's no sensitive data!
+	"configuration.php\n" => true,
 );
 
 /*
@@ -329,9 +331,8 @@ $doNotPackage = array(
 	// Media Manager Node Assets
 	'administrator/components/com_media/webpack.config.js',
 	'administrator/components/com_media/resources',
-	// Remove the testing sample data from all packages
-	'installation/sql/mysql/sample_testing.sql',
-	'installation/sql/postgresql/sample_testing.sql',
+	// No installation needed with our committed configuration
+	'installation',
 );
 
 /*
