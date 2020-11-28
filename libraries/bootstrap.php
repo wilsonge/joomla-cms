@@ -49,7 +49,7 @@ spl_autoload_register([new \Joomla\CMS\Autoload\ClassLoader($loader), 'loadClass
 require_once JPATH_LIBRARIES . '/classmap.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(JPATH_ROOT);
-$dotenv->load();
+$dotenv->safeLoad();
 
 /**
  * Register the global exception handler. And set error level to server default error level.
