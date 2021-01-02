@@ -132,12 +132,21 @@ class PlgActionlogJoomla extends ActionLogPlugin
 
 		$id = empty($params->id_holder) ? 0 : $article->get($params->id_holder);
 
+		if ($context === 'com_media.file')
+		{
+			$link = 'index.php?option=com_media&path=' . $article->get('adapter') . ':' . $article->get('path');
+		}
+		else
+		{
+			$link = ActionlogsHelper::getContentTypeLink($option, $contentType, $id, $params->id_holder);
+		}
+
 		$message = array(
 			'action'   => $isNew ? 'add' : 'update',
 			'type'     => $params->text_prefix . '_TYPE_' . $params->type_title,
 			'id'       => $id,
 			'title'    => $article->get($params->title_holder),
-			'itemlink' => ActionlogsHelper::getContentTypeLink($option, $contentType, $id, $params->id_holder)
+			'itemlink' => $link
 		);
 
 		$this->addLog(array($message), $messageLanguageKey, $context);
