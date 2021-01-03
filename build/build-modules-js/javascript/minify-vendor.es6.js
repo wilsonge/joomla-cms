@@ -14,7 +14,7 @@ module.exports.compile = () => {
       const folders = [
         Path.join(RootPath, 'media/vendor/codemirror'),
         Path.join(RootPath, 'media/vendor/punycode/js'),
-        Path.join(RootPath, 'media/vendor/tinymce-language-selector/js'),
+        Path.join(RootPath, 'media/plg_editors_tinymce/js/plugins/tinymce-language-selector'),
         Path.join(RootPath, 'media/vendor/webcomponentsjs'),
       ];
 

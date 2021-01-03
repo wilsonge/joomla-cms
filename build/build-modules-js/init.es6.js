@@ -235,21 +235,26 @@ const copyFiles = (options) => {
     } else if (packageName === '@edx/tinymce-language-selector') {
       // This whole section actually needs a bundler like rollup
       let finalPluginCode = '';
-      if (Fs.existsSync(Path.join(modulePathRoot, 'tinymce-language-selector/plugin.js'))) {
+      if (Fs.existsSync(Path.join(modulePathRoot, vendorName, 'plugin.js'))) {
         let constants = '';
-        if (Fs.existsSync(Path.join(modulePathRoot, 'tinymce-language-selector/plugin.js'))) {
-          constants = Fs.readFileSync(Path.join(modulePathRoot, 'tinymce-language-selector/constants.js'), { encoding: 'utf8' });
+        if (Fs.existsSync(Path.join(modulePathRoot, vendorName, 'plugin.js'))) {
+          constants = Fs.readFileSync(Path.join(modulePathRoot, vendorName, 'constants.js'), { encoding: 'utf8' });
           constants = constants.replace('export {\n  BROWSER_DEFAULT,\n  languages\n}', '');
         }
         if (constants) {
-          finalPluginCode = Fs.readFileSync(Path.join(modulePathRoot, 'tinymce-language-selector/plugin.js'), { encoding: 'utf8' });
+          finalPluginCode = Fs.readFileSync(Path.join(modulePathRoot, vendorName, 'plugin.js'), { encoding: 'utf8' });
           finalPluginCode = finalPluginCode.replace('import { BROWSER_DEFAULT, languages } from \'./constants\';', constants);
 
-          FsExtra.mkdirpSync('media/plg_editors_tinymce/js/plugins/tinymce-language-selector');
+          FsExtra.mkdirpSync(`media/plg_editors_tinymce/js/plugins/${vendorName}`);
 
-          Fs.writeFileSync('media/plg_editors_tinymce/js/plugins/tinymce-language-selector/plugin.es6.js', finalPluginCode, { encoding: 'utf8' });
+          Fs.writeFileSync(`media/plg_editors_tinymce/js/plugins/${vendorName}/plugin.es6.js`, finalPluginCode, { encoding: 'utf8' });
 
-          FsExtra.mkdirpSync('media/vendor/tinymce-language-selector/js');
+          if (vendor.licenseFilename
+              && Fs.existsSync(`${Path.join(RootPath, `node_modules/${packageName}`)}/${vendor.licenseFilename}`)
+          ) {
+            const dest = Path.join(RootPath, `media/plg_editors_tinymce/js/plugins/${vendorName}`);
+            FsExtra.copySync(`${Path.join(RootPath, `node_modules/${packageName}`)}/${vendor.licenseFilename}`, `${dest}/${vendor.licenseFilename}`);
+          }
         }
       }
     } else {
