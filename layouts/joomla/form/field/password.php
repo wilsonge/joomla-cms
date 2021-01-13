@@ -176,14 +176,12 @@ if ($rules && !empty($description))
 			id="<?php echo $id; ?>"
 			value="<?php echo htmlspecialchars($value, ENT_COMPAT, 'UTF-8'); ?>"
 			<?php echo implode(' ', $attributes); ?>>
-		<span class="input-group-append">
-			<button type="button" class="btn btn-secondary input-password-toggle">
-				<span class="icon-eye icon-fw" aria-hidden="true"></span>
-				<span class="sr-only"><?php echo Text::_('JSHOWPASSWORD'); ?></span>
-			</button>
-			<?php if ($lock): ?>
-				<button type="button" id="<?php echo $id; ?>_lock" class="btn btn-info" data-toggle="button"><?php echo Text::_('JMODIFY'); ?></button>
-			<?php endif; ?>
-		</span>
+        <button type="button" class="btn btn-secondary input-password-toggle">
+            <span class="icon-eye icon-fw" aria-hidden="true"></span>
+            <span class="sr-only"><?php echo Text::_('JSHOWPASSWORD'); ?></span>
+        </button>
+        <?php if ($lock): ?>
+            <button type="button" id="<?php echo $id; ?>_lock" class="btn btn-info" data-toggle="button"><?php echo Text::_('JMODIFY'); ?></button>
+        <?php endif; ?>
 	</div>
 </div>
