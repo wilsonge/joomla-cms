@@ -221,21 +221,21 @@ $currentDate = Factory::getDate()->format('Y-m-d H:i:s');
 					<?php endif; ?>
 					<?php if ($article->state == ContentComponent::CONDITION_UNPUBLISHED) : ?>
 						<div>
-							<span class="list-published badge bg-warning">
+							<span class="list-published badge bg-warning text-dark">
 								<?php echo Text::_('JUNPUBLISHED'); ?>
 							</span>
 						</div>
 					<?php endif; ?>
 					<?php if ($article->publish_up > $currentDate) : ?>
 						<div>
-							<span class="list-published badge bg-warning">
+							<span class="list-published badge bg-warning text-dark">
 								<?php echo Text::_('JNOTPUBLISHEDYET'); ?>
 							</span>
 						</div>
 					<?php endif; ?>
 					<?php if (!is_null($article->publish_down) && $article->publish_down < $currentDate) : ?>
 						<div>
-							<span class="list-published badge bg-warning">
+							<span class="list-published badge bg-warning text-dark">
 								<?php echo Text::_('JEXPIRED'); ?>
 							</span>
 						</div>
@@ -273,7 +273,7 @@ $currentDate = Factory::getDate()->format('Y-m-d H:i:s');
 				<?php endif; ?>
 				<?php if ($this->params->get('list_show_hits', 1)) : ?>
 					<td class="list-hits">
-						<span class="badge bg-info">
+						<span class="badge bg-info text-dark">
 							<?php if ($this->params->get('show_headings')) : ?>
 								<?php echo $article->hits; ?>
 							<?php else : ?>
@@ -295,7 +295,7 @@ $currentDate = Factory::getDate()->format('Y-m-d H:i:s');
 				<?php endif; ?>
 				<?php if ($this->params->get('list_show_ratings', 0) && $this->vote) : ?>
 					<td class="list-ratings">
-						<span class="badge bg-warning">
+						<span class="badge bg-warning text-dark">
 							<?php if ($this->params->get('show_headings')) : ?>
 								<?php echo $article->rating; ?>
 							<?php else : ?>
