@@ -56,7 +56,7 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
 						<li class="cat-list-row<?php echo $i % 2; ?>">
 					<?php endif; ?>
 					<?php if ($this->params->get('show_articles')) : ?>
-						<span class="list-hits badge bg-info text-dark float-end">
+						<span class="list-hits badge bg-info float-end">
 							<?php echo Text::sprintf('COM_NEWSFEEDS_NUM_ARTICLES_COUNT', $item->numarticles); ?>
 						</span>
 					<?php endif; ?>

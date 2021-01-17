@@ -273,7 +273,7 @@ $currentDate = Factory::getDate()->format('Y-m-d H:i:s');
 				<?php endif; ?>
 				<?php if ($this->params->get('list_show_hits', 1)) : ?>
 					<td class="list-hits">
-						<span class="badge bg-info text-dark">
+						<span class="badge bg-info">
 							<?php if ($this->params->get('show_headings')) : ?>
 								<?php echo $article->hits; ?>
 							<?php else : ?>
