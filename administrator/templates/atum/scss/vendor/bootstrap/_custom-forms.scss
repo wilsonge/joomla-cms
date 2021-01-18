@@ -1,6 +1,7 @@
 // Custom Forms
 
-.form-select {
+.form-select,
+.custom-select {
   max-width: $input-max-width;
   cursor: pointer;
   background: $form-select-background;
@@ -30,28 +31,27 @@
     }
   }
 
-  &.form-select-color-state {
+  &.form-select-success,
+  &.custom-select-success {
+    color: var(--success);
+    background-color: var(--success);
+    border-color: var(--success);
 
-    &.form-select-success {
-      color: var(--success);
-      background-color: var(--success);
-      border-color: var(--success);
-
-      option {
-        color: $form-select-color;
-        background-color: var(--white-offset);
-      }
+    option {
+      color: $form-select-color;
+      background-color: var(--white-offset);
     }
+  }
 
-    &.form-select-danger {
-      color: var(--danger);
-      background-color: var(--danger);
-      border-color: var(--danger);
+  &.form-select-danger,
+  &.custom-select-danger {
+    color: var(--danger);
+    background-color: var(--danger);
+    border-color: var(--danger);
 
-      option {
-        color: $form-select-color;
-        background-color: var(--white-offset);
-      }
+    option {
+      color: $form-select-color;
+      background-color: var(--white-offset);
     }
   }
 
