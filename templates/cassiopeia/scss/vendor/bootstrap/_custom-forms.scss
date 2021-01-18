@@ -35,26 +35,25 @@
     }
   }
 
-  &.form-select-color-state {
+  &.form-select-success,
+  &.custom-select-success {
+    color: $success;
+    background-color: $success;
 
-    &.form-select-success {
-      color: $success;
-      background-color: $success;
-
-      option {
-        color: $form-select-color;
-        background-color: $white;
-      }
+    option {
+      color: $form-select-color;
+      background-color: $white;
     }
+  }
 
-    &.form-select-danger {
-      color: $danger;
-      background-color: $danger;
+  &.form-select-danger,
+  &.custom-select-danger  {
+    color: $danger;
+    background-color: $danger;
 
-      option {
-        color: $form-select-color;
-        background-color: $white;
-      }
+    option {
+      color: $form-select-color;
+      background-color: $white;
     }
   }
 
