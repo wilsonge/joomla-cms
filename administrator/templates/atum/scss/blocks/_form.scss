@@ -177,7 +177,7 @@ legend {
 }
 
 // Backwards compat with BS4
-.form-select {
+.custom-select {
   @extend .form-select;
 }
 
