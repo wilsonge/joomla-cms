@@ -1,5 +1,9 @@
 // Custom Forms
 
+.custom-select {
+  @extend .form-select;
+}
+
 .form-select {
   max-width: $input-max-width;
   cursor: pointer;
@@ -35,7 +39,8 @@
     }
   }
 
-  &.form-select-success {
+  &.form-select-success,
+  &.custom-select-success {
     color: $success;
     background-color: $success;
 
@@ -45,7 +50,8 @@
     }
   }
 
-  &.form-select-danger {
+  &.form-select-danger,
+  &.custom-select-danger {
     color: $danger;
     background-color: $danger;
 
