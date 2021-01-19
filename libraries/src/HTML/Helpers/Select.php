@@ -137,7 +137,7 @@ abstract class Select
 		$id = $options['id'] !== false ? $options['id'] : $name;
 		$id = str_replace(array('[', ']', ' '), '', $id);
 
-		// If if the selectbox contains "form-select-color-state" then load the JS file
+		// If the selectbox contains "form-select-color-state" then load the JS file
 		if (strpos($attribs, 'form-select-color-state') !== false)
 		{
 			HTMLHelper::_('script', 'system/fields/select-colour.min.js', array('version' => 'auto', 'relative' => true));
