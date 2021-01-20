@@ -11,7 +11,7 @@
 #more-results,
 #language-results,
 #results-container {
-	display: none;
+	display: grid;
 }
 #overrider-spinner.show,
 #refresh-status.show,
