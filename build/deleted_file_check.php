@@ -175,6 +175,8 @@ $filesToKeep = [
 	"'/administrator/language/en-GB/en-GB.plg_system_weblinks.sys.ini',",
 	"'/language/en-GB/en-GB.mod_search.ini',",
 	"'/language/en-GB/en-GB.mod_search.sys.ini',",
+	"'/libraries/vendor/paragonie/sodium_compat/src/Core32/Curve25519/README.md',",
+	"'/libraries/vendor/typo3/phar-stream-wrapper/composer.json',",
 ];
 
 asort($filesDifference);
