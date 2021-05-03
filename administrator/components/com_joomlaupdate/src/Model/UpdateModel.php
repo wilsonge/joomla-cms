@@ -28,6 +28,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Schema\ChangeSet;
 use Joomla\CMS\Updater\Update;
 use Joomla\CMS\Updater\Updater;
 use Joomla\CMS\User\UserHelper;
@@ -1407,21 +1408,21 @@ ENDDATA;
 			return false;
 		}
 
-		// Ensure we only get information for core
-		$model->setState('filter.extension_id', $coreExtensionInfo->extension_id);
+		// Get the schema change set list
+		$changeSetList = $model->getItems();
 
-		// We're filtering by a single extensions which must always exist - so can safely access this through
-		// element 0 of the array
-		$changeInformation = $model->getItems()[0];
+		// Get the schema change set for the CMS core
+		$changeSet = $this->changeSetList[0];
+		$changeSet['changeset'] = new ChangeSet($this->getDbo(), $changeSet['folderTmp']);
 
 		// Check if schema errors found
-		if ($changeInformation['errorsCount'] !== 0)
+		if (!empty($changeSet['changeset']->check()))
 		{
 			return false;
 		}
 
 		// Check if database schema version does not match CMS version
-		if ($model->getSchemaVersion($coreExtensionInfo->extension_id) != $changeInformation['schema'])
+		if ($model->getSchemaVersion($coreExtensionInfo->extension_id) != $changeSet['changeset']->getSchema())
 		{
 			return false;
 		}
