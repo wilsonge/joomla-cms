@@ -1412,7 +1412,7 @@ ENDDATA;
 		$changeSetList = $model->getItems();
 
 		// Get the schema change set for the CMS core
-		$changeSet = $this->changeSetList[0];
+		$changeSet = $changeSetList[0];
 		$changeSet['changeset'] = new ChangeSet($this->getDbo(), $changeSet['folderTmp']);
 
 		// Check if schema errors found
