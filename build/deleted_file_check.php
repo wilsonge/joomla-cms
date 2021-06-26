@@ -177,6 +177,20 @@ $filesToKeep = [
 	"'/language/en-GB/en-GB.mod_search.sys.ini',",
 ];
 
+// Specific folders that we want to keep on upgrade
+$foldersToKeep = [
+	"'/bin',",
+	"'/libraries/vendor/bin',",
+];
+
+// Don't remove any specific folders that we want to keep on upgrade
+foreach ($foldersToKeep as $folder)
+{
+	if (($key = array_search($folder, $foldersDifference)) !== false) {
+		unset($foldersDifference[$key]);
+	}
+}
+
 asort($filesDifference);
 rsort($foldersDifference);
 
