@@ -180,7 +180,6 @@ $filesToKeep = [
 // Specific folders that we want to keep on upgrade
 $foldersToKeep = [
 	"'/bin',",
-	"'/libraries/vendor/bin',",
 ];
 
 // Remove folders from the results which we want to keep on upgrade
