@@ -24,6 +24,9 @@ Joomla = window.Joomla || {};
         urlStore: `${Joomla.getOptions('system.paths').rootFull}administrator/index.php?option=com_templates&task=file.save&file=${Joomla.getOptions('file_name')}&id=${Joomla.getOptions('extension_id')}`,
         urlLoad: `${Joomla.getOptions('system.paths').rootFull}administrator/index.php?option=com_templates&task=file.load&file=${Joomla.getOptions('file_name')}&id=${Joomla.getOptions('extension_id')}`,
         params: grapesJSParams,
+        headers: {
+          'X-CSRF-Token': Joomla.getOptions('csrf.token', ''),
+        },
       },
     });
 

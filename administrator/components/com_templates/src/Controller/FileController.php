@@ -85,13 +85,13 @@ class FileController extends BaseController
 		$this->app->setHeader('Content-Type', $this->app->mimeType . '; charset=' . $this->app->charSet);
 		$this->app->sendHeaders();
 
-//		// Check if user token is valid.
-//		if (!Session::checkToken('get'))
-//		{
-//			$this->app->enqueueMessage(Text::_('JINVALID_TOKEN'), 'error');
-//			echo new JsonResponse;
-//			$this->app->close();
-//		}
+		// Check if user token is valid.
+		if (!Session::checkToken('get'))
+		{
+			$this->app->enqueueMessage(Text::_('JINVALID_TOKEN'), 'error');
+			echo new JsonResponse;
+			$this->app->close();
+		}
 
 		// Check if the user is authorized to do this.
 		if (!$this->app->getIdentity()->authorise('core.admin'))
@@ -102,11 +102,32 @@ class FileController extends BaseController
 		}
 
 		/** @var \Joomla\Component\Templates\Administrator\Model\TemplateModel $model */
-		$model = $this->getModel();
+		$table = $this->getModel()->getTable('PagebuilderData');
+		$result = $table->load(
+			[
+				'extension_id' => $this->input->getInt('id'),
+				'file_name' => base64_decode($this->input->getBase64('file')),
+			]
+		);
 
-		$response = [
-			'html' => $model->getSource()->source
-		];
+		// If we have a match return the response. Else return the file contents if it exists.
+		if ($result)
+		{
+			$response = [
+				'gjs-components' => json_decode($table->{'gjs-components'}),
+				'gjs-assets' => json_decode($table->{'gjs-assets'}),
+				// TODO: Unsure if these should be saved + returned or not. For now left out as storing HTML/CSS to DB
+				//       is not ideal!
+//				'gjs-html' => $table->{'gjs-html'},
+//				'gjs-css' => $table->{'gjs-css'},
+			];
+		}
+		else
+		{
+			$response = [
+				'html' => $model->getSource()->source,
+			];
+		}
 
 		echo json_encode($response);
 
@@ -155,14 +176,14 @@ class FileController extends BaseController
 		$this->app->setHeader('Content-Type', $this->app->mimeType . '; charset=' . $this->app->charSet);
 		$this->app->sendHeaders();
 
-//		// Check if user token is valid.
-//		if (!Session::checkToken('post'))
-//		{
-//		    $this->app->setHeader('status', 403, true);
-//			$this->app->enqueueMessage(Text::_('JINVALID_TOKEN'), 'error');
-//			echo new JsonResponse;
-//			$this->app->close();
-//		}
+		// Check if user token is valid.
+		if (!Session::checkToken('post'))
+		{
+			$this->app->setHeader('status', 403, true);
+			$this->app->enqueueMessage(Text::_('JINVALID_TOKEN'), 'error');
+			echo new JsonResponse;
+			$this->app->close();
+		}
 
 		/** @var \Joomla\Component\Templates\Administrator\Model\TemplateModel $model */
 		$model        = $this->getModel();
