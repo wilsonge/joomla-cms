@@ -677,8 +677,6 @@ CREATE TABLE IF NOT EXISTS `#__pagebuilder_data` (
   `file_name` VARCHAR(192) NOT NULL,
   `gjs-assets` text NOT NULL,
   `gjs-components` text NOT NULL,
-  `gjs-css` text NOT NULL,
-  `gjs-html` text NOT NULL,
   `gjs-styles` text NOT NULL,
   PRIMARY KEY (`extension_id`,`file_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
