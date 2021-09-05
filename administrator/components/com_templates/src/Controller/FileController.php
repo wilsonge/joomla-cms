@@ -201,14 +201,13 @@ class FileController extends BaseController
 			return;
 		}
 
+		// TODO: Save the CSS somewhere!
 		$data = [
 			'extension_id' => $this->input->get->get('id'),
 			'filename' => end($explodeArray),
 			'source' => $this->input->json->get('gjs-html', null, 'raw'),
 			'gjs-assets' => $this->input->json->get('gjs-assets', null, 'raw'),
 			'gjs-components' => $this->input->json->get('gjs-components', null, 'raw'),
-			'gjs-css' => $this->input->json->get('gjs-css', null, 'raw'),
-			'gjs-html' => $this->input->json->get('gjs-html', null, 'raw'),
 			'gjs-styles' => $this->input->json->get('gjs-styles', null, 'raw'),
 		];
 
@@ -252,8 +251,6 @@ class FileController extends BaseController
 			'source' => $this->input->json->get('gjs-html', null, 'raw'),
 			'gjs-assets' => $this->input->json->get('gjs-assets', null, 'raw'),
 			'gjs-components' => $this->input->json->get('gjs-components', null, 'raw'),
-			'gjs-css' => $this->input->json->get('gjs-css', null, 'raw'),
-			'gjs-html' => $this->input->json->get('gjs-html', null, 'raw'),
 			'gjs-styles' => $this->input->json->get('gjs-styles', null, 'raw'),
 		];
 
