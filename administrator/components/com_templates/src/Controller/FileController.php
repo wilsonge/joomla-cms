@@ -29,49 +29,6 @@ use Joomla\Input\Input;
 class FileController extends BaseController
 {
 	/**
-	 * Constructor.
-	 *
-	 * @param   array                $config   An optional associative array of configuration settings.
-	 * @param   MVCFactoryInterface  $factory  The factory.
-	 * @param   CMSApplication       $app      The JApplication for the dispatcher
-	 * @param   Input                $input    Input
-	 *
-	 * @since  1.6
-	 * @see    BaseController
-	 */
-	public function __construct($config = array(), MVCFactoryInterface $factory = null, $app = null, $input = null)
-	{
-		parent::__construct($config, $factory, $app, $input);
-	}
-
-	/**
-	 * Method for closing the template.
-	 *
-	 * @return  void
-	 *
-	 * @since   3.2
-	 */
-	public function cancel()
-	{
-		$this->setRedirect(Route::_('index.php?option=com_templates&view=templates', false));
-	}
-
-	/**
-	 * Method for closing a file.
-	 *
-	 * @return  void
-	 *
-	 * @since   3.2
-	 */
-	public function close()
-	{
-		$file = base64_encode('home');
-		$id   = $this->input->get('id');
-		$url  = 'index.php?option=com_templates&view=template&id=' . $id . '&file=' . $file;
-		$this->setRedirect(Route::_($url, false));
-	}
-
-	/**
 	 * Load data in a format for grapes.js
 	 *
 	 * @return  void
@@ -174,7 +131,6 @@ class FileController extends BaseController
 		// Send json mime type.
 		$this->app->mimeType = 'application/json';
 		$this->app->setHeader('Content-Type', $this->app->mimeType . '; charset=' . $this->app->charSet);
-		$this->app->sendHeaders();
 
 		// Check if user token is valid.
 		if (!Session::checkToken('post'))
@@ -182,6 +138,7 @@ class FileController extends BaseController
 			$this->app->setHeader('status', 403, true);
 			$this->app->enqueueMessage(Text::_('JINVALID_TOKEN'), 'error');
 			echo new JsonResponse;
+			$this->app->sendHeaders();
 			$this->app->close();
 		}
 
@@ -196,6 +153,7 @@ class FileController extends BaseController
 			$this->app->setHeader('status', 403, true);
 			$this->app->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_SAVE_NOT_PERMITTED'), 'error');
 			echo new JsonResponse;
+			$this->app->sendHeaders();
 			$this->app->close();
 
 			return;
@@ -217,6 +175,7 @@ class FileController extends BaseController
 			$this->app->setHeader('status', 400, true);
 			$this->app->enqueueMessage(Text::_('COM_TEMPLATES_ERROR_SOURCE_ID_FILENAME_MISMATCH'), 'error');
 			echo new JsonResponse;
+			$this->app->sendHeaders();
 			$this->app->close();
 
 			return;
@@ -226,6 +185,7 @@ class FileController extends BaseController
 			$this->app->setHeader('status', 400, true);
 			$this->app->enqueueMessage(Text::_('COM_TEMPLATES_ERROR_SOURCE_ID_FILENAME_MISMATCH'), 'error');
 			echo new JsonResponse;
+			$this->app->sendHeaders();
 			$this->app->close();
 
 			return;
@@ -294,6 +254,7 @@ class FileController extends BaseController
 		// Success
 		$this->app->enqueueMessage(Text::_('COM_TEMPLATES_FILE_SAVE_SUCCESS'));
 		echo new JsonResponse;
+		$this->app->sendHeaders();
 		$this->app->close();
 	}
 }
