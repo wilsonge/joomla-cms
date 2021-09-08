@@ -17,3 +17,19 @@ $fa-font-path:                     "../../../../../../media/vendor/fontawesome-f
 html[dir=rtl] .float-right {
   float: left;
 }
+
+// Backport some FA4 icon classes for grapesjs. TODO: Obviously a bodge and needs fixing in a cleaner way.
+$fa4icons: (
+  arrows : $fa-var-arrows-alt,
+  trash-o: $fa-var-trash-alt,
+  // TODO: The real icon in FA4 is the same class but in the far brand.
+  square-o: $fa-var-square,
+) !default;
+
+@each $fa4icon-key, $fa4icon-value in $fa4icons {
+  .fa-#{$fa4icon-key} {
+    &:before {
+      content: fa-content($fa4icon-value);
+    }
+  }
+}

@@ -2,11 +2,6 @@ Joomla = window.Joomla || {};
 
 ((Joomla, grapesjs) => {
   document.addEventListener('DOMContentLoaded', () => {
-    const grapesJSParams = {};
-
-    // TODO: On success we must update the CSRF token in the storageManager (onComplete?)
-    grapesJSParams[Joomla.getOptions('csrf.token')] = 1;
-
     const editor = grapesjs.init({
       container: '#gjs',
       cssIcons: null,
@@ -23,7 +18,7 @@ Joomla = window.Joomla || {};
         stepsBeforeSave: 1,
         urlStore: `${Joomla.getOptions('system.paths').rootFull}administrator/index.php?option=com_templates&task=file.save&file=${Joomla.getOptions('file_name')}&id=${Joomla.getOptions('extension_id')}`,
         urlLoad: `${Joomla.getOptions('system.paths').rootFull}administrator/index.php?option=com_templates&task=file.load&file=${Joomla.getOptions('file_name')}&id=${Joomla.getOptions('extension_id')}`,
-        params: grapesJSParams,
+        // TODO: On success we must update the CSRF token in the storageManager (onComplete?)
         headers: {
           'X-CSRF-Token': Joomla.getOptions('csrf.token', ''),
         },

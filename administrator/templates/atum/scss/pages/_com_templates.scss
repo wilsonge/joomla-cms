@@ -45,4 +45,9 @@
       }
     }
   }
+
+  // TODO: Figure out why this is required. Presumably it shouldn't be!
+  .gjs-pn-buttons {
+    min-height: 33px;
+  }
 }
