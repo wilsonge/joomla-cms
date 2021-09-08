@@ -179,6 +179,7 @@ class HtmlView extends BaseHtmlView
 			$this->form->setFieldAttribute('source', 'syntax', $ext);
 			$this->source = $this->get('Source');
 			$this->type   = 'file';
+			// TODO: Cheap and nasty for now! Probably based on a template (XML?) property claiming support!
 			$this->isPageBuilderLayout = ($this->form->getField('filename')->value === '/test.php');
 		}
 		elseif (in_array($ext, $imageTypes))
