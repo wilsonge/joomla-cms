@@ -14,6 +14,7 @@ use Joomla\Application\Web\WebClient;
 use Joomla\CMS\Access\Exception\AuthenticationFailed;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\Exception\ResourceNotFound;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\ApiRouter;
 use Joomla\CMS\Router\Exception\RouteNotFoundException;
@@ -311,7 +312,7 @@ final class ApiApplication extends CMSApplication
 
 		if ($caught404)
 		{
-			throw $e;
+			throw new ResourceNotFound;
 		}
 
 		$this->input->set('option', $route['vars']['component']);
