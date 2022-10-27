@@ -16,7 +16,6 @@ use Joomla\CMS\Event\Table\BeforeStoreEvent;
 use Joomla\CMS\Event\View\DisplayEvent;
 use Joomla\CMS\Event\Workflow\WorkflowFunctionalityUsedEvent;
 use Joomla\CMS\Event\Workflow\WorkflowTransitionEvent;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\DatabaseModelInterface;
@@ -193,9 +192,7 @@ class PlgWorkflowFeaturing extends CMSPlugin implements SubscriberInterface
      */
     public function onAfterDisplay(DisplayEvent $event)
     {
-        $app = Factory::getApplication();
-
-        if (!$app->isClient('administrator')) {
+        if (!$this->app->isClient('administrator')) {
             return;
         }
 

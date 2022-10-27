@@ -10,7 +10,6 @@
  * @phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
  */
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 
@@ -63,10 +62,10 @@ class PlgSystemAccessibility extends CMSPlugin
         $this->loadLanguage();
 
         // Determine if it is an LTR or RTL language
-        $direction = Factory::getLanguage()->isRtl() ? 'right' : 'left';
+        $direction = $this->getApplication()->getLanguage()->isRtl() ? 'right' : 'left';
 
         // Detect the current active language
-        $lang = Factory::getLanguage()->getTag();
+        $lang = $this->getApplication()->getLanguage()->getTag();
 
         /**
         * Add strings for translations in Javascript.

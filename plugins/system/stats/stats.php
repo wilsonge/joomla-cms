@@ -11,7 +11,6 @@
  */
 
 use Joomla\CMS\Cache\Cache;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Http\HttpFactory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\FileLayout;
@@ -293,7 +292,7 @@ class PlgSystemStats extends CMSPlugin
      */
     protected function getLayoutPaths()
     {
-        $template = Factory::getApplication()->getTemplate();
+        $template = $this->app->getTemplate();
 
         return [
             JPATH_ADMINISTRATOR . '/templates/' . $template . '/html/layouts/plugins/' . $this->_type . '/' . $this->_name,
@@ -370,7 +369,13 @@ class PlgSystemStats extends CMSPlugin
      */
     private function isAllowedUser()
     {
-        return Factory::getUser()->authorise('core.admin');
+        $identity = $this->app->getIdentity();
+
+        if ($identity) {
+            return $identity->authorise('core.admin');
+        }
+
+        return false;
     }
 
     /**

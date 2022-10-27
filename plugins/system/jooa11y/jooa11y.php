@@ -117,12 +117,6 @@ class PlgSystemJooa11y extends CMSPlugin implements SubscriberInterface
         // Get the document object.
         $document = $this->app->getDocument();
 
-        // Determine if it is an LTR or RTL language
-        $direction = Factory::getLanguage()->isRtl() ? 'right' : 'left';
-
-        // Detect the current active language
-        $lang = Factory::getLanguage()->getTag();
-
         // Add plugin settings from the xml
         $document->addScriptOptions(
             'jooa11yOptions',

@@ -11,7 +11,6 @@
  */
 
 use Joomla\CMS\Cache\Cache;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Plugin\CMSPlugin;
@@ -236,7 +235,7 @@ class PlgSystemLogrotation extends CMSPlugin
                     $options = array(
                         'defaultgroup' => $group,
                         'cachebase'    => $client_id ? JPATH_ADMINISTRATOR . '/cache' :
-                            Factory::getApplication()->get('cache_path', JPATH_SITE . '/cache'),
+                            $this->app->get('cache_path', JPATH_SITE . '/cache'),
                     );
 
                     $cache = Cache::getInstance('callback', $options);
