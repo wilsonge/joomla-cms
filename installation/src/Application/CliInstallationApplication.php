@@ -78,6 +78,14 @@ final class CliInstallationApplication extends Application implements CMSApplica
     protected $session;
 
     /**
+     * The client identifier.
+     *
+     * @var    integer
+     * @since  4.3.0
+     */
+    protected $clientId = null;
+
+    /**
      * Class constructor.
      *
      * @param   Input|null      $input      An optional argument to provide dependency injection for the application's input
@@ -317,6 +325,6 @@ final class CliInstallationApplication extends Application implements CMSApplica
      */
     public function isCli()
     {
-        return $this->isClient('cli_installation');
+        return true;
     }
 }
