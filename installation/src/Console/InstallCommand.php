@@ -387,4 +387,16 @@ class InstallCommand extends AbstractCommand
 
         return $answer;
     }
+
+    /**
+     * Check if the command is enabled in this environment.
+     *
+     * @return  boolean
+     *
+     * @since   4.3.0
+     */
+    public function isEnabled(): bool
+    {
+        return !file_exists(JPATH_ROOT . '/configuration.php');
+    }
 }
