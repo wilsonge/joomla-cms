@@ -173,7 +173,7 @@ class Installer extends Adapter implements DatabaseAwareInterface
     {
         parent::__construct($basepath, $classprefix, $adapterfolder);
 
-        $this->extension = Table::getInstance('extension');
+        $this->extension = Table::getInstance('extension', '\\Joomla\\CMS\\Table\\', ['db' => $this->getDbo()]);
     }
 
     /**

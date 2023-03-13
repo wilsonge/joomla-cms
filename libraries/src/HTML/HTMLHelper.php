@@ -146,6 +146,15 @@ abstract class HTMLHelper
 
         $className = $prefix . ucfirst($file);
 
+        /**
+         * Manual namespace map so that we support functions in this class (all other classes use service providers and
+         * therefore are fine) so that the class_exists check below resolves which will happen when the namespace mapping
+         * is removed based on the current method defaults.
+         */
+        if ($className === 'JHtml') {
+            $className = HTMLHelper::class;
+        }
+
         if (!class_exists($className)) {
             $path = Path::find(static::$includePaths, strtolower($file) . '.php');
 

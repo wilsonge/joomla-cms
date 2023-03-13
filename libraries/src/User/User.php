@@ -550,7 +550,7 @@ class User extends CMSObject
         // Set the default tabletype;
         if (!isset($tabletype)) {
             $tabletype['name']   = 'user';
-            $tabletype['prefix'] = 'JTable';
+            $tabletype['prefix'] = '\\Joomla\\CMS\\Table\\';
         }
 
         // Set a custom table type is defined
