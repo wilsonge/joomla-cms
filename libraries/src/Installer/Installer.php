@@ -165,14 +165,19 @@ class Installer extends Adapter implements DatabaseAwareInterface
      * @param   string  $basepath       Base Path of the adapters
      * @param   string  $classprefix    Class prefix of adapters
      * @param   string  $adapterfolder  Name of folder to append to base path
+     * @param   DatabaseInterface  $db  The database instance
      *
      * @since   3.1
      */
-    public function __construct($basepath = __DIR__, $classprefix = '\\Joomla\\CMS\\Installer\\Adapter', $adapterfolder = 'Adapter')
+    public function __construct($basepath = __DIR__, $classprefix = '\\Joomla\\CMS\\Installer\\Adapter', $adapterfolder = 'Adapter', DatabaseInterface $db = null)
     {
         parent::__construct($basepath, $classprefix, $adapterfolder);
 
-        $this->extension = Table::getInstance('extension');
+        $this->extension = Table::getInstance('extension', 'JTable', ['dbo' => $db]);
+
+        if ($db) {
+            $this->setDatabase($db);
+        }
     }
 
     /**
@@ -181,16 +186,21 @@ class Installer extends Adapter implements DatabaseAwareInterface
      * @param   string  $basepath       Base Path of the adapters
      * @param   string  $classprefix    Class prefix of adapters
      * @param   string  $adapterfolder  Name of folder to append to base path
+     * @param   DatabaseInterface  $db  The database instance
      *
      * @return  Installer  An installer object
      *
      * @since   3.1
      */
-    public static function getInstance($basepath = __DIR__, $classprefix = '\\Joomla\\CMS\\Installer\\Adapter', $adapterfolder = 'Adapter')
+    public static function getInstance($basepath = __DIR__, $classprefix = '\\Joomla\\CMS\\Installer\\Adapter', $adapterfolder = 'Adapter', DatabaseInterface $db = null)
     {
+        if (!$db) {
+            $db = Factory::getContainer()->get(DatabaseInterface::class);
+        }
+
         if (!isset(self::$instances[$basepath])) {
-            self::$instances[$basepath] = new static($basepath, $classprefix, $adapterfolder);
-            self::$instances[$basepath]->setDatabase(Factory::getContainer()->get(DatabaseInterface::class));
+            self::$instances[$basepath] = new static($basepath, $classprefix, $adapterfolder, $db);
+            self::$instances[$basepath]->setDatabase($db);
         }
 
         return self::$instances[$basepath];

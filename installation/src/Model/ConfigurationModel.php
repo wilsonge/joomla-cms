@@ -141,8 +141,7 @@ class ConfigurationModel extends BaseInstallationModel
         }
 
         // This is needed because the installer loads the extension table in constructor, needs to be refactored in 5.0
-        Factory::$database = $db;
-        $installer         = Installer::getInstance();
+        $installer = Installer::getInstance(JPATH_LIBRARIES . '/src/Installer', '\\Joomla\\CMS\\Installer\\Adapter', 'Adapter', $db);
 
         foreach ($extensions as $extension) {
             if (!$installer->refreshManifestCache($extension->extension_id)) {
