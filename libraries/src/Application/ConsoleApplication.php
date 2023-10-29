@@ -302,6 +302,7 @@ class ConsoleApplication extends Application implements DispatcherAwareInterface
         return array_merge(
             parent::getDefaultCommands(),
             [
+                new Console\AssetFixCommand($this->getDatabase()),
                 new Console\CleanCacheCommand(),
                 new Console\CheckUpdatesCommand(),
                 new Console\RemoveOldFilesCommand(),
