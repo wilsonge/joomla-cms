@@ -157,6 +157,15 @@ abstract class Table implements TableInterface, DispatcherAwareInterface
     public $typeAlias = null;
 
     /**
+     * Use exceptions rather than getError/setError. This will default to true in Joomla 6 and removed in Joomla 7.
+     *
+     * @var          boolean
+     * @since        __DEPLOY_VERSION__
+     * @deprecated   7.0
+     */
+    private bool $useExceptions = false;
+
+    /**
      * Object constructor to set table and key fields.  In most cases this will
      * be overridden by child classes to explicitly set the table and key fields
      * for a particular database table.
@@ -877,8 +886,12 @@ abstract class Table implements TableInterface, DispatcherAwareInterface
                 $this->_db->insertObject($this->_tbl, $this, $this->_tbl_keys[0]);
             }
         } catch (\Exception $e) {
-            $this->setError($e->getMessage());
-            $result = false;
+            if (!$this->useExceptions) {
+                $this->setError($e->getMessage());
+                $result = false;
+            } else {
+                throw $e;
+            }
         }
 
         $this->typeAlias = $typeAlias;
@@ -1880,5 +1893,32 @@ abstract class Table implements TableInterface, DispatcherAwareInterface
         $key = $this->getColumnAlias($key);
 
         return property_exists($this, $key);
+    }
+
+    /**
+     * If true then subclasses should throw exceptions rather than use getError and setError.
+     *
+     * @return  boolean
+     *
+     * @since        __DEPLOY_VERSION__
+     * @deprecated   7.0
+     */
+    public function shouldUseExceptions(): bool
+    {
+        return $this->useExceptions;
+    }
+
+    /**
+     * If true then subclasses should throw exceptions rather than use getError and setError.
+     *
+     * @param   boolean   $value  The value to set for the field.
+     *
+     * @return  void
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    public function setUseExceptions(bool $value): void
+    {
+        $this->useExceptions = $value;
     }
 }
