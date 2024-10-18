@@ -1,12 +1,20 @@
+/**
+ * @copyright   (C) 2024 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
 Joomla = window.Joomla || {};
 
+/* global grapesjs */
 ((Joomla, grapesjs) => {
   document.addEventListener('DOMContentLoaded', () => {
     const editor = grapesjs.init({
       container: '#gjs',
-      cssIcons: null,
       // Load our Joomla Custom blocks
-      plugins: ['joomla-plugin', 'grapesjs-plugin-header'],
+      plugins: [
+        'joomla-plugin',
+        'grapesjs-plugin-header',
+      ],
       pluginsOpts: {
         'grapesjs-plugin-header': {
           // TODO: Override all the setting labels
@@ -16,11 +24,15 @@ Joomla = window.Joomla || {};
       storageManager: {
         type: 'remote',
         stepsBeforeSave: 1,
-        urlStore: `${Joomla.getOptions('system.paths').rootFull}administrator/index.php?option=com_templates&task=file.save&file=${Joomla.getOptions('file_name')}&id=${Joomla.getOptions('extension_id')}`,
-        urlLoad: `${Joomla.getOptions('system.paths').rootFull}administrator/index.php?option=com_templates&task=file.load&file=${Joomla.getOptions('file_name')}&id=${Joomla.getOptions('extension_id')}`,
-        // TODO: On success we must update the CSRF token in the storageManager (onComplete?)
-        headers: {
-          'X-CSRF-Token': Joomla.getOptions('csrf.token', ''),
+        options: {
+          remote: {
+            urlStore: `${Joomla.getOptions('system.paths').rootFull}administrator/index.php?option=com_templates&task=file.save&file=${Joomla.getOptions('file_name')}&id=${Joomla.getOptions('extension_id')}`,
+            urlLoad: `${Joomla.getOptions('system.paths').rootFull}administrator/index.php?option=com_templates&task=file.load&file=${Joomla.getOptions('file_name')}&id=${Joomla.getOptions('extension_id')}`,
+            // TODO: On success we must update the CSRF token in the storageManager (onComplete?)
+            headers: {
+              'X-CSRF-Token': Joomla.getOptions('csrf.token', ''),
+            },
+          },
         },
       },
     });

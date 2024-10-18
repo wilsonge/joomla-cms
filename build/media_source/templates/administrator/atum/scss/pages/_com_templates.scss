@@ -1,5 +1,8 @@
 // com_templates
 .com_templates {
+  --gjs-font-color: var(--body-color);
+  --gjs-main-font: var(--body-font-family);
+  --gjs-font-size: var(--body-font-size);
 
   .menu-assignment {
     position: relative;
@@ -54,10 +57,5 @@
   .thumbnail > img {
     max-width: 100%;
     max-height: 100%;
-  }
-
-  // TODO: Figure out why this is required. Presumably it shouldn't be!
-  .gjs-pn-buttons {
-    min-height: 33px;
   }
 }

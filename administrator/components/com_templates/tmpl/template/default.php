@@ -36,14 +36,16 @@ $wa->useScript('form.validate')
     ->useStyle('com_templates.admin-templates');
 
 // TODO: Add these script options in using a class
-$this->document->addScriptOptions('extension_id', $input->getInt('id'));
-$this->document->addScriptOptions('file_name', $this->file);
-Text::script('COM_TEMPLATES_PAGEBUILDER_BASIC_CATEGORY');
-Text::script('COM_TEMPLATES_PAGEBUILDER_JOOMLA_CATEGORY');
-Text::script('COM_TEMPLATES_PAGEBUILDER_BLOCK_BASIC_TEXT');
-Text::script('COM_TEMPLATES_PAGEBUILDER_BLOCK_BASIC_VIDEO');
-Text::script('COM_TEMPLATES_PAGEBUILDER_BLOCK_JOOMLA_COMPONENT');
-$wa->usePreset('com_templates.pagebuilder');
+if ($this->isPageBuilderLayout) {
+    $this->getDocument()->addScriptOptions('extension_id', $input->getInt('id'));
+    $this->getDocument()->addScriptOptions('file_name', $this->file);
+    Text::script('COM_TEMPLATES_PAGEBUILDER_BASIC_CATEGORY');
+    Text::script('COM_TEMPLATES_PAGEBUILDER_JOOMLA_CATEGORY');
+    Text::script('COM_TEMPLATES_PAGEBUILDER_BLOCK_BASIC_TEXT');
+    Text::script('COM_TEMPLATES_PAGEBUILDER_BLOCK_BASIC_VIDEO');
+    Text::script('COM_TEMPLATES_PAGEBUILDER_BLOCK_JOOMLA_COMPONENT');
+    $wa->usePreset('com_templates.pagebuilder');
+}
 
 // No access if not global SuperUser
 if (!$this->getCurrentUser()->authorise('core.admin')) {

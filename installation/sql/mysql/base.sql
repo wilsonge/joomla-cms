@@ -718,9 +718,9 @@ INSERT INTO `#__modules_menu` (`moduleid`, `menuid`) VALUES
 CREATE TABLE IF NOT EXISTS `#__pagebuilder_data` (
   `extension_id` int(11) NOT NULL DEFAULT 0,
   `file_name` VARCHAR(192) NOT NULL,
-  `gjs-assets` text NOT NULL,
-  `gjs-components` text NOT NULL,
-  `gjs-styles` text NOT NULL,
+  `assets` text NOT NULL,
+  `pages` text NOT NULL,
+  `styles` text NOT NULL,
   PRIMARY KEY (`extension_id`,`file_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
