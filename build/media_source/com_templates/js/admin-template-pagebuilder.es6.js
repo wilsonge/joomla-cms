@@ -4,7 +4,6 @@ Joomla = window.Joomla || {};
   document.addEventListener('DOMContentLoaded', () => {
     const editor = grapesjs.init({
       container: '#gjs',
-      cssIcons: null,
       // Load our Joomla Custom blocks
       plugins: ['joomla-plugin', 'grapesjs-plugin-header'],
       pluginsOpts: {
@@ -16,11 +15,15 @@ Joomla = window.Joomla || {};
       storageManager: {
         type: 'remote',
         stepsBeforeSave: 1,
-        urlStore: `${Joomla.getOptions('system.paths').rootFull}administrator/index.php?option=com_templates&task=file.save&file=${Joomla.getOptions('file_name')}&id=${Joomla.getOptions('extension_id')}`,
-        urlLoad: `${Joomla.getOptions('system.paths').rootFull}administrator/index.php?option=com_templates&task=file.load&file=${Joomla.getOptions('file_name')}&id=${Joomla.getOptions('extension_id')}`,
-        // TODO: On success we must update the CSRF token in the storageManager (onComplete?)
-        headers: {
-          'X-CSRF-Token': Joomla.getOptions('csrf.token', ''),
+        options: {
+          remote: {
+            urlStore: `${Joomla.getOptions('system.paths').rootFull}administrator/index.php?option=com_templates&task=file.save&file=${Joomla.getOptions('file_name')}&id=${Joomla.getOptions('extension_id')}`,
+            urlLoad: `${Joomla.getOptions('system.paths').rootFull}administrator/index.php?option=com_templates&task=file.load&file=${Joomla.getOptions('file_name')}&id=${Joomla.getOptions('extension_id')}`,
+            // TODO: On success we must update the CSRF token in the storageManager (onComplete?)
+            headers: {
+              'X-CSRF-Token': Joomla.getOptions('csrf.token', ''),
+            },
+          },
         },
       },
     });
